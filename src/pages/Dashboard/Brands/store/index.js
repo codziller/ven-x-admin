@@ -19,6 +19,7 @@ class BrandsStore {
   createBrandLoading = false;
   editBrandLoading = false;
   getBrandLoading = false;
+  deleteBrandLoading = false;
   constructor() {
     makeAutoObservable(this);
   }
@@ -83,6 +84,20 @@ class BrandsStore {
       this.error = error;
     } finally {
       this.editBrandLoading = false;
+    }
+  };
+
+  deleteBrand = async ({ data, onSuccess, page }) => {
+    this.deleteBrandLoading = true;
+    try {
+      await apis.deleteBrand(data);
+      successToast("Operation Successful!", "Brand deleted Successfully.");
+      onSuccess?.();
+      await this.getBrands({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteBrandLoading = false;
     }
   };
 }

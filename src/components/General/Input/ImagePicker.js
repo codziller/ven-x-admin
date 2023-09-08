@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import PropTypes from "prop-types";
 import Dropzone from "react-dropzone";
-import { isEmpty } from "lodash";
+import { isEmpty, isString } from "lodash";
 import { useDropzone } from "react-dropzone";
 
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
@@ -45,8 +45,10 @@ export default function ImagePicker({
   removeImage,
   placeholder = "Drag 'n' drop some images here, or click to select images",
   type = "image",
+  multiple,
   ...rest
 }) {
+  const imageArray = isString(images) ? [images] : images;
   const isError = formError && showFormError;
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -55,6 +57,7 @@ export default function ImagePicker({
         ...(type === "video" && { "video/*": [] }),
       },
       onDrop: handleDrop,
+      multiple,
       ...rest,
     });
   const style = useMemo(
@@ -66,6 +69,8 @@ export default function ImagePicker({
     }),
     [isFocused, isDragAccept, isDragReject, isError]
   );
+
+  console.log("images: ", images);
   return (
     <div className="flex-col justify-start items-start flex w-full">
       <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark">
@@ -79,52 +84,60 @@ export default function ImagePicker({
         <Gallery />
         <p className="text-xs text-grey">{placeholder}</p>
 
-        {!isEmpty(images) && (
+        {!isEmpty(imageArray) && (
           <p className="text-xs text-blue-bright">
-            {images?.length} {images?.length === 1 ? type : `${type}s`} selected
+            {imageArray?.length} {imageArray?.length === 1 ? type : `${type}s`}{" "}
+            selected
           </p>
         )}
       </div>
 
-      {!isEmpty(images) && (
+      {!isEmpty(imageArray) && (
         <div className="grid grid-cols-2 gap-10 my-4">
           {type === "video"
-            ? images?.map((file, index) => (
+            ? imageArray?.map((file, index) => (
                 <div key={file?.name} className="image-item w-full h-fit">
                   <div className="flex justify-between items-center">
                     <span className="text-grey text-xs truncate max-w-[calc(100%-30px)]">
                       {file?.name}
                     </span>
-                    <button
-                      onClick={() => removeImage?.(file)}
-                      className="text-red "
-                      type="button"
-                    >
-                      <Close className="current-svg w-[20px]" />
-                    </button>
+                    {multiple && (
+                      <button
+                        onClick={() => removeImage?.(file)}
+                        className="text-red "
+                        type="button"
+                      >
+                        <Close className="current-svg w-[20px]" />
+                      </button>
+                    )}
                   </div>
                   <video controls width="400" height="100">
-                    <source src={URL.createObjectURL(file)} type="video/mp4" />
+                    <source
+                      src={isString(file) ? file : URL.createObjectURL(file)}
+                      type="video/mp4"
+                    />
                     Your browser does not support the video tag.
                   </video>
                 </div>
               ))
-            : images?.map((file, index) => (
+            : imageArray?.map((file, index) => (
                 <div key={index} className="image-item w-full h-[150px]">
                   <div className="flex justify-between items-center">
                     <span className="text-grey text-xs truncate max-w-[calc(100%-30px)]">
                       {file?.name}
                     </span>
-                    <button
-                      onClick={() => removeImage?.(file)}
-                      className="text-red "
-                      type="button"
-                    >
-                      <Close className="current-svg w-[20px]" />
-                    </button>
+                    {multiple && (
+                      <button
+                        onClick={() => removeImage?.(file)}
+                        className="text-red "
+                        type="button"
+                      >
+                        <Close className="current-svg w-[20px]" />
+                      </button>
+                    )}
                   </div>
                   <img
-                    src={URL.createObjectURL(file)}
+                    src={isString(file) ? file : URL.createObjectURL(file)}
                     alt={`Image ${index}`}
                     className="object-cover object-center w-full h-full min-w-full min-h-full"
                   />

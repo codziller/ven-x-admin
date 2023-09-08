@@ -254,7 +254,7 @@ const SideNav = ({
       to: url,
     };
   };
-  console.log("sidenavCollapsed: ", sidenavCollapsed);
+
   return (
     <>
       {withBackDrop && (

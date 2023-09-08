@@ -169,15 +169,16 @@ const BrandsPage = () => {
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
           <span
-            onClick={() => setCurrentTxnDetails({ ...row, modalType: "edit" })}
+            onClick={() =>
+              setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" })
+            }
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
             Edit
           </span>
-
           <span
             onClick={() =>
-              setCurrentTxnDetails({ ...row, modalType: "delete" })
+              setCurrentTxnDetails({ ...row, currentPage, modalType: "delete" })
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-red-deep text-[11px] text-white "
           >

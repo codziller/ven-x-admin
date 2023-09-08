@@ -31,12 +31,20 @@ import {
   uploadImagesToCloud,
 } from "utils/uploadImagesToCloud";
 import { errorToast } from "components/General/Toast/Toast";
+import { isArray } from "lodash";
 
 const Form = ({ details, toggler }) => {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
     showFormError: false,
-    description: "",
+    // brandDescription: details?.isAdd
+    //   ? ""
+    //   : EditorState.createWithContent(
+    //       ContentState.createFromBlockArray(
+    //         convertFromHTML(JSON.parse(details?.brandDescription))
+    //       )
+    //     ),
+    brandDescription: details?.isAdd ? "" : "",
     collapsed: [],
     modalType: "",
     createLoading: false,
@@ -56,8 +64,7 @@ const Form = ({ details, toggler }) => {
       .required("Please select images for this brand"),
   });
 
-  const { createBrand, createBrandLoading, editBrand, editBrandLoading } =
-    BrandsStore;
+  const { createBrand, editBrand } = BrandsStore;
 
   const { categories, loading, getCategories } = CategoriesStore;
 
@@ -67,21 +74,17 @@ const Form = ({ details, toggler }) => {
 
   const defaultValues = {
     brandName: details?.brandName,
-    // brandDescription: details?.isAdd
-    //   ? ""
-    //   : EditorState.createWithContent(
-    //       ContentState.createFromBlockArray(
-    //         convertFromHTML(JSON.parse(details?.brandDescription || ""))
-    //       )
-    //     ),
-    brandDescription: "",
-    brandLogoUrl: details?.brandLogoUrl || [],
+    brandDescription: details?.isAdd ? "" : details?.brandDescription,
+    // brandDescription: "",
+    brandLogoUrl: details?.brandLogoUrl ? [details?.brandLogoUrl] : [],
     brandName: details?.brandName,
     brandShortText: details?.brandShortText,
     categoryId: details?.categoryId,
     imageUrls: details?.imageUrls || [],
     videoUrls: details?.videoUrls || [],
   };
+
+  console.log("defaultValues: ", defaultValues);
 
   const {
     handleSubmit,
@@ -99,7 +102,7 @@ const Form = ({ details, toggler }) => {
     const updatedVal = isWysywyg
       ? JSON.stringify(draftToHtml(convertToRaw(val?.getCurrentContent())))
       : rest
-      ? [...rest, ...val]
+      ? [...val, ...rest]
       : val;
     setValue(prop, updatedVal);
     await trigger(prop);
@@ -119,12 +122,17 @@ const Form = ({ details, toggler }) => {
     videoUrls: watch("videoUrls"),
   };
 
+  console.log("form: ", form);
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
 
     try {
       const imagesUrls = await Promise.all([
-        uploadImageToCloud(form?.brandLogoUrl?.[0]),
+        uploadImageToCloud(
+          isArray(form?.brandLogoUrl)
+            ? form?.brandLogoUrl?.[0]
+            : form?.brandLogoUrl
+        ),
         uploadImagesToCloud(form?.imageUrls),
         uploadImagesToCloud(form?.videoUrls),
       ]);
@@ -141,6 +149,19 @@ const Form = ({ details, toggler }) => {
 
         await createBrand({ data: payload, onSuccess: () => toggler?.() });
         return;
+      } else {
+        const payload = {
+          ...form,
+          id: details?.id,
+          brandLogoUrl: imagesUrls?.[0],
+          imageUrls: imagesUrls?.[1],
+          videoUrls: imagesUrls?.[2],
+        };
+
+        cleanPayload(payload);
+
+        await editBrand({ data: payload, onSuccess: () => toggler?.() });
+        return;
       }
     } catch (error) {
       console.log("imagesUrls error: ", error);
@@ -154,13 +175,11 @@ const Form = ({ details, toggler }) => {
   };
   const removeFile = (file, prop, files) => {
     let updatedFiles = [...files];
-    updatedFiles = updatedFiles.filter((_) => _?.name !== file?.name);
+    updatedFiles = updatedFiles.filter(
+      (_) => (_?.name || _) !== (file?.name || file)
+    );
     handleChange(prop, updatedFiles);
   };
-
-  console.log("errors: ", errors);
-  console.log("form: ", form);
-  console.log("formTwo: ", formTwo);
 
   return (
     <>
@@ -230,7 +249,7 @@ const Form = ({ details, toggler }) => {
             fullWidth
           />
           <ImagePicker
-            label=" Add Brand Logo "
+            label=" Add Brand Logo"
             handleDrop={(val) => handleChange("brandLogoUrl", val)}
             removeImage={(file) =>
               removeFile(file, "brandLogoUrl", form.brandLogoUrl)
@@ -241,7 +260,7 @@ const Form = ({ details, toggler }) => {
             multiple={false}
           />
           <ImagePicker
-            label=" Add Brand Images "
+            label=" Add Brand Images"
             handleDrop={(val) => handleChange("imageUrls", val, form.imageUrls)}
             images={form.imageUrls}
             formError={errors.imageUrls}

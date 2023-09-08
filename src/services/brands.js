@@ -14,6 +14,7 @@ const getBrandsQuery = ({ page }) => gql`
         createdAt
         id
         updatedAt
+        imageUrls
         category {
           name
           id
@@ -26,17 +27,20 @@ const getBrandsQuery = ({ page }) => gql`
 const getBrandQuery = ({ id }) => gql`
   {
     __typename
-    barnd(id: "${id}") {
-      name
-      country
-      state
-      createdAt
-      id
-      lat
-      lng
-      products {
-        brandId
-      }
+    brand(id: "${id}") {
+      brandDescription
+        brandLogoUrl
+        brandName
+        brandShortText
+        createdAt
+        id
+        updatedAt
+        imageUrls
+        videoUrls
+        category {
+          name
+          id
+        }
     }
   }
 `;
@@ -68,7 +72,7 @@ const createBrandQuery = gql`
 `;
 
 const editBrandQuery = gql`
-  mutation createBrand(
+  mutation updateBrand(
     $id: String!
     $brandDescription: String
     $brandLogoUrl: String
@@ -78,8 +82,8 @@ const editBrandQuery = gql`
     $imageUrls: [String!]
     $videoUrls: [String!]
   ) {
-    createBrand(
-      createBrandInput: {
+    updateBrand(
+      updateBrandInput: {
         id: $id
         brandDescription: $brandDescription
         brandLogoUrl: $brandLogoUrl
@@ -91,6 +95,14 @@ const editBrandQuery = gql`
       }
     ) {
       id
+    }
+  }
+`;
+
+const deleteBrandQuery = gql`
+  mutation removeBrand($id: String!) {
+    removeBrand(id: $id) {
+      status
     }
   }
 `;
@@ -115,10 +127,10 @@ const apis = {
       variables,
     }),
 
-  // deleteItem: (variables) =>
-  //   graphQlInstance(deleteItemQuery, {
-  //     variables,
-  //   }),
+  deleteBrand: (variables) =>
+    graphQlInstance(deleteBrandQuery, {
+      variables,
+    }),
 };
 
 export default apis;

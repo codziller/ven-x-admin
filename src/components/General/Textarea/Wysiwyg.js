@@ -34,8 +34,6 @@ const Wysiwyg = ({
       <Editor
         editorState={editorState}
         onEditorStateChange={onEditorStateChange}
-        //   initialEditorState={EditorState.createEmpty()}
-        //   editorState={value || EditorState.createEmpty()}
         //   toolbarClassName="toolbarClassName"
         //   wrapperClassName="wrapperClassName"
         editorClassName={`

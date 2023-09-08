@@ -1,73 +1,24 @@
-import React, { useState } from "react";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React from "react";
 import PropTypes from "prop-types";
 
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
 import Button from "components/General/Button/Button";
-import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
 import { Link } from "react-router-dom";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
+import { observer } from "mobx-react-lite";
+import BrandsStore from "../store";
 
-export default function DeleteDialog({ details, toggler }) {
-  const [formTwo, setFormTwo] = useState({
-    country: "NG",
-    showFormError: false,
-  });
+const DeleteDialog = ({ details, toggler }) => {
+  const { deleteBrand, deleteBrandLoading } = BrandsStore;
 
-  const schema = yup.object({
-    name: yup.string().required("Please enter your name"),
-    country: yup.string().required("Please select your country"),
-    amount: yup.string().required("Please enter amount"),
-    quantity: yup.string().required("Please enter quantity"),
-  });
-
-  //
-
-  //   const { actions } = signInSlice;
-
-  const defaultValues = {
-    name: "",
-    country: "",
-    amount: "",
-    quantity: "",
-  };
-
-  const {
-    handleSubmit,
-    formState: { errors, isValid },
-    setValue,
-    trigger,
-    watch,
-  } = useForm({
-    defaultValues,
-    mode: "onSubmit",
-    resolver: yupResolver(schema),
-  });
-
-  const handleChange = async (prop, val) => {
-    setValue(prop, val);
-    await trigger(prop);
-  };
-
-  const form = {
-    name: watch("name"),
-    country: watch("country"),
-    amount: watch("amount"),
-    quantity: watch("quantity"),
-  };
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
-    }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
+  const handleOnSubmit = () => {
+    const payload = { id: details?.id };
+    deleteBrand({
+      data: payload,
+      page: details?.currentPage,
+      onSuccess: () => toggler(),
+    });
   };
 
   return (
@@ -83,17 +34,18 @@ export default function DeleteDialog({ details, toggler }) {
       )}
 
       <Delete className="scale-90" />
-      <p className="font-600 text-xl ">Delete Product</p>
+      <p className="font-600 text-xl ">Delete Brand</p>
 
       <p className="mb-3 text-sm text-grey text-center">
         Are you sure you want to delete{" "}
-        <span className="text-black">"{details?.name}"?</span>
+        <span className="text-black">"{details?.brandName}"?</span>
       </p>
 
       <Button
-        onClick={() => toggler?.()}
+        onClick={handleOnSubmit}
+        isLoading={deleteBrandLoading}
         type="submit"
-        text="Yes, Delete this product"
+        text="Yes, Delete this brand"
         className="mb-2"
         fullWidth
         redBg
@@ -101,7 +53,7 @@ export default function DeleteDialog({ details, toggler }) {
 
       <Button
         onClick={() => toggler?.()}
-        type="submit"
+        isDisabled={deleteBrandLoading}
         text="No, Cancel"
         className="mb-5"
         fullWidth
@@ -109,8 +61,10 @@ export default function DeleteDialog({ details, toggler }) {
       />
     </div>
   );
-}
+};
 DeleteDialog.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(DeleteDialog);
