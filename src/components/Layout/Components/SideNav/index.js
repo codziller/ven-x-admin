@@ -240,7 +240,10 @@ const SideNav = ({
 }) => {
   const { warehouse_id } = useParams();
   const { user } = getUserInfoFromStorage();
-  const links = useMemo(() => getLinks(warehouse_id, user), [warehouse_id]);
+  const links = useMemo(
+    () => getLinks(warehouse_id, user),
+    [warehouse_id, user]
+  );
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
   useEffect(() => {
     warehouse_id && getWarehouse({ data: { id: warehouse_id } });
