@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { getBusinessInitials } from "utils/functions";
 import { ReactComponent as UserCaret } from "assets/icons/user-caret.svg";
+import { getUserInfoFromStorage } from "utils/storage";
+import { useAuth } from "hooks/useAuth";
 const HeaderDropDown = () => {
   const domNode = useRef();
   const [active, setActive] = useState(false);
   const [positionTop, setPositionTop] = useState(false);
   const [y, setY] = useState(null);
+  const { logout } = useAuth();
   const innerHeight = window.innerHeight;
 
   useEffect(() => {
@@ -32,7 +35,8 @@ const HeaderDropDown = () => {
     if (!y) return;
     y > innerHeight / 1.5 ? setPositionTop(true) : setPositionTop(false);
   }, [innerHeight, y]);
-  const user = "Jenrola Jackson";
+  const { user } = getUserInfoFromStorage();
+  const userName = user?.firstName && `${user?.firstName} ${user?.lastName}`;
   return (
     <div className="flex flex-row justify-between items-center" ref={domNode}>
       <button
@@ -55,11 +59,14 @@ ${!active ? "opacity-0 pointer-events-none scale-0" : "opacity-100 scale-100"}
  `}
       >
         <span className="flex justify-center items-center h-8 w-8 bg-blue text-center text-white rounded-full subpixel-antialiased select-none text-12 cursor-pointer">
-          {getBusinessInitials(user)}
+          {getBusinessInitials(userName)}
         </span>
 
-        <h3 className="text-[16px] text-black pb-2 pt-3">{user}</h3>
-        <button className="w-full border-t border-grey-bordercolor text-red-deep py-4 text-base hover:bg-grey-whitesmoke transition-colors ease-in-out duration-300">
+        <h3 className="text-[16px] text-black pb-2 pt-3">{userName}</h3>
+        <button
+          onClick={logout}
+          className="w-full border-t border-grey-bordercolor text-red-deep py-4 text-base hover:bg-grey-whitesmoke transition-colors ease-in-out duration-300"
+        >
           Sign Out
         </button>
       </div>

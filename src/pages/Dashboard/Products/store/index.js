@@ -31,6 +31,18 @@ class ProductsStore {
   setProductForm = (payload) => {
     this.productForm = { ...this.productForm, ...payload };
   };
+  getProductsCount = async ({ data }) => {
+    this.loading = true;
+    try {
+      let res = await apis.getProductsCount(data);
+      res = res?.products;
+      this.productsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loading = false;
+    }
+  };
   getProducts = async ({ data }) => {
     this.loading = true;
     try {

@@ -45,6 +45,17 @@ imageUrls
   }
 `;
 
+const getProductsCountQuery = ({ page }) => gql`
+  {
+    __typename
+    products(pageNumber: "${page}") {
+      
+      total
+      
+    }
+  }
+`;
+
 const getWarehouseQuery = ({ id }) => gql`
   {
     __typename
@@ -145,6 +156,10 @@ const editWarehouseQuery = gql`
 const apis = {
   getProducts: ({ page }) =>
     graphQlInstance(getProductsQuery({ page }), {
+      method: "GET",
+    }),
+  getProductsCount: ({ page }) =>
+    graphQlInstance(getProductsCountQuery({ page }), {
       method: "GET",
     }),
   getWarehouse: ({ id }) =>

@@ -20,12 +20,15 @@ import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg
 import useWindowDimensions from "hooks/useWindowDimensions";
 
 import { paramsObjectToQueryString } from "utils/request";
+import ProductsStore from "pages/Dashboard/Products/store";
 import EarningCard from "./EarningCard";
 import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
 import EarningValueCard from "./EarningValueCard";
 import TransactionValueCard from "./TransactionValueCard";
+import { observer } from "mobx-react-lite";
+import { numberWithCommas } from "utils/formatter";
 
 export const dateFilters = [
   {
@@ -47,7 +50,7 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
-export default function HomePage() {
+const HomePage = () => {
   const requiredFilters = {
     start_date: "2020-01-01",
     end_date: moment().format("YYYY-MM-DD"),
@@ -68,6 +71,9 @@ export default function HomePage() {
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [searchInput, setSearchInput] = useState("");
 
+  const { getProductsCount, productsCount, loading } = ProductsStore;
+
+  useEffect(() => getProductsCount({ data: { page: 1 } }), []);
   const searching = false;
 
   const params = qs.parse(location.hash?.substring(1));
@@ -243,8 +249,9 @@ export default function HomePage() {
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Products"
-              value="1600"
+              value={numberWithCommas(productsCount)}
               link="/dashboard/products/warehouse_id"
+              isLoading={loading}
             />
             <EarningCard
               icon={<CustomersIcon className="scale-[0.8]" />}
@@ -319,4 +326,6 @@ export default function HomePage() {
       />
     </>
   );
-}
+};
+
+export default observer(HomePage);

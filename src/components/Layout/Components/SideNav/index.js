@@ -32,11 +32,12 @@ import {
 } from "react-icons/md";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
-
+import { getUserInfoFromStorage } from "utils/storage";
+const { user } = getUserInfoFromStorage();
 const getLinks = (warehouse_id) => [
   {
     title: "Overview",
-    heading: "Welcome, Jenrola",
+    heading: `Welcome, ${user?.firstName}`,
     label: "Here’s what’s happening with Beautyhut today.",
     slug: "/dashboard/home",
     link: `/dashboard/home/${warehouse_id}`,
