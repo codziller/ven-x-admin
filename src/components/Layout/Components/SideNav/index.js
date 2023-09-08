@@ -33,8 +33,8 @@ import {
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
-const { user } = getUserInfoFromStorage();
-const getLinks = (warehouse_id) => [
+
+const getLinks = (warehouse_id, user) => [
   {
     title: "Overview",
     heading: `Welcome, ${user?.firstName}`,
@@ -239,7 +239,8 @@ const SideNav = ({
   setSidenavCollapsed,
 }) => {
   const { warehouse_id } = useParams();
-  const links = useMemo(() => getLinks(warehouse_id), [warehouse_id]);
+  const { user } = getUserInfoFromStorage();
+  const links = useMemo(() => getLinks(warehouse_id, user), [warehouse_id]);
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
   useEffect(() => {
     warehouse_id && getWarehouse({ data: { id: warehouse_id } });
