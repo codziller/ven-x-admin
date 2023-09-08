@@ -4,6 +4,7 @@ import moment from "moment";
 import { NAIRA_ABBR } from "./appConstant";
 import { BRANCH_COLORS } from "./colors";
 import { getLinks } from "components/Layout/Components/SideNav";
+import { getUserInfoFromStorage } from "./storage";
 
 export const formatAmount = (amount, decimalPlaces = 2) => {
   if (amount === 0) return 0;
@@ -208,8 +209,12 @@ export const getMerchantDetails = (account_holder_details, type) =>
       " " +
       account_holder_details?.last_name;
 
-export const getCurrentRoute = (route) =>
-  getLinks("")?.find((item) => route.includes(item?.slug || item.link));
+export const getCurrentRoute = (route) => {
+  const { user } = getUserInfoFromStorage();
+  return getLinks("", user)?.find((item) =>
+    route.includes(item?.slug || item.link)
+  );
+};
 
 export const moveCountryToFirst = (countries) => {
   // Find the index of the entry for Nigeria
