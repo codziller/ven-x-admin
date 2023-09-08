@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import { ReactComponent as CaretUp } from "assets/icons/caret-up-white.svg";
 import Loading from "components/General/CircleLoader/CircleLoader";
 import { IS_DEV } from "utils/appConstant";

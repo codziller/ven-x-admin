@@ -1138,7 +1138,7 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
-"@babel/runtime@^7.12.0", "@babel/runtime@^7.13.10", "@babel/runtime@^7.15.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.12.0", "@babel/runtime@^7.13.10", "@babel/runtime@^7.15.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.17.7"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.17.7.tgz"
   integrity sha512-L6rvG9GDxaLgFjg41K+5Yv9OMrU98sWe+Ykmc6FDJW/+vYZMhdOMKkISgzptMaERHvS2Y2lw9MDRm2gHhlQQoA==
@@ -2129,6 +2129,11 @@
   version "2.11.5"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.5.tgz#db5a11bf66bdab39569719555b0f76e138d7bd64"
   integrity sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==
+
+"@remix-run/router@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.8.0.tgz#e848d2f669f601544df15ce2a313955e4bf0bafc"
+  integrity sha512-mrfKqIHnSZRyIzBcanNJmVQELTnX+qagEDlcKO90RgRBVOZGSGvZKeDihTRfWcqoDn5N/NkUcwWTccnpN18Tfg==
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
@@ -6166,13 +6171,6 @@ heic2any@^0.0.3:
   resolved "https://registry.yarnpkg.com/heic2any/-/heic2any-0.0.3.tgz#59248665a3646424b1f88c0aaaa1abba3bbd1aae"
   integrity sha512-1KG0LzZuIPiqyJjwLgGlgrgWd3UBwUE9g5+tOuHy8PbeH2hF0U4gc4ZWT4ChlCmcdISr1xVRimSehsTOPdRXnQ==
 
-history@^5.2.0:
-  version "5.3.0"
-  resolved "https://registry.npmjs.org/history/-/history-5.3.0.tgz"
-  integrity sha512-ZqaKwjjrAYUYfLG+htGaIIZ4nioX2L70ZUMIFysS3xvBsSG4x/n1V6TXV3N8ZYNuFGlDirFg32T7B6WOUPDYcQ==
-  dependencies:
-    "@babel/runtime" "^7.7.6"
-
 hoist-non-react-statics@^3.0.0, hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
   resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
@@ -9423,19 +9421,19 @@ react-resize-detector@^8.0.4:
     lodash "^4.17.21"
 
 react-router-dom@^6.2.2:
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.3.0.tgz"
-  integrity sha512-uaJj7LKytRxZNQV8+RbzJWnJ8K2nPsOOEuX7aQstlMZKQT0164C+X2w6bnkqU3sjtLvpd5ojrezAyfZ1+0sStw==
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.15.0.tgz#6da7db61e56797266fbbef0d5e324d6ac443ee40"
+  integrity sha512-aR42t0fs7brintwBGAv2+mGlCtgtFQeOzK0BM1/OiqEzRejOZtpMZepvgkscpMUnKb8YO84G7s3LsHnnDNonbQ==
   dependencies:
-    history "^5.2.0"
-    react-router "6.3.0"
+    "@remix-run/router" "1.8.0"
+    react-router "6.15.0"
 
-react-router@6.3.0, react-router@^6.2.2:
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/react-router/-/react-router-6.3.0.tgz"
-  integrity sha512-7Wh1DzVQ+tlFjkeo+ujvjSqSJmkt1+8JO+T5xklPlgrh70y7ogx75ODRW0ThWhY7S+6yEDks8TYrtQe/aoboBQ==
+react-router@6.15.0:
+  version "6.15.0"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.15.0.tgz#bf2cb5a4a7ed57f074d4ea88db0d95033f39cac8"
+  integrity sha512-NIytlzvzLwJkCQj2HLefmeakxxWHWAP+02EGqWEZy+DgfHHKQMUoBBjUQLOtFInBMhWtb3hiUy6MfFgwLjXhqg==
   dependencies:
-    history "^5.2.0"
+    "@remix-run/router" "1.8.0"
 
 react-scripts@5.0.0:
   version "5.0.0"
