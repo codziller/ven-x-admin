@@ -142,7 +142,7 @@ const Form = ({ details, toggler }) => {
     cleanPayload(payload);
     payload = {
       ...payload,
-      discountExpiryTime: JSON.stringify(moment(form?.discountExpiryTime)._d),
+      discountExpiryTime: new Date(moment(form?.discountExpiryTime)._d),
     };
     console.log("payloadddddd: ", payload);
     if (affiliateMarketer_id) {
