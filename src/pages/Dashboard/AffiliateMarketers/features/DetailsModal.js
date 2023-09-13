@@ -11,7 +11,7 @@ import ProductOptions from "./ProductOptions";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
 import ProductVariant from "./ProductVariant";
 import ProductSubscription from "./ProductSubscription";
-import ProductCategories from "./ProductCategories";
+import Users from "./Users";
 import { observer } from "mobx-react-lite";
 
 const {
@@ -68,7 +68,7 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
         );
       case PRODUCT_CATEGORY_OPTIONS:
         return (
-          <ProductCategories
+          <Users
             details={details}
             toggler={toggler}
             handleChange={handleChange}

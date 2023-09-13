@@ -73,13 +73,13 @@ class BrandsStore {
       this.createBrandLoading = false;
     }
   };
-  editBrand = async ({ data, onSuccess }) => {
+  editBrand = async ({ data, onSuccess, page }) => {
     this.editBrandLoading = true;
     try {
       await apis.editBrand(data);
       successToast("Operation Successful!", "Brand updated Successfully.");
       onSuccess?.();
-      await this.getBrand({ data: { id: data?.id } });
+      await this.getBrands({ data: { page: page || 1 } });
     } catch (error) {
       this.error = error;
     } finally {

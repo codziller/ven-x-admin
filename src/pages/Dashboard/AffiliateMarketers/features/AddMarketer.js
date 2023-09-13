@@ -5,7 +5,7 @@ import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import ProductsStore from "../store";
 import Form from "./Form";
 
-const AddProduct = () => {
+const AddMarketer = () => {
   const { product_id } = useParams();
   const { getProduct, getProductLoading } = ProductsStore;
   useEffect(() => {
@@ -29,4 +29,4 @@ const AddProduct = () => {
   );
 };
 
-export default observer(AddProduct);
+export default observer(AddMarketer);

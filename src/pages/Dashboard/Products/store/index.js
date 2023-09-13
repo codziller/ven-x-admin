@@ -12,13 +12,13 @@ class ProductsStore {
   // State
   // ====================================================
   products = null;
-  warehouse = null;
+  product = null;
   productsCount = null;
   error = null;
   loading = false;
   createProductLoading = false;
-  editWareHouseLoading = false;
-  getWareHouseLoading = false;
+  editProductLoading = false;
+  getProductLoading = false;
   productForm = {};
   constructor() {
     makeAutoObservable(this);
@@ -60,16 +60,16 @@ class ProductsStore {
     }
   };
 
-  getWarehouse = async ({ data }) => {
-    this.getWareHouseLoading = true;
+  getProduct = async ({ data }) => {
+    this.getProductLoading = true;
     try {
-      let res = await apis.getWarehouse(data);
-      res = res?.warehouse;
-      this.warehouse = res;
+      let res = await apis.getProduct(data);
+      res = res?.product;
+      this.product = res;
     } catch (error) {
       this.error = error;
     } finally {
-      this.getWareHouseLoading = false;
+      this.getProductLoading = false;
     }
   };
 
@@ -79,24 +79,23 @@ class ProductsStore {
       await apis.createProduct(data);
       successToast("Operation Successful!", "Product created Successfully.");
       onSuccess?.();
-      // await this.getWarehouses({ data: { page: 1 } });
+      // await this.getProducts({ data: { page: 1 } });
     } catch (error) {
       this.error = error;
     } finally {
       this.createProductLoading = false;
     }
   };
-  editWarehouse = async ({ data, onSuccess }) => {
-    this.editWareHouseLoading = true;
+  editProduct = async ({ data, onSuccess }) => {
+    this.editProductLoading = true;
     try {
-      await apis.editWarehouse(data);
-      successToast("Operation Successful!", "Warehouse updated Successfully.");
+      await apis.editProduct(data);
+      successToast("Operation Successful!", "Product updated Successfully.");
       onSuccess?.();
-      await this.getWarehouse({ data: { id: data?.id } });
     } catch (error) {
       this.error = error;
     } finally {
-      this.editWareHouseLoading = false;
+      this.editProductLoading = false;
     }
   };
 }

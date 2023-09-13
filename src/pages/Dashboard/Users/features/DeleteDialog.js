@@ -1,20 +1,41 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import { useNavigate } from "react-router";
+import { Link, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
+
 import Button from "components/General/Button/Button";
-import { Link } from "react-router-dom";
-import { observer } from "mobx-react-lite";
-import CategoriesStore from "../store";
+import UsersStore from "../store";
+import cleanPayload from "utils/cleanPayload";
 
 const DeleteDialog = ({ details, toggler }) => {
-  const { deleteCategory, deleteCategoryLoading } = CategoriesStore;
-
+  const { warehouse_id } = useParams();
+  const { deleteUser, deleteUserLoading, editUser, editWareHouseLoading } =
+    UsersStore;
+  const navigate = useNavigate();
   const handleOnSubmit = () => {
+    if (details?.archive) {
+      const payload = { ...details, currentPage: "", archive: false };
+
+      cleanPayload(payload);
+      editUser({
+        data: payload,
+        page: details?.currentPage,
+        onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+      });
+      return;
+    }
     const payload = { id: details?.id };
-    deleteCategory({ data: payload, onSuccess: () => toggler() });
+    deleteUser({
+      data: payload,
+      onSuccess: () => {
+        toggler();
+        navigate(`/dashboard/users/${warehouse_id}`);
+      },
+    });
   };
 
   return (
@@ -30,18 +51,22 @@ const DeleteDialog = ({ details, toggler }) => {
       )}
 
       <Delete className="scale-90" />
-      <p className="font-600 text-xl ">Delete Category</p>
+      <p className="font-600 text-xl ">{`${
+        details?.archive ? "Unarchive" : "Archive"
+      } User`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to delete{" "}
-        <span className="text-black">"{details?.name}"?</span>
+        Are you sure you want to {details?.archive ? "unarchive" : "archive"}{" "}
+        <span className="text-black">
+          "{details?.firstName} {details?.lastName}"?
+        </span>
       </p>
 
       <Button
         onClick={handleOnSubmit}
-        isLoading={deleteCategoryLoading}
+        isLoading={deleteUserLoading || editWareHouseLoading}
         type="submit"
-        text="Yes, Delete this category"
+        text={`Yes, ${details?.archive ? "unarchive" : "archive"} this user`}
         className="mb-2"
         fullWidth
         redBg
@@ -49,7 +74,7 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Button
         onClick={() => toggler?.()}
-        isDisabled={deleteCategoryLoading}
+        isDisabled={deleteUserLoading || editWareHouseLoading}
         text="No, Cancel"
         className="mb-5"
         fullWidth
@@ -58,7 +83,6 @@ const DeleteDialog = ({ details, toggler }) => {
     </div>
   );
 };
-
 DeleteDialog.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,

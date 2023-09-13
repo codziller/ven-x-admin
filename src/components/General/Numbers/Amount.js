@@ -5,12 +5,19 @@ import PropTypes from "prop-types";
 import { numberWithCommas } from "utils/formatter";
 import useWindowDimensions from "hooks/useWindowDimensions";
 import ToolTip from "../ToolTip";
+import { NAIRA } from "utils/appConstant";
 
-const Amount = ({ prefix = "NGN", className, value, noDefaultPrefix }) => {
+const Amount = ({
+  prefix = NAIRA,
+  className,
+  value,
+  noDefaultPrefix,
+  onClick,
+}) => {
   const { width } = useWindowDimensions();
   return (
     <ToolTip content={`${prefix || ""} ${numberWithCommas(value)}`}>
-      <div className={className}>
+      <div className={className} onClick={onClick}>
         <NumberFormat
           decimalScale={2}
           fixedDecimalScale
@@ -21,7 +28,7 @@ const Amount = ({ prefix = "NGN", className, value, noDefaultPrefix }) => {
           prefix={
             noDefaultPrefix
               ? null
-              : (prefix === "NGN" && width < 768 ? "₦" : prefix) + " "
+              : (prefix === NAIRA && width < 768 ? NAIRA : prefix) + " "
           }
         />
       </div>
@@ -34,6 +41,7 @@ Amount.propTypes = {
   className: PropTypes.string,
   value: PropTypes.number,
   noDefaultPrefix: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 export default Amount;

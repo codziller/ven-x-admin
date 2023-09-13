@@ -14,13 +14,15 @@ import { isEmpty, lowerCase } from "lodash";
 import Select from "components/General/Input/Select";
 import cleanPayload from "utils/cleanPayload";
 import Input from "components/General/Input/Input";
+import { DeleteButton } from "components/General/Button";
+import DetailsModal from "./DetailsModal";
 
 const CreateProvider = () => {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
     showFormError: false,
   });
-
+  const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const schema = yup.object({
     name: yup.string().required("Please enter name"),
     state: yup.string().required("Please select state"),
@@ -32,7 +34,6 @@ const CreateProvider = () => {
   const { state } = location;
 
   const {
-    warehouse,
     createWarehouse,
     createWareHouseLoading,
     editWarehouse,
@@ -106,64 +107,88 @@ const CreateProvider = () => {
     () => states?.find((item) => item.value === form.state),
     [form.state]
   );
+
+  console.log("state: ", state);
   return (
-    <div className="md:p-7 py-8 px-3 form-container min-w-[calc(100vw-24px)] mini:!min-w-[362px] snap-center rounded-lg bg-white shadow-[0_7px_56px_0_rgba(84,68,242,0.04)] border border-grey-border">
-      <button onClick={() => navigate("/warehouses")} className="scale-90 mb-5">
-        <ArrowBack />
-      </button>
+    <>
+      <div className="md:p-7 py-8 px-3 form-container min-w-[calc(100vw-24px)] mini:!min-w-[362px] snap-center rounded-lg bg-white shadow-[0_7px_56px_0_rgba(84,68,242,0.04)] border border-grey-border">
+        <button
+          onClick={() => navigate("/warehouses")}
+          className="scale-90 mb-5"
+        >
+          <ArrowBack />
+        </button>
 
-      <h2 className="section-heading mb-3 text-xl">
-        {state ? "Edit Warehouse" : "Add a New Warehouse"}
-      </h2>
+        <h2 className="section-heading mb-3 text-xl">
+          {state ? "Edit Warehouse" : "Add a New Warehouse"}
+        </h2>
 
-      <form
-        onSubmit={handleSubmit(handleOnSubmit)}
-        className="flex flex-col justify-start items-start space-y-3 w-full"
-      >
-        <Input
-          label="Warehouse Name"
-          value={form?.name}
-          onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Warehouse Name"
-          formError={errors.name}
-          showFormError={formTwo?.showFormError}
-          required
-        />
+        <form
+          onSubmit={handleSubmit(handleOnSubmit)}
+          className="flex flex-col justify-start items-start space-y-3 w-full"
+        >
+          <Input
+            label="Warehouse Name"
+            value={form?.name}
+            onChangeFunc={(val) => handleChange("name", val)}
+            placeholder="Enter Warehouse Name"
+            formError={errors.name}
+            showFormError={formTwo?.showFormError}
+            required
+          />
 
-        <CountryListDropdown
-          label="Select Country"
-          placeholder="Select country"
-          onClick={(val) => {
-            console.log("Vallll: ", val);
-            handleChange("country", val);
-          }}
-          value={form.country}
-          formError={errors.country}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
-
-        <Select
-          label="Select State"
-          placeholder="Select state"
-          options={states}
-          onChange={(val) => handleChange("state", val?.value)}
-          value={stateValue}
-          formError={errors.state}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
-        <div className="flex flex-col justify-start items-center gap-y-2 w-full">
-          <Button
-            onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-            type="submit"
-            text={state ? "Save Changes" : "Add New Warehouse"}
-            isLoading={editWareHouseLoading || createWareHouseLoading}
+          <CountryListDropdown
+            label="Select Country"
+            placeholder="Select country"
+            onClick={(val) => {
+              console.log("Vallll: ", val);
+              handleChange("country", val);
+            }}
+            value={form.country}
+            formError={errors.country}
+            showFormError={formTwo?.showFormError}
             fullWidth
           />
-        </div>
-      </form>
-    </div>
+
+          <Select
+            label="Select State"
+            placeholder="Select state"
+            options={states}
+            onChange={(val) => handleChange("state", val?.value)}
+            value={stateValue}
+            formError={errors.state}
+            showFormError={formTwo?.showFormError}
+            fullWidth
+          />
+          <div className="flex flex-col justify-start items-center gap-4 w-full">
+            <Button
+              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              type="submit"
+              text={state ? "Save Changes" : "Add New Warehouse"}
+              isLoading={editWareHouseLoading || createWareHouseLoading}
+              fullWidth
+            />
+            {state && (
+              <DeleteButton
+                onClick={() =>
+                  setCurrentTxnDetails({
+                    ...state,
+                    modalType: "delete",
+                  })
+                }
+                text={`${state?.archive ? "Unarchive" : "Archive"} Warehouse`}
+              />
+            )}
+          </div>
+        </form>
+      </div>
+
+      <DetailsModal
+        active={!!currentTxnDetails}
+        details={currentTxnDetails}
+        toggler={() => setCurrentTxnDetails(null)}
+      />
+    </>
   );
 };
 export default observer(CreateProvider);

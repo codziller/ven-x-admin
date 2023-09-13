@@ -10,7 +10,7 @@ import ActiveFilter from "components/General/ActiveFilter";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 import { ReactComponent as Filter } from "assets/icons/Filter/filter.svg";
-import { pageCount, brands } from "utils/appConstant";
+import { pageCount } from "utils/appConstant";
 import { hasValue } from "utils/validations";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 import { ReactComponent as Plus } from "assets/icons/add.svg";

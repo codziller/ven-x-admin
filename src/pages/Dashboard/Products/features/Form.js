@@ -46,7 +46,7 @@ const {
 } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const { product_id, warehouse_id } = useParams();
-  const { createProduct } = ProductsStore;
+  const { createProduct, product, editProduct } = ProductsStore;
   const { getCategories, categories } = CategoriesStore;
   const { brands, getBrands, loading } = BrandsStore;
   const navigate = useNavigate();
@@ -57,45 +57,71 @@ const Form = ({ details, toggler }) => {
 
   const [formTwo, setFormTwo] = useState({
     country: "NG",
-    no_limit: true,
+    no_limit: Number(product?.preOrderLimit) ? false : true,
     showFormError: false,
-    productDescription: "",
+    formModified: false,
+    productDescription:
+      product_id && product?.productDescription
+        ? EditorState.createWithContent(
+            ContentState.createFromBlockArray(
+              convertFromHTML(JSON.parse(product?.productDescription))
+            )
+          )
+        : "",
+    howToUse:
+      product_id && product?.howToUse
+        ? EditorState.createWithContent(
+            ContentState.createFromBlockArray(
+              convertFromHTML(JSON.parse(product?.howToUse))
+            )
+          )
+        : "",
+    productIngredients:
+      product_id && product?.productIngredients
+        ? EditorState.createWithContent(
+            ContentState.createFromBlockArray(
+              convertFromHTML(JSON.parse(product?.productIngredients))
+            )
+          )
+        : "",
+
     collapsed: [],
     modalType: "",
     createLoading: false,
   });
+
   useEffect(() => {
     getCategories();
     getBrands({ data: { page: 1 } });
   }, []);
+
   const schema = yup.object({
     name: yup.string().required("Please enter name"),
   });
 
   const defaultValues = {
-    name: "",
-    brandId: "",
-    categoryId: "",
-    ribbon: "",
-    country: "",
-    costPrice: "",
-    salePrice: "",
-    discountValue: "",
-    quantity: "",
-    weight: "",
-    lowInQuantityValue: "",
-    imageUrls: [],
-    videoUrls: [],
-    productDescription: "",
-    howToUse: "",
-    productIngredients: "",
-    enablePreOrder: false,
-    preOrderMessage: "",
-    preOrderLimit: "",
-    discountType: "",
-    productVariant: {},
-    productOptions: [],
-    productSubscriptions: [],
+    name: product_id ? product?.name : "",
+    brandId: product_id ? product?.brandId : "",
+    categoryId: product_id ? product?.categoryId : "",
+    ribbon: product_id ? product?.ribbon : "",
+    costPrice: product_id ? product?.costPrice : "",
+    salePrice: product_id ? product?.salePrice : "",
+    discountValue: product_id ? product?.discountValue : "",
+    quantity: product_id ? product?.quantity : "",
+    weight: product_id ? product?.weight : "",
+    lowInQuantityValue: product_id ? product?.lowInQuantityValue : "",
+    imageUrls: product?.imageUrls || [],
+    videoUrls: product?.videoUrls || [],
+    productDescription: product_id ? product?.productDescription : "",
+    howToUse: product_id ? product?.howToUse : "",
+    productIngredients: product_id ? product?.productIngredients : "",
+    enablePreOrder: product_id ? product?.enablePreOrder : false,
+    preOrderMessage: product_id ? product?.preOrderMessage : "",
+    preOrderLimit: product_id ? product?.preOrderLimit : "",
+    discountType: product_id ? product?.discountType : "",
+    productVariants: product?.productVariants || [],
+    productOptions: product?.productOptions || [],
+    productSubscriptions: product?.productSubscriptions || [],
   };
 
   const {
@@ -130,7 +156,7 @@ const Form = ({ details, toggler }) => {
     preOrderMessage: watch("preOrderMessage"),
     preOrderLimit: watch("preOrderLimit"),
     discountType: watch("discountType"),
-    productVariant: watch("productVariant"),
+    productVariants: watch("productVariants"),
     productOptions: watch("productOptions"),
     productSubscriptions: watch("productSubscriptions"),
   };
@@ -144,7 +170,6 @@ const Form = ({ details, toggler }) => {
     [flattenedCategories, form?.categoryId]
   );
   const handleChange = async (prop, val, rest, isFormTwo, isWysywyg) => {
-    console.log(",ngjgt78: ", prop, val);
     if (
       prop === "discountValue" &&
       form.discountType === "PERCENTAGE" &&
@@ -153,7 +178,9 @@ const Form = ({ details, toggler }) => {
       return;
     }
 
-    isFormTwo && setFormTwo({ ...formTwo, [prop]: val });
+    isFormTwo
+      ? setFormTwo({ ...formTwo, [prop]: val, formModified: true })
+      : setFormTwo({ ...formTwo, formModified: true });
     const updatedVal = isWysywyg
       ? JSON.stringify(draftToHtml(convertToRaw(val?.getCurrentContent())))
       : rest
@@ -168,8 +195,13 @@ const Form = ({ details, toggler }) => {
   };
 
   useEffect(() => {
-    handleChange("discountValue", "");
-  }, [form.discountType]);
+    if (
+      form.discountType === "PERCENTAGE" &&
+      parseFloat(form.discountValue) > 100
+    ) {
+      handleChange("discountValue", "");
+    }
+  }, [form.discountType, form.discountValue]);
 
   const removeFile = (file, prop, files) => {
     let updatedFiles = [...files];
@@ -177,7 +209,10 @@ const Form = ({ details, toggler }) => {
     handleChange(prop, updatedFiles);
   };
   const handleRemoveOption = (val, prop) => {
-    const newOptions = form?.[prop]?.filter((item) => item?.name !== val?.name);
+    const newOptions = form?.[prop]?.filter(
+      (item) =>
+        (item?.name || item?.variantName) !== (val?.name || val?.variantName)
+    );
     handleChange(prop, newOptions);
   };
 
@@ -186,24 +221,54 @@ const Form = ({ details, toggler }) => {
 
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
+    const productVariantsImages = form?.productVariants?.map(
+      (item) => item.imageUrls
+    );
+    const productVariantsVideos = form?.productVariants?.map(
+      (item) => item.videoUrls
+    );
     try {
       const imagesUrls = await Promise.all([
         uploadImagesToCloud(form?.imageUrls),
         uploadImagesToCloud(form?.videoUrls),
+        ...productVariantsImages?.map((items) => uploadImagesToCloud(items)),
+        ...productVariantsVideos?.map((items) => uploadImagesToCloud(items)),
       ]);
 
+      console.log("imagesUrls: ", imagesUrls);
+      const productVariants = form.productVariants?.map((item, i) => {
+        return cleanPayload({
+          ...item,
+          imageUrls: imagesUrls?.[i + 2],
+          videoUrls: imagesUrls?.[i + (2 + productVariantsImages?.length)],
+        });
+      });
+      console.log("productVariants: ", productVariants);
       const payload = {
         ...form,
+        productVariants,
         imageUrls: imagesUrls?.[0],
         videoUrls: imagesUrls?.[1],
+        lowInQuantityValue: form?.lowInQuantityValue || "0",
+        preOrderLimit: form?.preOrderLimit || "0",
+        ...(product_id && { id: product_id }),
       };
       cleanPayload(payload);
       console.log("payload: ", payload);
-      await createProduct({
-        data: payload,
-        onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
-      });
+
+      if (product_id) {
+        await editProduct({
+          data: payload,
+          onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+        });
+      } else {
+        await createProduct({
+          data: payload,
+          onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+        });
+      }
     } catch (error) {
+      console.log("error: ", error);
       errorToast(
         "Error!",
         "Error encountered uploading images. Kindly Check the image format."
@@ -454,6 +519,7 @@ const Form = ({ details, toggler }) => {
               Images & Videos
             </span>
             <ImagePicker
+              isRequired
               label=" Add Product Image "
               showFormError={formTwo?.showFormError && errors.imageUrls}
               handleDrop={(val) =>
@@ -566,24 +632,40 @@ const Form = ({ details, toggler }) => {
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">Variants</span>
               <span className="text-grey-text text-sm">
-                Add a variant of this product and configure its price and
-                inventory
+                Add variants of this product and configure their prices and
+                quantity
               </span>
             </div>
+
+            {!isEmpty(form.productVariants) && (
+              <div className="flex flex-wrap justify-start items-start gap-2 ">
+                {form.productVariants?.map((item, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                    >
+                      <div className="flex justify-start items-center gap-3 ">
+                        <span className="">{item?.variantName}</span>
+                      </div>
+
+                      <span
+                        onClick={() =>
+                          handleRemoveOption(item, "productVariants")
+                        }
+                        className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                      >
+                        <Close className="current-svg scale-[0.7]" />
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <Button
               onClick={() => handleChangeTwo("modalType", PRODUCT_VARIANT)}
-              text={
-                form?.productVariant?.variantName
-                  ? `Edit (${form?.productVariant?.variantName})`
-                  : "Add Variant"
-              }
-              icon={
-                form?.productVariant?.variantName ? (
-                  <Edit className="text-black current-svg" />
-                ) : (
-                  <Plus className="text-black current-svg" />
-                )
-              }
+              text="Add Variant"
+              icon={<Plus className="text-black current-svg" />}
               className=""
               whiteBg
               fullWidth

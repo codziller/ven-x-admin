@@ -27,7 +27,7 @@ export default function TableDropdown({ content, handleClick, options }) {
             
             `}
           >
-            <div className="text-black text-sm font-normal mr-4">
+            <div className="text-black text-sm font-normal mr-4 capitalize">
               {selected?.label || content}
             </div>
           </div>
@@ -70,7 +70,9 @@ export default function TableDropdown({ content, handleClick, options }) {
               }}
               className="w-full flex items-center justify-between p-3 transition-colors duration-500 ease-in-out hover:bg-grey-whitesmoke3 "
             >
-              <span className="text-base text-grey-text">{item?.label}</span>
+              <span className="text-base text-grey-text capitalize">
+                {item?.label}
+              </span>
               {item.value === (selected?.value || content) && <Check />}
             </button>
           ))}

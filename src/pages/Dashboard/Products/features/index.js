@@ -149,9 +149,9 @@ const ProductsPage = () => {
         <div
           className="flex justify-start items-center gap-4"
           onClick={() => {
-            // navigate(
-            //   `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
-            // );
+            navigate(
+              `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
+            );
           }}
         >
           {row?.imageUrls?.[0] && (
@@ -183,9 +183,9 @@ const ProductsPage = () => {
       selector: (row) => (
         <span
           onClick={() => {
-            // navigate(
-            //   `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
-            // );
+            navigate(
+              `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
+            );
           }}
           className="uppercase"
         >
@@ -202,9 +202,9 @@ const ProductsPage = () => {
         <div className="flex justify-start items-center gap-1.5">
           <span
             onClick={() => {
-              // navigate(
-              //   `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
-              // )
+              navigate(
+                `/dashboard/products/edit-product/${warehouse_id}/${row?.id}`
+              );
             }}
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
@@ -306,9 +306,9 @@ const ProductsPage = () => {
                     data={products?.length ? products.slice(0, pageCount) : []}
                     columns={width >= 640 ? columns : columns.slice(0, 3)}
                     onRowClicked={(e) => {
-                      // navigate(
-                      //   `/dashboard/products/edit-product/${warehouse_id}/${e?.id}`
-                      // );
+                      navigate(
+                        `/dashboard/products/edit-product/${warehouse_id}/${e?.id}`
+                      );
                     }}
                     pointerOnHover
                     isLoading={loading}

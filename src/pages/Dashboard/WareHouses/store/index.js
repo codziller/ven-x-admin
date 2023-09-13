@@ -12,13 +12,17 @@ class WareHousesStore {
   // State
   // ====================================================
   warehouses = null;
+  warehousesArchived = null;
   warehouse = null;
   warehousesCount = null;
+  warehousesArchivedCount = null;
   error = null;
   loading = false;
+  loadingArchived = false;
   createWareHouseLoading = false;
   editWareHouseLoading = false;
   getWareHouseLoading = false;
+  deleteWarehouseLoading = false;
   constructor() {
     makeAutoObservable(this);
   }
@@ -41,6 +45,20 @@ class WareHousesStore {
       this.error = error;
     } finally {
       this.loading = false;
+    }
+  };
+
+  getArchivedWarehouses = async ({ data }) => {
+    this.loadingArchived = true;
+    try {
+      let res = await apis.getArchivedWarehouses(data);
+      res = res?.archived_warehouses;
+      this.warehousesArchived = res?.results || [];
+      this.warehousesArchivedCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingArchived = false;
     }
   };
 
@@ -81,6 +99,18 @@ class WareHousesStore {
       this.error = error;
     } finally {
       this.editWareHouseLoading = false;
+    }
+  };
+  deleteWarehouse = async ({ data, onSuccess }) => {
+    this.deleteWarehouseLoading = true;
+    try {
+      await apis.deleteWarehouse(data);
+      successToast("Operation Successful!", "Warehouse archived successfully.");
+      onSuccess?.();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteWarehouseLoading = false;
     }
   };
 }

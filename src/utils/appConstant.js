@@ -8,7 +8,7 @@ import shm from "assets/images/shm.png";
 import corsx from "assets/images/corsx.png";
 import rashel from "assets/images/rashel.png";
 
-export const pageCount = 10;
+export const pageCount = 60;
 
 export const IS_DEV = [
   "testflight.getbani.com",
@@ -635,3 +635,30 @@ export const CHOICE_DISPLAY = {
   COLOR: "COLOR",
   LIST: "LIST",
 };
+export const NAIRA = "₦‎";
+export const ROLES = [
+  {
+    value: "CUSTOMER",
+    label: "CUSTOMER",
+  },
+  {
+    value: "GENERAL_ADMIN",
+    label: "GENERAL ADMIN",
+  },
+  {
+    value: "GENERAL_STAFF",
+    label: "GENERAL STAFF",
+  },
+  {
+    value: "GUEST",
+    label: "GUEST",
+  },
+  {
+    value: "WAREHOUSE_ADMIN",
+    label: "WAREHOUSE ADMIN",
+  },
+  {
+    value: "WAREHOUSE_STAFF",
+    label: "WAREHOUSE STAFF",
+  },
+];

@@ -51,6 +51,11 @@ import Referrals from "pages/Dashboard/Referrals";
 import ReferralsPage from "pages/Dashboard/Referrals/features";
 import Payments from "pages/Dashboard/Payments";
 import PaymentsPage from "pages/Dashboard/Payments/features";
+import AddMarketer from "pages/Dashboard/AffiliateMarketers/features/AddMarketer";
+import AffiliateMarketers from "pages/Dashboard/AffiliateMarketers";
+import AffiliateMarketersPage from "pages/Dashboard/AffiliateMarketers/features";
+import Users from "pages/Dashboard/Users";
+import UsersPage from "pages/Dashboard/Users/features";
 
 const Router = () => {
   return (
@@ -104,6 +109,24 @@ const Router = () => {
           />
         </Route>
         {/* end products */}
+
+        {/* affiliate-marketers */}
+        <Route
+          path="/dashboard/affiliate-marketers"
+          element={
+            <ProtectedRoute path="">
+              <AffiliateMarketers />
+            </ProtectedRoute>
+          }
+        >
+          <Route path=":warehouse_id" element={<AffiliateMarketersPage />} />
+          <Route path="add/:warehouse_id" element={<AddMarketer />} />
+          <Route
+            path="edit/:warehouse_id/:affiliateMarketer_id"
+            element={<AddMarketer />}
+          />
+        </Route>
+        {/* end affiliate-marketers */}
 
         {/* orders */}
         <Route
@@ -195,6 +218,19 @@ const Router = () => {
           <Route path=":warehouse_id" element={<StaffPage />} />
         </Route>
         {/* end staff */}
+
+        {/* users */}
+        <Route
+          path="/dashboard/users"
+          element={
+            <ProtectedRoute path="">
+              <Users />
+            </ProtectedRoute>
+          }
+        >
+          <Route path=":warehouse_id" element={<UsersPage />} />
+        </Route>
+        {/* end users */}
 
         {/* promo */}
         <Route

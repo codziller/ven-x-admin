@@ -14,6 +14,7 @@ import { TbBrandDenodo, TbCategory2, TbPackageImport } from "react-icons/tb";
 import {
   PiArrowsInLineVerticalDuotone,
   PiArrowsOutLineHorizontalDuotone,
+  PiUsersThree,
 } from "react-icons/pi";
 import Pol from "assets/logos/POL.png";
 import BackDrop from "components/Layout/BackDrop";
@@ -30,6 +31,8 @@ import {
   MdOutlineStorage,
   MdStorage,
 } from "react-icons/md";
+import { FcBusinesswoman } from "react-icons/fc";
+
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
@@ -129,6 +132,20 @@ const getLinks = (warehouse_id, user) => [
   },
 
   {
+    title: "Affiliate Marketers",
+    slug: "/dashboard/affiliate-marketers",
+    heading: "Manage Affiliate Marketers",
+    label: "Here’s what’s happening with Beautyhut today.",
+    link: `/dashboard/affiliate-marketers/${warehouse_id}`,
+    icon: (
+      <FcBusinesswoman
+        size={24}
+        className="stroke-current transition-all duration-500 ease-in-out"
+      />
+    ),
+  },
+
+  {
     title: "Promo",
     slug: "/dashboard/promo",
     heading: "Manage Promo Code",
@@ -193,6 +210,20 @@ const getLinks = (warehouse_id, user) => [
     link: `/dashboard/payments/${warehouse_id}`,
     icon: (
       <MdOutlinePayments
+        size={24}
+        className="stroke-current transition-all duration-500 ease-in-out"
+      />
+    ),
+  },
+
+  {
+    title: "Users",
+    slug: "/dashboard/users",
+    heading: "Manage Users",
+    label: "Here’s what’s happening with Beautyhut today.",
+    link: `/dashboard/users/${warehouse_id}`,
+    icon: (
+      <PiUsersThree
         size={24}
         className="stroke-current transition-all duration-500 ease-in-out"
       />

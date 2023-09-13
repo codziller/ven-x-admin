@@ -37,14 +37,14 @@ const Form = ({ details, toggler }) => {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
     showFormError: false,
-    // brandDescription: details?.isAdd
-    //   ? ""
-    //   : EditorState.createWithContent(
-    //       ContentState.createFromBlockArray(
-    //         convertFromHTML(JSON.parse(details?.brandDescription))
-    //       )
-    //     ),
-    brandDescription: details?.isAdd ? "" : "",
+    brandDescription: details?.isAdd
+      ? ""
+      : EditorState.createWithContent(
+          ContentState.createFromBlockArray(
+            convertFromHTML(JSON.parse(details?.brandDescription))
+          )
+        ),
+    // brandDescription: details?.isAdd ? "" : "",
     collapsed: [],
     modalType: "",
     createLoading: false,

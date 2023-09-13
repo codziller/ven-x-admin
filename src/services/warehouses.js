@@ -14,6 +14,29 @@ const getWarehousesQuery = ({ page }) => gql`
         id
         lat
         lng
+        archive
+        products {
+          brandId
+        }
+      }
+    }
+  }
+`;
+
+const getArchivedWarehousesQuery = ({ page }) => gql`
+  {
+    __typename
+    archived_warehouses(pageNumber: "${page}") {
+      total
+      results {
+        name
+        country
+        state
+        createdAt
+        id
+        lat
+        lng
+        archive
         products {
           brandId
         }
@@ -89,9 +112,21 @@ const editWarehouseQuery = gql`
   }
 `;
 
+const deleteWarehouseQuery = gql`
+  mutation removeWarehouse($id: String!) {
+    removeWarehouse(id: $id) {
+      status
+    }
+  }
+`;
+
 const apis = {
   getWarehouses: ({ page }) =>
     graphQlInstance(getWarehousesQuery({ page }), {
+      method: "GET",
+    }),
+  getArchivedWarehouses: ({ page }) =>
+    graphQlInstance(getArchivedWarehousesQuery({ page }), {
       method: "GET",
     }),
   getWarehouse: ({ id }) =>
@@ -109,10 +144,10 @@ const apis = {
       variables,
     }),
 
-  // deleteItem: (variables) =>
-  //   graphQlInstance(deleteItemQuery, {
-  //     variables,
-  //   }),
+  deleteWarehouse: (variables) =>
+    graphQlInstance(deleteWarehouseQuery, {
+      variables,
+    }),
 };
 
 export default apis;

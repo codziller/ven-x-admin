@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import DatePicker from "react-datepicker";
@@ -10,9 +10,11 @@ import { ReactComponent as PrevYearIcon } from "assets/icons/Arrow/double-arrow-
 import { ReactComponent as NextYearIcon } from "assets/icons/Arrow/double-arrow-right.svg";
 import { ReactComponent as ArrowRight } from "assets/icons/Arrow/arrow-right-thick.svg";
 import { ReactComponent as ArrowLeft } from "assets/icons/Arrow/arrow-left-thick.svg";
-
+import { ReactComponent as InfoIcon } from "assets/icons/info-icon.svg";
 import "react-datepicker/dist/react-datepicker.css";
 import { DatePickerWrapper } from "./style";
+import { FormErrorMessage } from "../FormErrorMessage";
+import ToolTip from "../ToolTip";
 
 const CustomInput = forwardRef(
   ({ value, onChange, placeholder, autoComplete, ...rest }, ref) => (
@@ -38,11 +40,56 @@ export default function DatePickerComponent({
   name,
   containerStyle,
   labelClass,
+  showFormError,
+  formError,
+  onBlur,
+  isRequired,
+  tooltip,
+  dataType,
+  subLabel,
   ...rest
 }) {
+  const [isBlurred, setIsBlurred] = useState(false);
+  const errorObject = useMemo(
+    () => (showFormError || isBlurred) && formError,
+    [formError, isBlurred, showFormError]
+  );
+  const isError = !!errorObject;
+  const handleBlur = (val) => {
+    setIsBlurred(val);
+  };
+
   return (
-    <DatePickerWrapper containerStyle={containerStyle}>
-      <label className={clsx(labelClass)}>{label}</label>
+    <DatePickerWrapper isError={isError} containerStyle={containerStyle}>
+      <label
+        className={clsx(
+          "general-input-label text-sm text-grey-text !flex justify-start items-center gap-1.5",
+          {
+            "mb-[5px]": subLabel,
+            "mb-[10px]": !subLabel,
+          },
+          labelClass
+        )}
+      >
+        {label}
+        {isRequired && <span className="text-red text-sm -mt-1 ">*</span>}
+        {dataType && (
+          <span className="bg-grey-light2 px-1 py-0.5 text-grey-text text-[10px] lowercase">
+            {dataType}
+          </span>
+        )}
+        {tooltip && (
+          <ToolTip content={tooltip}>
+            <InfoIcon />
+          </ToolTip>
+        )}
+      </label>
+
+      {subLabel && (
+        <div className="text-grey-dark text-[12px] lowercase mb-[10px]">
+          {subLabel}
+        </div>
+      )}
       <div className="datepicker-full-container">
         <DatePicker
           placeholderText={placeholder}
@@ -52,7 +99,8 @@ export default function DatePickerComponent({
           customInput={<CustomInput />}
           showMonthDropdown
           showYearDropdown
-          dropdownMode="scroll"
+          dropdownMode="select"
+          onBlur={() => onBlur?.() || handleBlur(true)}
           {...rest}
           renderCustomHeader={({
             date,
@@ -69,7 +117,7 @@ export default function DatePickerComponent({
           }) => (
             <div className="calendar-header">
               <div
-                className="year-controls prev"
+                className="year-controls prev cursor-pointer"
                 onClick={decreaseYear}
                 disabled={prevYearButtonDisabled}
               >
@@ -77,39 +125,49 @@ export default function DatePickerComponent({
               </div>
               <div className="central-control">
                 <div
-                  className="month-controls prev"
+                  className="month-controls prev cursor-pointer"
                   onClick={decreaseMonth}
                   disabled={prevMonthButtonDisabled}
                 >
                   <ArrowLeft className="month-arrow" />
                 </div>
 
-                <div className="current-date">
-                  <select
-                    value={moment(date).format("MMMM")}
-                    className="date-month"
-                    onChange={({ target: { value } }) => {
-                      changeMonth(months.indexOf(value));
-                    }}
-                  >
-                    {months.map((option) => (
-                      <option key={option} value={option}>
-                        {option.substring(0, 3)}
-                      </option>
-                    ))}
-                  </select>
+                <div className="current-date flex justify-center items-center gap-3">
+                  <div className="flex justify-center items-center">
+                    <select
+                      value={moment(date).format("MMMM")}
+                      className="date-month z-10 w-[48px] bg-none bg-transparent cursor-pointer"
+                      onChange={({ target: { value } }) => {
+                        changeMonth(months.indexOf(value));
+                      }}
+                    >
+                      {months.map((option) => (
+                        <option key={option} value={option}>
+                          {option.substring(0, 3)}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="ml-[-20px]">
+                      <ArrowLeft className="month-arrow -rotate-90" />
+                    </span>
+                  </div>
 
-                  <select
-                    className="date-year"
-                    value={moment(date).format("YYYY")}
-                    onChange={({ target: { value } }) => changeYear(value)}
-                  >
-                    {years().map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex justify-center items-center">
+                    <select
+                      className="date-year z-10 w-[60px] bg-none bg-transparent cursor-pointer"
+                      value={moment(date).format("YYYY")}
+                      onChange={({ target: { value } }) => changeYear(value)}
+                    >
+                      {years().map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="ml-[-20px]">
+                      <ArrowLeft className="month-arrow -rotate-90" />
+                    </span>
+                  </div>
                 </div>
 
                 <div
@@ -117,12 +175,12 @@ export default function DatePickerComponent({
                   onClick={increaseMonth}
                   disabled={nextMonthButtonDisabled}
                 >
-                  <ArrowRight className="month-arrow" />
+                  <ArrowRight className="month-arrow cursor-pointer" />
                 </div>
               </div>
 
               <div
-                className="year-controls next"
+                className="year-controls next cursor-pointer"
                 onClick={increaseYear}
                 disabled={nextYearButtonDisabled}
               >
@@ -133,6 +191,7 @@ export default function DatePickerComponent({
         />
         <CalendarIcon className="calendar-icon" />
       </div>
+      {errorObject && <FormErrorMessage type={errorObject} />}
     </DatePickerWrapper>
   );
 }
@@ -152,5 +211,12 @@ DatePickerComponent.propTypes = {
   placeholder: PropTypes.string,
   containerStyle: PropTypes.object,
   labelClass: PropTypes.string,
+  formError: PropTypes.object,
+  showFormError: PropTypes.bool,
+  onBlur: PropTypes.func,
+  isRequired: PropTypes.bool,
+  tooltip: PropTypes.string,
   rest: PropTypes.object,
+  dataType: PropTypes.string,
+  subLabel: PropTypes.string,
 };

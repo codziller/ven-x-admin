@@ -46,6 +46,7 @@ export default function ImagePicker({
   placeholder = "Drag 'n' drop some images here, or click to select images",
   type = "image",
   multiple,
+  isRequired,
   ...rest
 }) {
   const imageArray = isString(images) ? [images] : images;
@@ -73,8 +74,9 @@ export default function ImagePicker({
   console.log("images: ", images);
   return (
     <div className="flex-col justify-start items-start flex w-full">
-      <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark">
+      <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark !flex justify-start items-center gap-1.5">
         {label}
+        {isRequired && <span className="text-red text-sm -mt-1 ">*</span>}
       </div>
       <div
         className=" flex flex-col justify-center items-center cursor-pointer gap-4 w-full min-h-[150px] bg-stone-50 rounded-lg"
@@ -161,4 +163,5 @@ ImagePicker.propTypes = {
   placeholder: PropTypes.string,
   showFormError: PropTypes.bool,
   formError: PropTypes.object,
+  isRequired: PropTypes.bool,
 };

@@ -8,8 +8,8 @@ import EmptyState from "assets/logos/emptyState.png";
 
 export default function EmptyList({ handleCreateProvider }) {
   return (
-    <div className="w-[945px] h-[506px] flex-col justify-start items-center gap-8 inline-flex">
-      <div className=" w-full md:w-[500px] lg:w-[800px] h-[444px] px-10 py-16 bg-white rounded-lg border border-neutral-200 flex-col justify-center items-center flex">
+    <div className="w-full min-h-[506px] flex-col justify-start items-center gap-8 inline-flex">
+      <div className=" w-full  min-h-[444px] px-10 py-16 bg-white rounded-lg border border-neutral-200 flex-col justify-center items-center flex">
         <div className="flex-col justify-start items-center gap-10 flex">
           <img
             src={EmptyState}

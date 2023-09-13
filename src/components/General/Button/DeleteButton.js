@@ -3,12 +3,13 @@ import PropTypes from "prop-types";
 import { ReactComponent as TrashBin } from "assets/icons/TrashBin/trashBin.svg";
 import Button from "./Button";
 
-const DeleteButton = ({ onClick }) => (
+const DeleteButton = ({ onClick, text }) => (
   <Button
     {...{ onClick }}
-    text="Delete"
-    icon={<TrashBin className="stroke-current" />}
-    whiteBg
+    text={text || "Delete"}
+    icon={<TrashBin className="stroke-current current-svg" />}
+    fullWidth
+    redBg
   />
 );
 
