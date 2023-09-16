@@ -6,6 +6,7 @@ import {
   sucessfulTransactionStatus,
   partPaidTransactionStatus,
   failedTransactionStatus,
+  NAIRA,
 } from "./appConstant";
 
 export const determineTransactionType = (type, stringValue) => {
@@ -50,11 +51,13 @@ export const determineTransactionType = (type, stringValue) => {
 
 export const transactionAmount = (row) => {
   if (row) {
-    const { total, currency, salePrice, price } = row;
+    const { total, currency, salePrice, price, calculatedOrder } = row;
 
     return (
       <div className="w-full flex flex-col gap-2">
-        {`${currency || "₦‎"} ${numberWithCommas(salePrice || total || price)}`}
+        {`${currency || NAIRA} ${numberWithCommas(
+          calculatedOrder?.totalAmount || salePrice || total || price
+        )}`}
       </div>
     );
   }

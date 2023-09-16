@@ -27,6 +27,7 @@ import UsersStore from "pages/Dashboard/Users/store";
 const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const { affiliateMarketer_id, warehouse_id } = useParams();
+  console.log("affiliateMarketer_id: ", affiliateMarketer_id);
   const {
     createAffiliateMarketer,
     affiliateMarketer,
@@ -129,10 +130,6 @@ const Form = ({ details, toggler }) => {
   }, [form.discountType, form.discountValue]);
 
   const handleOnSubmit = () => {
-    console.log(
-      "new Date(moment(form?.discountExpiryTime)): ",
-      new Date(moment(form?.discountExpiryTime))
-    );
     let payload = {
       ...form,
 
@@ -144,7 +141,7 @@ const Form = ({ details, toggler }) => {
       ...payload,
       discountExpiryTime: new Date(moment(form?.discountExpiryTime)._d),
     };
-    console.log("payloadddddd: ", payload);
+
     if (affiliateMarketer_id) {
       editAffiliateMarketer({
         data: payload,
@@ -160,13 +157,6 @@ const Form = ({ details, toggler }) => {
     });
   };
 
-  console.log("main form: ", form);
-
-  console.log(
-    "moment(form?.discountExpiryTime)._d: ",
-    moment(form?.discountExpiryTime)?._d
-  );
-  console.log("errors: ", errors);
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 ">

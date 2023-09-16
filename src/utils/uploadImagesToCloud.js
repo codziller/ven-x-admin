@@ -1,9 +1,13 @@
 import axios from "axios";
+import { isEmpty } from "lodash";
 const CLOUDINARY_CLOUDNAME = process.env.REACT_APP_CLOUDINARY_CLOUDNAME;
 const CLOUDINARY_UPLOAD_PRESET = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/";
 export const uploadImagesToCloud = async (files) => {
+  if (isEmpty(files)) {
+    return [];
+  }
   let imageUrls = [];
   // Cheking if image is not a file
   if (typeof files[0] === "string") {

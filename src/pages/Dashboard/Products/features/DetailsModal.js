@@ -13,12 +13,14 @@ import ProductVariant from "./ProductVariant";
 import ProductSubscription from "./ProductSubscription";
 import ProductCategories from "./ProductCategories";
 import { observer } from "mobx-react-lite";
+import DeleteProductOptionDialog from "./DeleteProductOptionDialog";
 
 const {
   PRODUCT_OPTION,
   PRODUCT_SUBSCRIPTION,
   PRODUCT_VARIANT,
   PRODUCT_CATEGORY_OPTIONS,
+  DELETE,
 } = PRODUCT_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
   const { product_id } = useParams();
@@ -28,6 +30,10 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
     switch (details?.modalType) {
       case "delete":
         return <DeleteDialog details={details} toggler={toggler} />;
+      case DELETE:
+        return (
+          <DeleteProductOptionDialog details={details} toggler={toggler} />
+        );
       case "edit":
         if (product_id) {
           return getProductLoading ? (

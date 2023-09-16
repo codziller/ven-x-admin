@@ -43,6 +43,7 @@ const {
   PRODUCT_VARIANT,
   PRODUCT_CATEGORY,
   PRODUCT_CATEGORY_OPTIONS,
+  DELETE,
 } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const { product_id, warehouse_id } = useParams();
@@ -57,9 +58,14 @@ const Form = ({ details, toggler }) => {
 
   const [formTwo, setFormTwo] = useState({
     country: "NG",
-    no_limit: Number(product?.preOrderLimit) ? false : true,
+    no_limit: product_id && Number(product?.preOrderLimit) ? false : true,
     showFormError: false,
     formModified: false,
+    currentProductVariant: {},
+    currentProductOption: {},
+    currentProductSubscription: {},
+    modalDeleteType: null,
+    modalDeleteData: null,
     productDescription:
       product_id && product?.productDescription
         ? EditorState.createWithContent(
@@ -110,8 +116,8 @@ const Form = ({ details, toggler }) => {
     quantity: product_id ? product?.quantity : "",
     weight: product_id ? product?.weight : "",
     lowInQuantityValue: product_id ? product?.lowInQuantityValue : "",
-    imageUrls: product?.imageUrls || [],
-    videoUrls: product?.videoUrls || [],
+    imageUrls: product_id ? product?.imageUrls : [],
+    videoUrls: product_id ? product?.videoUrls : [],
     productDescription: product_id ? product?.productDescription : "",
     howToUse: product_id ? product?.howToUse : "",
     productIngredients: product_id ? product?.productIngredients : "",
@@ -119,9 +125,9 @@ const Form = ({ details, toggler }) => {
     preOrderMessage: product_id ? product?.preOrderMessage : "",
     preOrderLimit: product_id ? product?.preOrderLimit : "",
     discountType: product_id ? product?.discountType : "",
-    productVariants: product?.productVariants || [],
-    productOptions: product?.productOptions || [],
-    productSubscriptions: product?.productSubscriptions || [],
+    productVariants: product_id ? product?.productVariants : [],
+    productOptions: product_id ? product?.productOptions : [],
+    productSubscriptions: product_id ? product?.productSubscriptions : [],
   };
 
   const {
@@ -184,7 +190,7 @@ const Form = ({ details, toggler }) => {
     const updatedVal = isWysywyg
       ? JSON.stringify(draftToHtml(convertToRaw(val?.getCurrentContent())))
       : rest
-      ? [...rest, ...val]
+      ? [...val, ...rest]
       : val;
     setValue(prop, updatedVal);
     await trigger(prop);
@@ -205,10 +211,41 @@ const Form = ({ details, toggler }) => {
 
   const removeFile = (file, prop, files) => {
     let updatedFiles = [...files];
-    updatedFiles = updatedFiles.filter((_) => _?.name !== file?.name);
+    updatedFiles = updatedFiles.filter(
+      (_) => (_?.name || _) !== (file?.name || file)
+    );
     handleChange(prop, updatedFiles);
   };
   const handleRemoveOption = (val, prop) => {
+    if (val?.id) {
+      if (prop === "productVariants") {
+        setFormTwo({
+          ...formTwo,
+          modalDeleteType: PRODUCT_VARIANT,
+          modalDeleteData: val,
+          modalType: DELETE,
+        });
+        return;
+      }
+      if (prop === "productOptions") {
+        setFormTwo({
+          ...formTwo,
+          modalDeleteType: PRODUCT_OPTION,
+          modalDeleteData: val,
+          modalType: DELETE,
+        });
+        return;
+      }
+      if (prop === "productSubscriptions") {
+        setFormTwo({
+          ...formTwo,
+          modalDeleteType: PRODUCT_SUBSCRIPTION,
+          modalDeleteData: val,
+          modalType: DELETE,
+        });
+        return;
+      }
+    }
     const newOptions = form?.[prop]?.filter(
       (item) =>
         (item?.name || item?.variantName) !== (val?.name || val?.variantName)
@@ -216,17 +253,50 @@ const Form = ({ details, toggler }) => {
     handleChange(prop, newOptions);
   };
 
+  const handleEditOption = (val, prop) => {
+    if (prop === "productVariants") {
+      setFormTwo({
+        ...formTwo,
+        currentProductVariant: val,
+        modalType: PRODUCT_VARIANT,
+      });
+      return;
+    }
+    if (prop === "productOptions") {
+      setFormTwo({
+        ...formTwo,
+        currentProductOption: val,
+        modalType: PRODUCT_OPTION,
+      });
+      return;
+    }
+    if (prop === "productSubscriptions") {
+      setFormTwo({
+        ...formTwo,
+        currentProductSubscription: val,
+        modalType: PRODUCT_SUBSCRIPTION,
+      });
+      return;
+    }
+  };
   const profitMargin =
     form?.costPrice && form?.salePrice ? form?.salePrice - form?.costPrice : "";
 
+  const handleCloseModal = () => {
+    setFormTwo({
+      ...formTwo,
+      currentProductVariant: {},
+      modalType: false,
+    });
+  };
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
-    const productVariantsImages = form?.productVariants?.map(
-      (item) => item.imageUrls
-    );
-    const productVariantsVideos = form?.productVariants?.map(
-      (item) => item.videoUrls
-    );
+    const productVariantsImages = product_id
+      ? []
+      : form?.productVariants?.map((item) => item.imageUrls);
+    const productVariantsVideos = product_id
+      ? []
+      : form?.productVariants?.map((item) => item.videoUrls);
     try {
       const imagesUrls = await Promise.all([
         uploadImagesToCloud(form?.imageUrls),
@@ -235,15 +305,17 @@ const Form = ({ details, toggler }) => {
         ...productVariantsVideos?.map((items) => uploadImagesToCloud(items)),
       ]);
 
-      console.log("imagesUrls: ", imagesUrls);
-      const productVariants = form.productVariants?.map((item, i) => {
-        return cleanPayload({
-          ...item,
-          imageUrls: imagesUrls?.[i + 2],
-          videoUrls: imagesUrls?.[i + (2 + productVariantsImages?.length)],
+      let productVariants = [];
+      if (!product_id) {
+        productVariants = form.productVariants?.map((item, i) => {
+          return cleanPayload({
+            ...item,
+            imageUrls: imagesUrls?.[i + 2],
+            videoUrls: imagesUrls?.[i + (2 + productVariantsImages?.length)],
+          });
         });
-      });
-      console.log("productVariants: ", productVariants);
+      }
+
       const payload = {
         ...form,
         productVariants,
@@ -251,10 +323,14 @@ const Form = ({ details, toggler }) => {
         videoUrls: imagesUrls?.[1],
         lowInQuantityValue: form?.lowInQuantityValue || "0",
         preOrderLimit: form?.preOrderLimit || "0",
-        ...(product_id && { id: product_id }),
+        ...(product_id && {
+          productId: product_id,
+          productVariants: null,
+          productOptions: null,
+          productSubscriptions: null,
+        }),
       };
       cleanPayload(payload);
-      console.log("payload: ", payload);
 
       if (product_id) {
         await editProduct({
@@ -322,7 +398,6 @@ const Form = ({ details, toggler }) => {
               showFormError={formTwo?.showFormError}
               isRequired
             />
-
             <Select
               label="Product Brand"
               placeholder="Select Product Brand"
@@ -628,6 +703,16 @@ const Form = ({ details, toggler }) => {
                 </div>
               </>
             )}
+            {product_id && (
+              <Button
+                onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+                type="submit"
+                text={!product_id ? "Add New Product" : "Save Changes"}
+                isLoading={formTwo.createLoading}
+                className="mt-10 mb-5 "
+                fullWidth
+              />
+            )}
             <hr className="w-full" />
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">Variants</span>
@@ -648,7 +733,16 @@ const Form = ({ details, toggler }) => {
                       <div className="flex justify-start items-center gap-3 ">
                         <span className="">{item?.variantName}</span>
                       </div>
-
+                      {product_id && (
+                        <span
+                          onClick={() =>
+                            handleEditOption(item, "productVariants")
+                          }
+                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                        >
+                          <Edit className="current-svg scale-[0.9]" />
+                        </span>
+                      )}
                       <span
                         onClick={() =>
                           handleRemoveOption(item, "productVariants")
@@ -694,7 +788,16 @@ const Form = ({ details, toggler }) => {
                           {item?.choices?.length > 1 ? "choices" : "choice"}
                         </span>
                       </div>
-
+                      {product_id && (
+                        <span
+                          onClick={() =>
+                            handleEditOption(item, "productOptions")
+                          }
+                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                        >
+                          <Edit className="current-svg scale-[0.9]" />
+                        </span>
+                      )}
                       <span
                         onClick={() =>
                           handleRemoveOption(item, "productOptions")
@@ -743,6 +846,17 @@ const Form = ({ details, toggler }) => {
                         </span>
                       </div>
 
+                      {product_id && (
+                        <span
+                          onClick={() =>
+                            handleEditOption(item, "productSubscriptions")
+                          }
+                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                        >
+                          <Edit className="current-svg scale-[0.9]" />
+                        </span>
+                      )}
+
                       <span
                         onClick={() =>
                           handleRemoveOption(item, "productSubscriptions")
@@ -764,51 +878,71 @@ const Form = ({ details, toggler }) => {
               whiteBg
               fullWidth
             />
-
-            <Button
-              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-              type="submit"
-              text={!product_id ? "Add New Product" : "Save Changes"}
-              isLoading={formTwo.createLoading}
-              className="mt-10 mb-5 "
-              fullWidth
-            />
+            {!product_id && (
+              <Button
+                onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+                type="submit"
+                text={!product_id ? "Add New Product" : "Save Changes"}
+                isLoading={formTwo.createLoading}
+                className="mt-10 mb-5 "
+                fullWidth
+              />
+            )}
           </div>
         </form>
       </div>
       <DetailsModal
         active={formTwo?.modalType === PRODUCT_OPTION}
-        details={{ modalType: PRODUCT_OPTION }}
-        toggler={() => handleChangeTwo("modalType", false)}
+        details={{
+          modalType: PRODUCT_OPTION,
+          currentProductOption: formTwo.currentProductOption,
+        }}
+        toggler={handleCloseModal}
         handleChange={handleChange}
         form={form}
       />
       <DetailsModal
         active={formTwo?.modalType === PRODUCT_VARIANT}
-        details={{ modalType: PRODUCT_VARIANT }}
-        toggler={() => handleChangeTwo("modalType", false)}
+        details={{
+          modalType: PRODUCT_VARIANT,
+          currentProductVariant: formTwo.currentProductVariant,
+        }}
+        toggler={handleCloseModal}
         handleChange={handleChange}
         form={form}
       />
 
       <DetailsModal
         active={formTwo?.modalType === PRODUCT_SUBSCRIPTION}
-        details={{ modalType: PRODUCT_SUBSCRIPTION }}
-        toggler={() => handleChangeTwo("modalType", false)}
+        details={{
+          modalType: PRODUCT_SUBSCRIPTION,
+          currentProductSubscription: formTwo.currentProductSubscription,
+        }}
+        toggler={handleCloseModal}
         handleChange={handleChange}
         form={form}
       />
       <DetailsModal
         active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
         details={{ modalType: PRODUCT_CATEGORY_OPTIONS }}
-        toggler={() => handleChangeTwo("modalType", false)}
+        toggler={handleCloseModal}
         handleChange={handleChange}
         form={form}
+      />
+
+      <DetailsModal
+        active={formTwo?.modalType === DELETE}
+        details={{
+          modalType: DELETE,
+          modalDeleteType: formTwo.modalDeleteType,
+          modalDeleteData: formTwo.modalDeleteData,
+        }}
+        toggler={handleCloseModal}
       />
       <CategoryDetailsModal
         active={formTwo?.modalType === PRODUCT_CATEGORY}
         details={{ modalType: "add", isAdd: true }}
-        toggler={() => handleChangeTwo("modalType", false)}
+        toggler={handleCloseModal}
       />
     </>
   );

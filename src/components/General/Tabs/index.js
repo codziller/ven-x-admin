@@ -8,7 +8,9 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
 
   const getTabRect = () => {
     const containerLeft = tabRef?.current?.getBoundingClientRect?.()?.left;
-    const currentIndex = tabs.indexOf(tabs.find((tab) => tab === activeTab));
+    const currentIndex = tabs.indexOf(
+      tabs.find((tab) => (tab?.name || tab) === activeTab)
+    );
     const elementLeft =
       elementsRef?.current?.[currentIndex]?.getBoundingClientRect?.()?.left;
     const width = elementsRef?.current?.[currentIndex]?.offsetWidth;
@@ -27,22 +29,25 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
           className="flex flex-row justify-start items-start w-full gap-2"
           ref={tabRef}
         >
-          {tabs.map((tab, index) => (
-            <span
-              key={index}
-              ref={(el) => (elementsRef.current[index] = el)}
-              className={clsx(
-                `w-fit px-2 pb-3 text-center cursor-pointer whitespace-nowrap text-sm`,
-                {
-                  "text-blue ": activeTab === tab,
-                  "text-grey-text": activeTab !== tab,
-                }
-              )}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </span>
-          ))}
+          {tabs.map((tab, index) => {
+            const tabName = tab?.name || tab;
+            return (
+              <span
+                key={index}
+                ref={(el) => (elementsRef.current[index] = el)}
+                className={clsx(
+                  `w-fit px-2 pb-3 text-center cursor-pointer whitespace-nowrap text-sm`,
+                  {
+                    "text-blue ": activeTab === tabName,
+                    "text-grey-text": activeTab !== tabName,
+                  }
+                )}
+                onClick={() => setActiveTab(tab?.name || tab)}
+              >
+                {tab?.label || tab}
+              </span>
+            );
+          })}
         </div>
 
         <div className="relative w-full h-[1px] bg-grey-bordercolor">

@@ -56,6 +56,9 @@ import AffiliateMarketers from "pages/Dashboard/AffiliateMarketers";
 import AffiliateMarketersPage from "pages/Dashboard/AffiliateMarketers/features";
 import Users from "pages/Dashboard/Users";
 import UsersPage from "pages/Dashboard/Users/features";
+import AddUser from "pages/Dashboard/Users/features/AddUser";
+import Donations from "pages/Dashboard/Donations";
+import DonationsPage from "pages/Dashboard/Donations/features";
 
 const Router = () => {
   return (
@@ -125,6 +128,19 @@ const Router = () => {
             path="edit/:warehouse_id/:affiliateMarketer_id"
             element={<AddMarketer />}
           />
+        </Route>
+        {/* end affiliate-marketers */}
+
+        {/* donations */}
+        <Route
+          path="/dashboard/donations"
+          element={
+            <ProtectedRoute path="">
+              <Donations />
+            </ProtectedRoute>
+          }
+        >
+          <Route path=":warehouse_id" element={<DonationsPage />} />
         </Route>
         {/* end affiliate-marketers */}
 
@@ -229,6 +245,7 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<UsersPage />} />
+          <Route path="edit/:warehouse_id/:user_id" element={<AddUser />} />
         </Route>
         {/* end users */}
 

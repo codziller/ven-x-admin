@@ -9,60 +9,50 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { numberWithCommas } from "utils/formatter";
 import classNames from "classnames";
-import DetailsModal from "./DetailsModal";
 import Textarea from "components/General/Textarea/Textarea";
 import ImagePicker from "components/General/Input/ImagePicker";
 import cleanPayload from "utils/cleanPayload";
 import { errorToast } from "components/General/Toast/Toast";
-import { lowerCase } from "lodash";
+import { isEmpty, lowerCase } from "lodash";
+import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
+import ProductsStore from "../store";
+import { observer } from "mobx-react-lite";
 
-export default function ProductVariant({
-  details,
-  toggler,
-  handleOnChange,
-  formObj,
-}) {
+const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
   const { productVariants } = formObj;
+  const { currentProductVariant } = details;
+  const { product_id } = useParams();
+  const isEdit = !isEmpty(currentProductVariant);
+
+  const { editProductVariant } = ProductsStore;
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
-    visibility: "",
-    collapsed: [],
-    showProductOption: false,
+    editLoading: false,
   });
 
   const schema = yup.object({
     variantName: yup.string().required("Please enter variant name"),
   });
 
-  // const defaultValues = {
-  //   variantName: productVariant?.variantName || "",
-  //   variantCostPrice: productVariant?.variantCostPrice || "",
-  //   variantSalePrice: productVariant?.variantSalePrice || "",
-  //   variantQuantity: productVariant?.variantQuantity || "",
-  //   imageUrls: productVariant?.imageUrls || [],
-  //   videoUrls: productVariant?.videoUrls || [],
-  //   visibility: productVariant?.variantName ? productVariant?.visibility : true,
-  //   description: productVariant?.description || "",
-  // };
-
   const defaultValues = {
-    variantName: "",
-    variantCostPrice: "",
-    variantSalePrice: "",
-    variantQuantity: "",
-    imageUrls: [],
-    videoUrls: [],
-    visibility: true,
-    description: "",
+    variantName: currentProductVariant?.variantName || "",
+    variantCostPrice: currentProductVariant?.variantCostPrice || "",
+    variantSalePrice: currentProductVariant?.variantSalePrice || "",
+    variantQuantity: currentProductVariant?.variantQuantity || "",
+    imageUrls: currentProductVariant?.imageUrls || [],
+    videoUrls: currentProductVariant?.videoUrls || [],
+    visibility: currentProductVariant?.variantName
+      ? currentProductVariant?.visibility
+      : true,
+    description: currentProductVariant?.description || "",
   };
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -73,7 +63,7 @@ export default function ProductVariant({
   });
   const handleChange = async (prop, val, rest, isFormTwo) => {
     isFormTwo && setFormTwo({ ...formTwo, [prop]: val });
-    const updatedVal = rest ? [...rest, ...val] : val;
+    const updatedVal = rest ? [...val, ...rest] : val;
     setValue(prop, updatedVal);
     await trigger(prop);
   };
@@ -92,8 +82,33 @@ export default function ProductVariant({
     visibility: watch("visibility"),
     description: watch("description"),
   };
-  const handleOnSubmit = (e) => {
-    console.log("varint form: ", form);
+  const handleOnSubmit = async (e) => {
+    if (isEdit) {
+      try {
+        handleChangeTwo("editLoading", true);
+        const imagesUrls = await Promise.all([
+          uploadImagesToCloud(form?.imageUrls),
+          uploadImagesToCloud(form?.videoUrls),
+        ]);
+
+        const payload = {
+          ...form,
+          productVariantId: currentProductVariant?.id,
+          imageUrls: imagesUrls?.[0],
+          videoUrls: imagesUrls?.[1],
+        };
+        cleanPayload(payload);
+        await editProductVariant({
+          product_id,
+          data: payload,
+          onSuccess: () => toggler?.(),
+        });
+      } catch (error) {
+      } finally {
+        handleChangeTwo("editLoading", false);
+      }
+      return;
+    }
 
     const prevOption = productVariants?.find(
       (item) => lowerCase(item?.variantName) === lowerCase(form.variantName)
@@ -115,6 +130,14 @@ export default function ProductVariant({
       ? form?.variantSalePrice - form?.variantCostPrice
       : "";
 
+  const removeFile = (file, prop, files) => {
+    let updatedFiles = [...files];
+    updatedFiles = updatedFiles.filter(
+      (_) => (_?.name || _) !== (file?.name || file)
+    );
+    handleChange(prop, updatedFiles);
+  };
+
   return (
     <>
       <div className="flex flex-col justify-center items-start gap-y-2 w-full h-full pb-4 overflow-y-auto">
@@ -130,7 +153,9 @@ export default function ProductVariant({
           </button>
         )}
 
-        <p className="font-600 text-xl ">Add Product Variant</p>
+        <p className="font-600 text-xl">
+          {isEdit ? "Edit Product Variant" : "Add Product Variant"}
+        </p>
 
         <p className="mb-3 text-sm text-grey text-left">
           You'll be able to manage pricing and inventory for this variant later
@@ -269,8 +294,9 @@ export default function ProductVariant({
 
             <Button
               onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              isLoading={formTwo.editLoading}
               type="submit"
-              text="Save"
+              text={isEdit ? "Save Changes" : "Add"}
               className="mb-2"
               fullWidth
             />
@@ -279,10 +305,11 @@ export default function ProductVariant({
       </div>
     </>
   );
-}
+};
 ProductVariant.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
   handleChange: PropTypes.func,
   form: PropTypes.object,
 };
+export default observer(ProductVariant);

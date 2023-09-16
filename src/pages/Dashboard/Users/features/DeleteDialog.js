@@ -17,8 +17,8 @@ const DeleteDialog = ({ details, toggler }) => {
     UsersStore;
   const navigate = useNavigate();
   const handleOnSubmit = () => {
-    if (details?.archive) {
-      const payload = { ...details, currentPage: "", archive: false };
+    if (details?.isDeleted) {
+      const payload = { ...details, currentPage: "", isDeleted: false };
 
       cleanPayload(payload);
       editUser({
@@ -52,11 +52,11 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Delete className="scale-90" />
       <p className="font-600 text-xl ">{`${
-        details?.archive ? "Unarchive" : "Archive"
+        details?.isDeleted ? "Unarchive" : "Archive"
       } User`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to {details?.archive ? "unarchive" : "archive"}{" "}
+        Are you sure you want to {details?.isDeleted ? "unarchive" : "archive"}{" "}
         <span className="text-black">
           "{details?.firstName} {details?.lastName}"?
         </span>
@@ -66,7 +66,7 @@ const DeleteDialog = ({ details, toggler }) => {
         onClick={handleOnSubmit}
         isLoading={deleteUserLoading || editWareHouseLoading}
         type="submit"
-        text={`Yes, ${details?.archive ? "unarchive" : "archive"} this user`}
+        text={`Yes, ${details?.isDeleted ? "unarchive" : "archive"} this user`}
         className="mb-2"
         fullWidth
         redBg

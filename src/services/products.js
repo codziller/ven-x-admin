@@ -31,12 +31,23 @@ preOrderMessage
 productDescription
 productIngredients
 productOptions {
+  choiceDisplay
+  choices{
+    choice
+    name
+  }
   name
   id
 }
 productSubscriptions {
   name
   id
+  active
+  discountType
+  discountValue
+  subscriptionDuration
+  subscriptionFrequency
+  tagline
 }
 productVariants {
   id
@@ -46,7 +57,6 @@ productVariants {
   variantName
   variantQuantity
   variantSalePrice
-  videoUrls
   visibility
   weight
 }
@@ -56,7 +66,7 @@ salePrice
 updatedAt
 weight
 imageUrls
-videoUrls
+archive
        
     }
   }
@@ -67,17 +77,19 @@ const getProductsQuery = ({ page }) => gql`
     products(pageNumber: "${page}") {
       total
       results {
-brand {
-  brandName
-}
-category {
-  name
-  }
-id
-name
-quantity
-salePrice
-imageUrls
+      brand {
+        brandName
+      }
+      category {
+        name
+        }
+      id
+      name
+      quantity
+      lowInQuantityValue
+      salePrice
+      imageUrls
+      archive
       }
     }
   }
@@ -88,25 +100,6 @@ const getProductsCountQuery = ({ page }) => gql`
     __typename
     products(pageNumber: "${page}") {
       total
-      
-    }
-  }
-`;
-
-const getWarehouseQuery = ({ id }) => gql`
-  {
-    __typename
-    warehouse(id: "${id}") {
-      name
-      country
-      state
-      createdAt
-      id
-      lat
-      lng
-      products {
-        brandId
-      }
     }
   }
 `;
@@ -169,6 +162,7 @@ const createProductQuery = gql`
 
 const editProductQuery = gql`
   mutation updateProduct(
+    $productId: String!
     $brandId: String!
     $categoryId: String!
     $costPrice: String!
@@ -183,9 +177,6 @@ const editProductQuery = gql`
     $preOrderMessage: String
     $productDescription: String
     $productIngredients: String
-    $productOptions: [CreateProductOptionInput!]
-    $productSubscriptions: [CreateProductSubscriptionInput!]
-    $productVariants: [CreateProductVariantInput!]
     $quantity: String!
     $ribbon: RIBBON
     $salePrice: String!
@@ -208,17 +199,147 @@ const editProductQuery = gql`
         preOrderMessage: $preOrderMessage
         productDescription: $productDescription
         productIngredients: $productIngredients
-        productOptions: $productOptions
-        productSubscriptions: $productSubscriptions
-        productVariants: $productVariants
         quantity: $quantity
         ribbon: $ribbon
         salePrice: $salePrice
         videoUrls: $videoUrls
         weight: $weight
       }
+      productId: $productId
     ) {
       id
+    }
+  }
+`;
+
+const editProductVariantQuery = gql`
+  mutation updateProductVariant(
+    $description: String
+    $imageUrls: [String!]
+    $productVariantId: String!
+    $variantCostPrice: String
+    $variantName: String
+    $variantQuantity: String
+    $variantSalePrice: String
+    $videoUrls: [String!]
+    $visibility: Boolean
+    $weight: String
+  ) {
+    updateProductVariant(
+      updateProductInput: {
+        description: $description
+        imageUrls: $imageUrls
+        productVariantId: $productVariantId
+        variantCostPrice: $variantCostPrice
+        variantName: $variantName
+        variantQuantity: $variantQuantity
+        variantSalePrice: $variantSalePrice
+        videoUrls: $videoUrls
+        visibility: $visibility
+        weight: $weight
+      }
+    ) {
+      id
+    }
+  }
+`;
+const editProductOptionQuery = gql`
+  mutation updateProductOption(
+    $choiceDisplay: String
+    $choices: [UpdateProductSubOption!]
+    $name: String
+    $productOptionId: String!
+  ) {
+    updateProductOption(
+      updateProductInput: {
+        choiceDisplay: $choiceDisplay
+        choices: $choices
+        name: $name
+        productOptionId: $productOptionId
+      }
+    ) {
+      id
+    }
+  }
+`;
+const editProductSubscriptionQuery = gql`
+  mutation updateProductSubscription(
+    $active: Boolean
+    $discountType: DISCOUNT_TYPE
+    $discountValue: String
+    $name: String
+    $productSubscriptionId: String!
+    $subscriptionDuration: String
+    $subscriptionFrequency: String
+    $tagline: String
+  ) {
+    updateProductSubscription(
+      updateProductInput: {
+        active: $active
+        discountType: $discountType
+        discountValue: $discountValue
+        name: $name
+        productSubscriptionId: $productSubscriptionId
+        subscriptionDuration: $subscriptionDuration
+        subscriptionFrequency: $subscriptionFrequency
+        tagline: $tagline
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const getArchivedProductsQuery = ({ page }) => gql`
+  {
+    __typename
+    archived_products(pageNumber: "${page}") {
+      total
+      results {
+        brand {
+          brandName
+        }
+        category {
+          name
+          }
+        id
+        name
+        quantity
+        lowInQuantityValue
+        salePrice
+        imageUrls
+        archive
+      }
+    }
+  }
+`;
+const searchProductsQuery = ({ page, searchQuery }) => gql`
+  {
+    __typename
+    searchProducts(pageNumber: "${page}", searchQuery: "${searchQuery}") {
+      total
+      results {
+        brand {
+          brandName
+        }
+        category {
+          name
+          }
+        id
+        name
+        quantity
+        lowInQuantityValue
+        salePrice
+        imageUrls
+        archive 
+      }
+    }
+  }
+`;
+const deleteProductQuery = gql`
+  mutation removeProduct($id: String!) {
+    removeProduct(id: $id) {
+      status
     }
   }
 `;
@@ -232,8 +353,8 @@ const apis = {
     graphQlInstance(getProductsCountQuery({ page }), {
       method: "GET",
     }),
-  getWarehouse: ({ id }) =>
-    graphQlInstance(getWarehouseQuery({ id }), {
+  getProduct: ({ id }) =>
+    graphQlInstance(getProductQuery({ id }), {
       method: "GET",
     }),
 
@@ -246,10 +367,29 @@ const apis = {
     graphQlInstance(editProductQuery, {
       variables,
     }),
-
-  getProduct: ({ id }) =>
-    graphQlInstance(getProductQuery({ id }), {
+  editProductVariant: (variables) =>
+    graphQlInstance(editProductVariantQuery, {
+      variables,
+    }),
+  editProductOption: (variables) =>
+    graphQlInstance(editProductOptionQuery, {
+      variables,
+    }),
+  editProductSubscription: (variables) =>
+    graphQlInstance(editProductSubscriptionQuery, {
+      variables,
+    }),
+  searchProducts: ({ page, searchQuery }) =>
+    graphQlInstance(searchProductsQuery({ page, searchQuery }), {
       method: "GET",
+    }),
+  getArchivedProducts: ({ page }) =>
+    graphQlInstance(getArchivedProductsQuery({ page }), {
+      method: "GET",
+    }),
+  deleteProduct: (variables) =>
+    graphQlInstance(deleteProductQuery, {
+      variables,
     }),
 };
 

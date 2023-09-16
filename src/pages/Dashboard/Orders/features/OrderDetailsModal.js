@@ -21,7 +21,7 @@ const OrderDetailsModal = ({ active, toggler, transaction }) => {
       <form onSubmit={handleSubmit} className="w-full h-full mb-10">
         <ModalBody>
           <div className="w-full">
-            <TransactionDetails transaction={transaction} />
+            {active && <TransactionDetails transaction={transaction} />}
           </div>
         </ModalBody>
       </form>

@@ -2,8 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
+import { NAIRA } from "utils/appConstant";
 
-const EarningCard = ({ icon, title, value, link, isDecimal, isLoading }) => (
+const EarningCard = ({
+  icon,
+  title,
+  value,
+  link,
+  isDecimal,
+  isLoading,
+  isAmount,
+}) => (
   <Link
     to={link}
     className="bg-white flex flex-col justify-start items-start w-full border border-transparent hover:border-grey-text pt-3 pb-5 gap-3.5 cursor-pointer transition-colors duration-500 ease-in-out"
@@ -24,6 +33,7 @@ const EarningCard = ({ icon, title, value, link, isDecimal, isLoading }) => (
         />
       ) : (
         <span className="text-2xl font-600 truncate max-w-full">
+          {isAmount && NAIRA}
           {value}
           {isDecimal && <span className="font-500 text-[10px]">{".00"}</span>}
         </span>
@@ -38,6 +48,7 @@ EarningCard.propTypes = {
   value: PropTypes.string,
   isDecimal: PropTypes.bool,
   isLoading: PropTypes.bool,
+  isAmount: PropTypes.bool,
 };
 
 export default EarningCard;

@@ -38,6 +38,8 @@ const getAffiliateMarketersQuery = ({ page }) => gql`
           firstName
           lastName
           gender
+          email 
+          phoneNumber
         }
         userProfitType
         userProfitValue
@@ -75,33 +77,33 @@ const createAffiliateMarketerQuery = gql`
 `;
 
 const editAffiliateMarketerQuery = gql`
-mutation updateAffiliateMarketer(
-  id: String!
-  discountCode: String!
-  discountExpiryTime: DateTime!
-  discountLimit: String
-  discountType: DISCOUNT_TYPE!
-  discountValue: String!
-  userId: String!
-  userProfitType: DISCOUNT_TYPE!
-  userProfitValue: String!
-) {
-  updateAffiliateMarketer(
-    updateAffiliateMarketerInput: {
-      id: $id
-      discountCode: $discountCode
-      discountExpiryTime: $discountExpiryTime
-      discountLimit: $discountLimit
-      discountType: $discountType!
-      discountValue: $discountValue
-      userId: $userId
-      userProfitType: $userProfitType
-      userProfitValue: $userProfitValue
-    }
+  mutation updateAffiliateMarketer(
+    $id: String!
+    $discountCode: String!
+    $discountExpiryTime: DateTime!
+    $discountLimit: String
+    $discountType: DISCOUNT_TYPE!
+    $discountValue: String!
+    $userId: String!
+    $userProfitType: DISCOUNT_TYPE!
+    $userProfitValue: String!
   ) {
-    id
+    updateAffiliateMarketer(
+      updateAffiliateMarketerInput: {
+        id: $id
+        discountCode: $discountCode
+        discountExpiryTime: $discountExpiryTime
+        discountLimit: $discountLimit
+        discountType: $discountType
+        discountValue: $discountValue
+        userId: $userId
+        userProfitType: $userProfitType
+        userProfitValue: $userProfitValue
+      }
+    ) {
+      id
+    }
   }
-}
 `;
 
 const apis = {

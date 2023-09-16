@@ -3,28 +3,13 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
-import { EditorState, convertToRaw, ContentState } from "draft-js";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
+
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
-import { ReactComponent as Edit } from "assets/icons/Edit/edit.svg";
-import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
 import { Link } from "react-router-dom";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
-import ImagePicker from "components/General/Input/ImagePicker";
-import Wysiwyg from "components/General/Textarea/Wysiwyg";
-import { numberWithCommas } from "utils/formatter";
-import classNames from "classnames";
-import { PRODUCT_MODAL_TYPES, RIBBONS } from "utils/appConstant";
-import DetailsModal from "./DetailsModal";
-import CheckBox from "components/General/Input/CheckBox";
 
-const { PRODUCT_OPTION, PRODUCT_SUBSCRIPTION, PRODUCT_VARIANT } =
-  PRODUCT_MODAL_TYPES;
 export default function Form({ details, toggler }) {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
@@ -36,22 +21,9 @@ export default function Form({ details, toggler }) {
 
   const schema = yup.object({});
 
-  //
-
-  //   const { actions } = signInSlice;
-
   const defaultValues = {
-    name: "",
-    country: "",
-    cost_price: "",
-    sale_price: "",
-    low_at: details?.quantity || "",
+    lowInQuantityValue: details?.lowInQuantityValue || "",
     quantity: details?.quantity || "",
-    images: [],
-    videos: [],
-    description: EditorState.createEmpty(),
-    enable_preorder: false,
-    no_limit: true,
   };
 
   const {
@@ -72,36 +44,16 @@ export default function Form({ details, toggler }) {
     await trigger(prop);
   };
 
-  const handleChangeTwo = async (prop, val) => {
-    setFormTwo({ ...formTwo, [prop]: val });
-  };
-
   const form = {
-    name: watch("name"),
-    country: watch("country"),
-    cost_price: watch("cost_price"),
-    sale_price: watch("sale_price"),
-    low_at: watch("low_at"),
+    lowInQuantityValue: watch("lowInQuantityValue"),
     quantity: watch("quantity"),
-    images: watch("images"),
-    videos: watch("videos"),
-    description: watch("description"),
-    enable_preorder: watch("enable_preorder"),
-    no_limit: watch("no_limit"),
   };
   const handleOnSubmit = (e) => {
     e.preventDefault();
     if (isValid) {
       toggler?.();
     }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
   };
-
-  const profitMargin =
-    form?.cost_price && form?.sale_price
-      ? form?.sale_price - form?.cost_price
-      : "";
 
   return (
     <>
@@ -143,10 +95,10 @@ export default function Form({ details, toggler }) {
 
           <Input
             label="Low in stock value"
-            value={form?.low_at}
-            onChangeFunc={(val) => handleChange("low_at", val)}
-            placeholder="Enter low_at"
-            formError={errors.low_at}
+            value={form?.lowInQuantityValue}
+            onChangeFunc={(val) => handleChange("lowInQuantityValue", val)}
+            placeholder="Enter lowInQuantityValue"
+            formError={errors.lowInQuantityValue}
             showFormError={formTwo?.showFormError}
             type="number"
             required
@@ -161,22 +113,6 @@ export default function Form({ details, toggler }) {
           />
         </form>
       </div>
-      <DetailsModal
-        active={formTwo?.modalType === PRODUCT_OPTION}
-        details={{ modalType: PRODUCT_OPTION }}
-        toggler={() => handleChangeTwo("modalType", false)}
-      />
-      <DetailsModal
-        active={formTwo?.modalType === PRODUCT_VARIANT}
-        details={{ modalType: PRODUCT_VARIANT }}
-        toggler={() => handleChangeTwo("modalType", false)}
-      />
-
-      <DetailsModal
-        active={formTwo?.modalType === PRODUCT_SUBSCRIPTION}
-        details={{ modalType: PRODUCT_SUBSCRIPTION }}
-        toggler={() => handleChangeTwo("modalType", false)}
-      />
     </>
   );
 }

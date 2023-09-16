@@ -1,21 +1,20 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
+import { useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
-import AffiliateMarketersStore from "../store";
+import UsersStore from "../store";
 import Form from "./Form";
 
-const AddMarketer = () => {
-  const { affiliateMarketer_id } = useParams();
-  const { getAffiliateMarketer, getAffiliateMarketerLoading } =
-    AffiliateMarketersStore;
+const AddUser = () => {
+  const { user_id } = useParams();
+  const { getUser, getUserLoading } = UsersStore;
   useEffect(() => {
-    affiliateMarketer_id &&
-      getAffiliateMarketer({ data: { id: affiliateMarketer_id } });
-  }, [affiliateMarketer_id]);
+    user_id && getUser({ data: { id: user_id } });
+  }, [user_id]);
+
   return (
     <div className="h-full md:pr-4 pt-1 w-full flex justify-center items-start">
-      {getAffiliateMarketerLoading ? (
+      {getUserLoading ? (
         <CircleLoader blue />
       ) : (
         <Form
@@ -28,5 +27,4 @@ const AddMarketer = () => {
     </div>
   );
 };
-
-export default observer(AddMarketer);
+export default observer(AddUser);

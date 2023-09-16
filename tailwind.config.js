@@ -92,6 +92,7 @@ module.exports = {
           light4: "#FFDBDE",
         },
         green: {
+          DEFAULT: "#50AA75",
           light: "#02BA81",
           warning: "#02BA81",
         },

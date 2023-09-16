@@ -21,6 +21,7 @@ import useWindowDimensions from "hooks/useWindowDimensions";
 
 import { paramsObjectToQueryString } from "utils/request";
 import ProductsStore from "pages/Dashboard/Products/store";
+import OrdersStore from "pages/Dashboard/Orders/store";
 import EarningCard from "./EarningCard";
 import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./OrderDetailsModal";
@@ -29,6 +30,7 @@ import EarningValueCard from "./EarningValueCard";
 import TransactionValueCard from "./TransactionValueCard";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
+import { useParams } from "react-router-dom";
 
 export const dateFilters = [
   {
@@ -51,6 +53,7 @@ export const dateFilters = [
   },
 ];
 const HomePage = () => {
+  const { warehouse_id } = useParams();
   const requiredFilters = {
     start_date: "2020-01-01",
     end_date: moment().format("YYYY-MM-DD"),
@@ -72,8 +75,11 @@ const HomePage = () => {
   const [searchInput, setSearchInput] = useState("");
 
   const { getProductsCount, productsCount, loading } = ProductsStore;
-
-  useEffect(() => getProductsCount({ data: { page: 1 } }), []);
+  const { getOrdersCount, ordersCount, loading: orderLoading } = OrdersStore;
+  useEffect(() => {
+    getProductsCount({ data: { page: 1 } });
+    getOrdersCount({ data: { page: 1 } });
+  }, []);
   const searching = false;
 
   const params = qs.parse(location.hash?.substring(1));
@@ -236,28 +242,29 @@ const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
             <EarningCard
               icon={<OrdersIcon className="scale-[0.8]" />}
-              title="Orders"
-              value="400"
-              link="/dashboard/home/warehouse_id"
+              title="Total Orders"
+              value={numberWithCommas(ordersCount)}
+              link={`/dashboard/orders/${warehouse_id}`}
+              isLoading={orderLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
               value="₦‎ 2,000,000"
-              link="/dashboard/home/warehouse_id"
+              link={`/dashboard/orders/${warehouse_id}`}
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
-              title="Products"
+              title="Total Products"
               value={numberWithCommas(productsCount)}
-              link="/dashboard/products/warehouse_id"
+              link={`/dashboard/products/${warehouse_id}`}
               isLoading={loading}
             />
             <EarningCard
               icon={<CustomersIcon className="scale-[0.8]" />}
-              title="Customers"
+              title="Users"
               value="3000"
-              link="/dashboard/home/warehouse_id"
+              link={`/dashboard/users/${warehouse_id}`}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">

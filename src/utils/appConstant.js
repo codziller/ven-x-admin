@@ -624,6 +624,7 @@ export const PRODUCT_MODAL_TYPES = {
   PRODUCT_SUBSCRIPTION: "PRODUCT_SUBSCRIPTION",
   PRODUCT_CATEGORY: "PRODUCT_CATEGORY",
   PRODUCT_CATEGORY_OPTIONS: "PRODUCT_CATEGORY_OPTIONS",
+  DELETE: "DELETE",
 };
 
 export const subscriptionDurationOptions = [
@@ -662,3 +663,5 @@ export const ROLES = [
     label: "WAREHOUSE STAFF",
   },
 ];
+
+export const WALLET_ACTIONS = { Credit: "Credit", Debit: "Debit" };

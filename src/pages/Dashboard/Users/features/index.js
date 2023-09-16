@@ -1,22 +1,22 @@
 import React, { useEffect, useMemo, useState } from "react";
-
 import _, { isEmpty } from "lodash";
+import { useNavigate, useParams } from "react-router-dom";
+import classNames from "classnames";
+import { observer } from "mobx-react-lite";
+import PropTypes from "prop-types";
 
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 import { pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
-import PropTypes from "prop-types";
 import useWindowDimensions from "hooks/useWindowDimensions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
-import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import Amount from "components/General/Numbers/Amount";
-
+import Tabs from "components/General/Tabs";
 import UsersStore from "../store";
-import classNames from "classnames";
 
 export const dateFilters = [
   {
@@ -39,6 +39,8 @@ export const dateFilters = [
   },
 ];
 const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
+  const navigate = useNavigate();
+  const { warehouse_id } = useParams();
   const {
     searchUsers,
     searchResult,
@@ -48,16 +50,29 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
     users,
     loading,
     usersCount,
+    getArchivedUsers,
+    loadingArchived,
+    usersArchived,
+    usersArchivedCount,
   } = UsersStore;
 
+  const TABS = [
+    { name: "users", label: `Users (${usersCount || "-"})` },
+    {
+      name: "archived",
+      label: `Archived users (${usersArchivedCount || "-"})`,
+    },
+  ];
   const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageArchived, setCurrentPageArchived] = useState(1);
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [searchInput, setSearchInput] = useState("");
-
+  const [activeTab, setActiveTab] = useState(TABS[0]?.name);
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
+  const isArchive = activeTab === TABS[1]?.name;
 
   const handleSearch = async () => {
     if (!searchQuery) {
@@ -67,9 +82,15 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
     await searchUsers({ data: payload });
   };
 
+  const handleGetData = () => {
+    isArchive
+      ? getArchivedUsers({ data: { page: currentPageArchived } })
+      : getUsers({ data: { page: currentPage } });
+  };
+
   useEffect(() => {
-    isSearchMode ? handleSearch() : getUsers({ data: { page: currentPage } });
-  }, [currentPage, currentPageSearch]);
+    isSearchMode ? handleSearch() : handleGetData();
+  }, [currentPage, currentPageSearch, currentPageArchived, isArchive]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -78,8 +99,12 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
   }, [searchInput]);
 
   const handleEdit = (row) => {
-    isModal && handleUserSelect(row);
-    // setCurrentTxnDetails({ ...row, modalType: "edit" });
+    if (isModal) {
+      handleUserSelect(row);
+      return;
+    }
+
+    navigate(`/dashboard/users/edit/${warehouse_id}/${row?.id}`);
   };
   const columns = [
     {
@@ -131,7 +156,7 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-red-deep text-[11px] text-white "
           >
-            Archive
+            {row?.isDeleted ? "Unarchive" : "Archive"}
           </span>
 
           <span
@@ -154,12 +179,24 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
   };
 
   const displayedUsers = useMemo(() => {
-    return isSearchMode ? searchResult : users;
-  }, [searchResult, users, isSearchMode]);
+    return isSearchMode ? searchResult : isArchive ? usersArchived : users;
+  }, [searchResult, users, usersArchived, isSearchMode, isArchive]);
 
   const displayedUsersCount = useMemo(() => {
-    return isSearchMode ? searchResultCount : usersCount;
-  }, [searchResult, users, isSearchMode]);
+    return isSearchMode
+      ? searchResultCount
+      : isArchive
+      ? usersArchivedCount
+      : usersCount;
+  }, [searchResult, users, isSearchMode, usersArchivedCount]);
+
+  const isLoading = useMemo(() => {
+    return isSearchMode
+      ? searchUserLoading
+      : isArchive
+      ? isEmpty(usersArchived) && loadingArchived
+      : isEmpty(users) && loading;
+  }, [searchUserLoading, loadingArchived, loading]);
 
   useEffect(() => scrollToTop(), [displayedUsers]);
 
@@ -192,7 +229,8 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
             /> */}
           </div>
 
-          {searchUserLoading || (isEmpty(users) && loading) ? (
+          <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
+          {isLoading ? (
             <CircleLoader blue />
           ) : (
             <>
@@ -217,9 +255,17 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
                     onPageChange={(page) =>
                       isSearchMode
                         ? setCurrentPageSearch(page)
+                        : isArchive
+                        ? setCurrentPageArchived(page)
                         : setCurrentPage(page)
                     }
-                    currentPage={isSearchMode ? currentPageSearch : currentPage}
+                    currentPage={
+                      isSearchMode
+                        ? currentPageSearch
+                        : isArchive
+                        ? currentPageArchived
+                        : currentPage
+                    }
                     tableClassName="txn-section-table"
                     noPadding
                   />
@@ -231,6 +277,8 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
                         <span>
                           {isSearchMode && isEmpty(searchResult)
                             ? `There are no results for your search '${searchQuery}'`
+                            : isArchive
+                            ? "There are currently no archived users"
                             : "There are currently no users"}
                         </span>
                       }

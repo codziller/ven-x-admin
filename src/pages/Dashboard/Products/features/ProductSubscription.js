@@ -9,22 +9,24 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import Select from "components/General/Input/Select";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { subscriptionDurationOptions } from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
 import cleanPayload from "utils/cleanPayload";
-import { lowerCase } from "lodash";
-
-export default function ProductSubscription({
-  details,
-  toggler,
-  handleOnChange,
-  formObj,
-}) {
+import { isEmpty, lowerCase } from "lodash";
+import ProductsStore from "../store";
+import { observer } from "mobx-react-lite";
+const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
   const { productSubscriptions } = formObj;
+  const { currentProductSubscription } = details;
+  const { product_id } = useParams();
+  const isEdit = !isEmpty(currentProductSubscription);
+  console.log("currentProductSubscription: ", currentProductSubscription);
+  const { editProductSubscription, editProductSubscriptionLoading } =
+    ProductsStore;
+
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
     visibility: "",
     collapsed: [],
@@ -46,18 +48,22 @@ export default function ProductSubscription({
   //   const { actions } = signInSlice;
 
   const defaultValues = {
-    name: "",
-    active: true,
-    discountType: "",
-    discountValue: "",
-    subscriptionDuration: "",
-    subscriptionFrequency: "",
-    tagline: "",
+    name: currentProductSubscription?.name || "",
+    active: currentProductSubscription?.name
+      ? currentProductSubscription?.active
+      : true,
+    discountType: currentProductSubscription?.discountType || "",
+    discountValue: currentProductSubscription?.discountValue || "",
+    subscriptionDuration:
+      currentProductSubscription?.subscriptionDuration || "",
+    subscriptionFrequency:
+      currentProductSubscription?.subscriptionFrequency || "",
+    tagline: currentProductSubscription?.tagline || "",
   };
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -88,6 +94,19 @@ export default function ProductSubscription({
   };
 
   const handleOnSubmit = () => {
+    if (isEdit) {
+      const payload = {
+        ...form,
+        productSubscriptionId: currentProductSubscription?.id,
+      };
+      cleanPayload(payload);
+      editProductSubscription({
+        product_id,
+        data: payload,
+        onSuccess: () => toggler?.(),
+      });
+      return;
+    }
     const prevOption = productSubscriptions?.find(
       (item) => lowerCase(item?.name) === lowerCase(form.name)
     );
@@ -118,7 +137,11 @@ export default function ProductSubscription({
           </button>
         )}
 
-        <p className="font-600 text-xl ">Add a Subscription To This Product</p>
+        <p className="font-600 text-xl ">
+          {isEdit
+            ? "Edit Product Subscription"
+            : "Add a Subscription To This Product"}
+        </p>
 
         <p className="mb-3 text-sm text-grey text-left">
           Easily offer this product on a recurring basis with subscriptions
@@ -232,8 +255,9 @@ export default function ProductSubscription({
 
             <Button
               onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              isLoading={editProductSubscriptionLoading}
               type="submit"
-              text="Save"
+              text={isEdit ? "Save Changes" : "Add"}
               className="mb-2"
               fullWidth
             />
@@ -242,8 +266,10 @@ export default function ProductSubscription({
       </div>
     </>
   );
-}
+};
 ProductSubscription.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(ProductSubscription);

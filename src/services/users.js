@@ -48,7 +48,31 @@ const getUsersQuery = ({ page }) => gql`
     }
   }
 `;
-
+const getArchivedUsersQuery = ({ page }) => gql`
+  {
+    __typename
+    archived_users(pageNumber: "${page}") {
+      total
+      results {
+        balance
+        baniCustomerRef
+        createdAt
+        dob
+        email
+        emailConfirmedTime
+        firstName
+        gender
+        id
+        isDeleted
+        isEmailConfirmed
+        lastName
+        phoneNumber
+        referralCode
+        role
+      }
+    }
+  }
+`;
 const searchUsersQuery = ({ page, searchQuery }) => gql`
   {
     __typename
@@ -133,6 +157,22 @@ mutation updateUser(
 }
 `;
 
+const editUserWalletQuery = gql`
+  mutation adjustUserBalance(
+    $amount: Float!
+    $transactionType: TRANSACTION_TYPE!
+    $userId: String!
+  ) {
+    adjustUserBalance(
+      amount: $amount
+      transactionType: $transactionType
+      userId: $userId
+    ) {
+      id
+    }
+  }
+`;
+
 const deleteUserQuery = gql`
   mutation removeUser($id: String!) {
     removeUser(id: $id) {
@@ -144,6 +184,10 @@ const deleteUserQuery = gql`
 const apis = {
   getUsers: ({ page }) =>
     graphQlInstance(getUsersQuery({ page }), {
+      method: "GET",
+    }),
+  getArchivedUsers: ({ page }) =>
+    graphQlInstance(getArchivedUsersQuery({ page }), {
       method: "GET",
     }),
   searchUsers: ({ page, searchQuery }) =>
@@ -162,6 +206,11 @@ const apis = {
 
   editUser: (variables) =>
     graphQlInstance(editUserQuery, {
+      variables,
+    }),
+
+  editUserWallet: (variables) =>
+    graphQlInstance(editUserWalletQuery, {
       variables,
     }),
 

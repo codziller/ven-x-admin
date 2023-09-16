@@ -14,7 +14,7 @@ import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import Select from "components/General/Input/Select";
 import Textarea from "components/General/Textarea/Textarea";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
 import RadioInput from "components/General/Input/RadioInput";
 import classNames from "classnames";
@@ -22,16 +22,19 @@ import { errorToast } from "components/General/Toast/Toast";
 import { isEmpty, lowerCase, uniq } from "lodash";
 import cleanPayload from "utils/cleanPayload";
 import { CHOICE_DISPLAY } from "utils/appConstant";
+import ProductsStore from "../store";
+import { observer } from "mobx-react-lite";
 
-export default function ProductOptions({
-  details,
-  toggler,
-  handleOnChange,
-  formObj,
-}) {
+const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
   const { productOptions } = formObj;
+  const { currentProductOption } = details;
+  const { product_id } = useParams();
+  const isEdit = !isEmpty(currentProductOption);
+
+  const { editProductOption, editProductOptionLoading } = ProductsStore;
+
+  console.log("currentProductOption: ", currentProductOption);
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
     activeChoice: "",
     choice: "",
@@ -50,9 +53,9 @@ export default function ProductOptions({
   const { COLOR, LIST } = CHOICE_DISPLAY;
 
   const defaultValues = {
-    name: "",
-    choiceDisplay: LIST,
-    choices: [],
+    name: currentProductOption?.name || "",
+    choiceDisplay: currentProductOption?.choiceDisplay || LIST,
+    choices: currentProductOption?.choices || [],
   };
 
   const {
@@ -85,7 +88,7 @@ export default function ProductOptions({
     let choice = formTwo.choice?.split(",").map((item) => item?.trim());
     choice = uniq(choice);
     const choiceObj = choice?.map?.((itm) => {
-      return { name: itm, color: "#000000" };
+      return { name: itm, choice: "#000000" };
     });
 
     if (isEmpty(choice)) return;
@@ -100,14 +103,27 @@ export default function ProductOptions({
     const newChoices = form.choices.filter((item) => item?.name !== val?.name);
     handleChange("choices", newChoices);
   };
-  const handleSetColor = ({ index, name, color }) => {
-    console.log("index, name, color: ", index, name, color);
+  const handleSetColor = ({ index, name, choice }) => {
+    console.log("index, name, color: ", index, name, choice);
     let choices = [...form.choices];
-    choices[index] = { name, color };
+    choices[index] = { name, choice };
     handleChange("choices", choices);
   };
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = () => {
+    if (isEdit) {
+      const payload = {
+        ...form,
+        productOptionId: currentProductOption?.id,
+      };
+      cleanPayload(payload);
+      editProductOption({
+        product_id,
+        data: payload,
+        onSuccess: () => toggler?.(),
+      });
+      return;
+    }
     const prevOption = productOptions?.find(
       (item) => lowerCase(item?.name) === lowerCase(form.name)
     );
@@ -118,10 +134,8 @@ export default function ProductOptions({
       );
       return;
     }
-    const choices = form.choices.map((item) => {
-      return { name: item?.name, choice: item?.color };
-    });
-    const payload = cleanPayload({ ...form, choices });
+
+    const payload = cleanPayload(form);
     handleOnChange("productOptions", [...productOptions, payload]);
     toggler?.();
   };
@@ -138,7 +152,9 @@ export default function ProductOptions({
         </button>
       )}
 
-      <p className="font-600 text-xl ">Add Product Option</p>
+      <p className="font-600 text-xl ">
+        {isEdit ? "Edit" : "Add"} Product Option
+      </p>
 
       <p className="mb-3 text-sm text-grey text-left">
         You'll be able to manage pricing and inventory for this product option
@@ -226,7 +242,7 @@ export default function ProductOptions({
         {!isEmpty(form?.choices) && (
           <div className="flex flex-wrap gap-3 w-full my-3 justify-start items-center border-1/2 border-grey-border p-2">
             {form?.choices?.map((item, index) => {
-              const backgroundColor = item?.color;
+              const backgroundColor = item?.choice;
               const isActive = formTwo?.activeChoice?.name === item?.name;
               return (
                 <div
@@ -262,8 +278,8 @@ export default function ProductOptions({
                     >
                       <HexColorPicker
                         color={backgroundColor}
-                        onChange={(color) =>
-                          handleSetColor({ ...item, color, index })
+                        onChange={(choice) =>
+                          handleSetColor({ ...item, choice, index })
                         }
                       />
                     </div>
@@ -282,8 +298,9 @@ export default function ProductOptions({
 
           <Button
             onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+            isLoading={editProductOptionLoading}
             type="submit"
-            text="Add"
+            text={isEdit ? "Save Changes" : "Add"}
             className="mb-2"
             fullWidth
           />
@@ -291,8 +308,10 @@ export default function ProductOptions({
       </form>
     </div>
   );
-}
+};
 ProductOptions.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(ProductOptions);

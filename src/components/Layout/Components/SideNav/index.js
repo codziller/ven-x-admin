@@ -36,6 +36,7 @@ import { FcBusinesswoman } from "react-icons/fc";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
+import { GiReceiveMoney } from "react-icons/gi";
 
 const getLinks = (warehouse_id, user) => [
   {
@@ -139,6 +140,20 @@ const getLinks = (warehouse_id, user) => [
     link: `/dashboard/affiliate-marketers/${warehouse_id}`,
     icon: (
       <FcBusinesswoman
+        size={24}
+        className="stroke-current transition-all duration-500 ease-in-out"
+      />
+    ),
+  },
+
+  {
+    title: "Donations",
+    slug: "/dashboard/donations",
+    heading: "Manage Donations",
+    label: "Here’s what’s happening with Beautyhut today.",
+    link: `/dashboard/donations/${warehouse_id}`,
+    icon: (
+      <GiReceiveMoney
         size={24}
         className="stroke-current transition-all duration-500 ease-in-out"
       />

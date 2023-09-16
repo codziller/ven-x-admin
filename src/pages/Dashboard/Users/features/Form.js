@@ -1,43 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 
+import { TailSpin } from "react-loader-spinner";
+import { ReactComponent as Plus } from "assets/icons/add.svg";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
-import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { NAIRA, PRODUCT_MODAL_TYPES, WALLET_ACTIONS } from "utils/appConstant";
+import DetailsModal from "./DetailsModal";
+import CheckBox from "components/General/Input/CheckBox";
+import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
+import { observer } from "mobx-react-lite";
+import AffiliateMarketersStore from "../store";
+import cleanPayload from "utils/cleanPayload";
+import { isEmpty } from "lodash";
+import DatePickerComponent from "components/General/DatePicker";
+import moment from "moment";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
+import UsersStore from "../store";
+import { numberWithCommas } from "utils/formatter";
+const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+const { Credit, Debit } = WALLET_ACTIONS;
+const Form = ({ details, toggler }) => {
+  const { user_id, warehouse_id } = useParams();
+  console.log("user_id: ", user_id);
 
-export default function Form({ details, toggler }) {
+  const { editUserWallet, user, editUserWalletLoading } = UsersStore;
+  const navigate = useNavigate();
+
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
+    formModified: false,
+    modalType: "",
+    createLoading: false,
   });
 
   const schema = yup.object({
-    name: yup.string().required("Please enter your name"),
+    amount: yup.string().required("Please enter amount"),
+    transactionType: yup.string().required("Please select transaction type"),
   });
 
-  //
-
-  //   const { actions } = signInSlice;
-
   const defaultValues = {
-    name: "",
-    country: "",
     amount: "",
-    quantity: "",
+    transactionType: "",
   };
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -47,132 +63,144 @@ export default function Form({ details, toggler }) {
     resolver: yupResolver(schema),
   });
 
-  const handleChange = async (prop, val) => {
-    setValue(prop, val);
+  const form = {
+    amount: watch("amount"),
+    transactionType: watch("transactionType"),
+  };
+
+  const handleChange = async (prop, val, rest, isFormTwo) => {
+    isFormTwo
+      ? setFormTwo({ ...formTwo, [prop]: val, formModified: true })
+      : setFormTwo({ ...formTwo, formModified: true });
+    const updatedVal = rest ? [...rest, ...val] : val;
+    setValue(prop, updatedVal);
     await trigger(prop);
   };
 
-  const form = {
-    name: watch("name"),
-    country: watch("country"),
-    amount: watch("amount"),
-    quantity: watch("quantity"),
+  const handleChangeTwo = async (prop, val) => {
+    setFormTwo({ ...formTwo, [prop]: val });
   };
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
+
+  const handleOnSubmit = () => {
+    let payload = {
+      ...form,
+      amount: parseFloat(form.amount),
+      userId: user_id,
+    };
+
+    if (user_id) {
+      editUserWallet({
+        data: payload,
+        onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+      });
+      return;
     }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
   };
 
   return (
-    <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
-      {details?.link ? (
-        <div className="mb-5">
-          <Link to={details?.link} className="scale-90">
-            <ArrowBack />
-          </Link>
-        </div>
-      ) : (
-        <button onClick={() => toggler?.()} className="scale-90 mb-5">
-          <Close />
-        </button>
-      )}
-
-      {details?.isAdd ? (
-        <h2 className="section-heading mb-3 text-xl">Add a New Staff</h2>
-      ) : (
-        <h2 className="section-heading mb-3 text-xl">Edit Staff</h2>
-      )}
-
-      <form
-        onSubmit={handleSubmit(handleOnSubmit)}
-        className="flex flex-col justify-start items-start gap-y-3 w-full overflow-y-auto"
-      >
-        <div className="flex-col justify-start items-start flex w-full">
-          <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark">
-            Add Staff Image
+    <>
+      <div className="gap-y-4 py-4 w-full h-full pb-4 ">
+        {details?.link ? (
+          <div className="mb-5">
+            <Link to={`/dashboard/users/${warehouse_id}`} className="scale-90">
+              <ArrowBack />
+            </Link>
           </div>
-          <div className="w-full h-[204px] px-[127px] py-16 bg-stone-50 rounded-lg border border-dashed border-black  flex-col justify-center items-center gap-2.5 flex cursor-pointer">
-            <div className="w-[86px] h-[86px] min-w-[86px] min-h-[86px] bg-[#EAEAEA] rounded-full flex items-center justify-center">
-              <Gallery className="stroke-current" />
+        ) : (
+          <button onClick={() => toggler?.()} className="scale-90 mb-5">
+            <Close />
+          </button>
+        )}
+
+        {!user_id ? (
+          <h2 className="section-heading my-8 text-xl">Add User</h2>
+        ) : (
+          <h2 className="section-heading my-8 text-xl  ">Edit User</h2>
+        )}
+
+        <form
+          onSubmit={handleSubmit(handleOnSubmit)}
+          className="flex flex-col md:flex-row justify-start items-start gap-10 w-full "
+        >
+          {/* First section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Update Wallet
+              </span>
+              <span className="text-grey-text text-sm">
+                Select the transaction type to be performed on this user&apos;s
+                wallet <br />
+                Wallet Balance -{" "}
+                <span className="text-black">
+                  {NAIRA}
+                  {numberWithCommas(user?.balance)}
+                </span>
+              </span>
             </div>
-          </div>
 
-          <div className="min-h-[13px]">
-            {formTwo?.showFormError && errors.name && (
-              <FormErrorMessage type={errors.name} />
+            <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
+              <div className="flex justify-start items-center w-full gap-6">
+                <CheckBox
+                  label={Credit}
+                  onChange={() => handleChange("transactionType", Credit)}
+                  checked={form.transactionType === Credit}
+                />
+
+                <CheckBox
+                  label={Debit}
+                  onChange={() => handleChange("transactionType", Debit)}
+                  checked={form.transactionType === Debit}
+                />
+              </div>
+            </div>
+
+            {form?.transactionType && (
+              <Input
+                label="Amount"
+                value={form?.amount}
+                onChangeFunc={(val) => handleChange("amount", val)}
+                placeholder="Enter Amount"
+                formError={errors.amount}
+                showFormError={formTwo?.showFormError}
+                prefix={NAIRA}
+                tooltip={`Amount to be ${
+                  form.transactionType === Debit ? "debited" : "credited"
+                }`}
+                type="number"
+                isRequired
+              />
             )}
+            <Button
+              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              type="submit"
+              text={!user_id ? "Add User" : "Save Changes"}
+              isLoading={editUserWalletLoading}
+              className="mt-10 mb-5 "
+              fullWidth
+            />
           </div>
-        </div>
-        <Input
-          label="Full Name"
-          value={form?.name}
-          onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Full Name"
-          formError={errors.name}
-          showFormError={formTwo?.showFormError}
-          required
-        />
+          {/* Second section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 "></div>
+          {/* Third section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
+        </form>
+      </div>
 
-        <Input
-          label="Email Address"
-          value={form?.name}
-          onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Email Address"
-          formError={errors.name}
-          showFormError={formTwo?.showFormError}
-          required
-        />
-
-        <Select
-          label="Staff Role "
-          placeholder="Select Staff Role "
-          options={[
-            {
-              value: "Admin",
-              label: "Admin",
-            },
-            {
-              value: "Basic Staff",
-              label: "Basic Staff",
-            },
-          ]}
-          onChange={(val) => handleChange("country", val)}
-          value={form.country}
-          formError={errors.country}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
-
-        <Select
-          label="Staff Status "
-          placeholder="Select Staff Status "
-          options={[
-            { label: "Active", value: "Active" },
-            { label: "Disabled", value: "Disabled" },
-          ]}
-          onChange={(val) => handleChange("country", val)}
-          value={form.country}
-          formError={errors.country}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
-
-        <Button
-          onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-          type="submit"
-          text={details?.isAdd ? "Add New Staff" : "Save Changes"}
-          className="mt-8 mb-5"
-          fullWidth
-        />
-      </form>
-    </div>
+      <DetailsModal
+        active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
+        details={{ modalType: PRODUCT_CATEGORY_OPTIONS }}
+        toggler={() => handleChangeTwo("modalType", false)}
+        handleChange={handleChange}
+        form={form}
+      />
+    </>
   );
-}
+};
+
 Form.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(Form);

@@ -1,73 +1,51 @@
-import React, { useState } from "react";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React from "react";
 import PropTypes from "prop-types";
-
+import { useNavigate } from "react-router";
+import { Link, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
+
 import Button from "components/General/Button/Button";
-import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
-import { Link } from "react-router-dom";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
+import ProductsStore from "../store";
+import cleanPayload from "utils/cleanPayload";
 
-export default function DeleteDialog({ details, toggler }) {
-  const [formTwo, setFormTwo] = useState({
-    country: "NG",
-    showFormError: false,
-  });
-
-  const schema = yup.object({
-    name: yup.string().required("Please enter your name"),
-    country: yup.string().required("Please select your country"),
-    amount: yup.string().required("Please enter amount"),
-    quantity: yup.string().required("Please enter quantity"),
-  });
-
-  //
-
-  //   const { actions } = signInSlice;
-
-  const defaultValues = {
-    name: "",
-    country: "",
-    amount: "",
-    quantity: "",
-  };
-
+const DeleteDialog = ({ details, toggler }) => {
+  const { warehouse_id } = useParams();
   const {
-    handleSubmit,
-    formState: { errors, isValid },
-    setValue,
-    trigger,
-    watch,
-  } = useForm({
-    defaultValues,
-    mode: "onSubmit",
-    resolver: yupResolver(schema),
-  });
+    deleteProduct,
+    deleteProductLoading,
+    editProduct,
+    editWareHouseLoading,
+  } = ProductsStore;
+  const navigate = useNavigate();
+  const handleOnSubmit = () => {
+    if (details?.archive) {
+      const payload = {
+        ...details,
+        archive: false,
+        productId: details?.id,
+        currentPage: "",
+        id: "",
+      };
 
-  const handleChange = async (prop, val) => {
-    setValue(prop, val);
-    await trigger(prop);
-  };
-
-  const form = {
-    name: watch("name"),
-    country: watch("country"),
-    amount: watch("amount"),
-    quantity: watch("quantity"),
-  };
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
+      cleanPayload(payload);
+      editProduct({
+        data: payload,
+        page: details?.currentPage,
+        onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+      });
+      return;
     }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
+    const payload = { id: details?.id };
+    deleteProduct({
+      data: payload,
+      onSuccess: () => {
+        toggler();
+        navigate(`/dashboard/products/${warehouse_id}`);
+      },
+    });
   };
 
   return (
@@ -83,17 +61,20 @@ export default function DeleteDialog({ details, toggler }) {
       )}
 
       <Delete className="scale-90" />
-      <p className="font-600 text-xl ">Delete Product</p>
+      <p className="font-600 text-xl ">{`${
+        details?.archive ? "Unarchive" : "Archive"
+      } Product`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to delete{" "}
+        Are you sure you want to {details?.archive ? "unarchive" : "archive"}{" "}
         <span className="text-black">"{details?.name}"?</span>
       </p>
 
       <Button
-        onClick={() => toggler?.()}
+        onClick={handleOnSubmit}
+        isLoading={deleteProductLoading || editWareHouseLoading}
         type="submit"
-        text="Yes, Delete this product"
+        text={`Yes, ${details?.archive ? "unarchive" : "archive"} this product`}
         className="mb-2"
         fullWidth
         redBg
@@ -101,7 +82,7 @@ export default function DeleteDialog({ details, toggler }) {
 
       <Button
         onClick={() => toggler?.()}
-        type="submit"
+        isDisabled={deleteProductLoading || editWareHouseLoading}
         text="No, Cancel"
         className="mb-5"
         fullWidth
@@ -109,8 +90,10 @@ export default function DeleteDialog({ details, toggler }) {
       />
     </div>
   );
-}
+};
 DeleteDialog.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(DeleteDialog);

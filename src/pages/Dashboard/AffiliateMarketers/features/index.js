@@ -139,64 +139,49 @@ const AffiliateMarketersPage = () => {
     }
   }, [searchInput]);
 
+  const handleEdit = (e) => {
+    navigate(`/dashboard/affiliate-marketers/edit/${warehouse_id}/${e?.id}`);
+  };
   const columns = [
     {
-      name: "SKU",
-      minWidth: "20px",
-      maxWidth: isMobile ? "10%" : "70px",
-      selector: "id",
-      sortable: false,
-    },
-    {
-      name: "Product",
-      minWidth: isMobile ? "40%" : "30%",
+      name: "User",
+      minWidth: isMobile ? "50%" : "30%",
       selector: (row) => (
         <div
-          className="flex justify-start items-center gap-4"
-          onClick={() => {
-            navigate(
-              `/dashboard/affiliate-marketers/edit/${warehouse_id}/${row?.id}`
-            );
-          }}
+          onClick={() => handleEdit(row)}
+          className="py-4 mt-[5px] mb-[5px] flex-col justify-start items-start gap-1 flex"
         >
-          {row?.imageUrls?.[0] && (
-            <img
-              src={row?.imageUrls?.[0]}
-              className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
-            />
-          )}
-          <span className="truncate">{row.name}</span>
+          <div className="text-black text-sm font-medium font-700">
+            {row?.user?.firstName} {row?.user?.lastName}
+          </div>
+          <div className="text-grey text-sm font-normal">
+            {row?.user?.email}
+          </div>
         </div>
       ),
       sortable: false,
     },
 
     {
-      name: "Category",
-      selector: "category.name",
+      name: "Phone Number",
+      selector: (row) => (
+        <span onClick={() => handleEdit(row)}>{row?.user?.phoneNumber}</span>
+      ),
+      sortable: false,
+    },
+    {
+      name: "Expiry Date",
+      selector: (row) => (
+        <span onClick={() => handleEdit(row)}>
+          {moment(row?.discountExpiryTime).fromNow()}
+        </span>
+      ),
       sortable: false,
     },
 
     {
-      name: "Qty Available",
-      selector: "quantity",
-      sortable: true,
-    },
-
-    {
-      name: "Price",
-      selector: (row) => (
-        <span
-          onClick={() => {
-            navigate(
-              `/dashboard/affiliate-marketers/edit/${warehouse_id}/${row?.id}`
-            );
-          }}
-          className="uppercase"
-        >
-          {transactionAmount(row)}
-        </span>
-      ),
+      name: "Discount Code",
+      selector: "discountCode",
       sortable: true,
     },
 
@@ -206,27 +191,19 @@ const AffiliateMarketersPage = () => {
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
           <span
-            onClick={() => {
-              navigate(
-                `/dashboard/affiliate-marketers/edit/${warehouse_id}/${row?.id}`
-              );
-            }}
-            className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
+            onClick={() =>
+              setCurrentTxnDetails({ ...row, modalType: "delete" })
+            }
+            className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
-            Edit
+            Settle
           </span>
 
           <span
-            // onClick={() =>
-            //   setCurrentTxnDetails({
-            //     ...row,
-            //     modalType: "delete",
-            //     modalSize: "sm",
-            //   })
-            // }
-            className=" cursor-pointer px-4 py-1 rounded-full bg-red-deep text-[11px] text-white "
+            onClick={() => handleEdit(row)}
+            className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
-            Delete
+            Edit
           </span>
         </div>
       ),
@@ -314,11 +291,7 @@ const AffiliateMarketersPage = () => {
                         : []
                     }
                     columns={width >= 640 ? columns : columns.slice(0, 3)}
-                    onRowClicked={(e) => {
-                      navigate(
-                        `/dashboard/affiliate-marketers/edit/${warehouse_id}/${e?.id}`
-                      );
-                    }}
+                    onRowClicked={(e) => handleEdit(e)}
                     pointerOnHover
                     isLoading={loading}
                     pageCount={affiliateMarketersCount / pageCount}

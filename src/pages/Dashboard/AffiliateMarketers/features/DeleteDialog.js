@@ -8,7 +8,7 @@ import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
 import Button from "components/General/Button/Button";
-import Input from "components/General/Input/Input";
+import { GiCash } from "react-icons/gi";
 import Select from "components/General/Input/Select";
 import Textarea from "components/General/Textarea/Textarea";
 import { Link } from "react-router-dom";
@@ -82,21 +82,23 @@ export default function DeleteDialog({ details, toggler }) {
         </button>
       )}
 
-      <Delete className="scale-90" />
-      <p className="font-600 text-xl ">Delete Product</p>
+      <GiCash size={30} className="mb-5" />
+      <p className="font-600 text-xl ">Confirm Settlement</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to delete{" "}
-        <span className="text-black">"{details?.name}"?</span>
+        Confirm that{" "}
+        <span className="text-black">
+          "{details?.user?.firstName} {details?.user?.lastName}"
+        </span>{" "}
+        has been fully settled
       </p>
 
       <Button
         onClick={() => toggler?.()}
         type="submit"
-        text="Yes, Delete this product"
+        text="Yes, confirm settlement"
         className="mb-2"
         fullWidth
-        redBg
       />
 
       <Button
