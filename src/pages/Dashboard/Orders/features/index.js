@@ -110,13 +110,22 @@ const OrdersPage = () => {
       sortable: false,
     },
     {
-      name: "Payment Method",
-      selector: "paymentMethod",
-      sortable: false,
-    },
-    {
-      name: "Delivery Option",
-      selector: "deliveryMethod",
+      name: "Order Status",
+      selector: (row) => (
+        <span
+          className={classNames({
+            "text-yellow":
+              row?.orderStatus === "IN_PROGRESS" ||
+              row?.orderStatus === "PENDING" ||
+              row?.orderStatus === "DISPATCHED",
+            "text-green": row?.orderStatus === "COMPLETED",
+            "text-red-deep": row?.orderStatus === "CANCELLED",
+          })}
+          onClick={() => handleView(row)}
+        >
+          {row?.orderStatus}
+        </span>
+      ),
       sortable: false,
     },
 

@@ -59,6 +59,7 @@ const getOrderQuery = ({ id }) => gql`
           lastName
           phoneNumber
           gender
+          email
         }
       }
       deliveryMethod

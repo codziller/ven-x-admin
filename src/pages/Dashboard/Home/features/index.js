@@ -22,6 +22,7 @@ import useWindowDimensions from "hooks/useWindowDimensions";
 import { paramsObjectToQueryString } from "utils/request";
 import ProductsStore from "pages/Dashboard/Products/store";
 import OrdersStore from "pages/Dashboard/Orders/store";
+import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
 import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./OrderDetailsModal";
@@ -76,9 +77,11 @@ const HomePage = () => {
 
   const { getProductsCount, productsCount, loading } = ProductsStore;
   const { getOrdersCount, ordersCount, loading: orderLoading } = OrdersStore;
+  const { getUsers, usersCount, loading: usersLoading } = UsersStore;
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
     getOrdersCount({ data: { page: 1 } });
+    getUsers({ data: { page: 1 } });
   }, []);
   const searching = false;
 
@@ -262,9 +265,10 @@ const HomePage = () => {
             />
             <EarningCard
               icon={<CustomersIcon className="scale-[0.8]" />}
-              title="Users"
-              value="3000"
+              title="All Users"
+              value={numberWithCommas(usersCount)}
               link={`/dashboard/users/${warehouse_id}`}
+              isLoading={usersLoading}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
