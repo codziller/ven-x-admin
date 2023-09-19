@@ -68,6 +68,7 @@ class ProductsStore {
       this.loading = false;
     }
   };
+
   getArchivedProducts = async ({ data }) => {
     this.loadingArchived = true;
     try {
@@ -112,6 +113,18 @@ class ProductsStore {
     this.getProductLoading = true;
     try {
       let res = await apis.getProduct(data);
+      res = res?.product;
+      this.product = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.getProductLoading = false;
+    }
+  };
+  getProductName = async ({ data }) => {
+    this.getProductLoading = true;
+    try {
+      let res = await apis.getProductName(data);
       res = res?.product;
       this.product = res;
     } catch (error) {

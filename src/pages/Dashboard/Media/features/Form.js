@@ -71,20 +71,13 @@ export default function Form({ details, toggler }) {
   };
   return (
     <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
-      {details?.link ? (
-        <div className="mb-5">
-          <Link to={details?.link} className="scale-90">
-            <ArrowBack />
-          </Link>
-        </div>
-      ) : (
-        <button onClick={() => toggler?.()} className="scale-90 mb-5">
-          <Close />
-        </button>
-      )}
-
+      <div className="mb-5">
+        <Link to={details?.link} className="scale-90">
+          <ArrowBack />
+        </Link>
+      </div>
       {details?.isAdd ? (
-        <h2 className="section-heading my-8 text-xl">Add Home Slider Image</h2>
+        <h2 className="section-heading my-8 text-xl">Add New Offer Image</h2>
       ) : (
         <h2 className="section-heading mb-3 text-xl">Edit Product</h2>
       )}
@@ -103,10 +96,10 @@ export default function Form({ details, toggler }) {
         />
 
         <Textarea
-          label="Slider Description  (150 characters Max)"
+          label="Description  (150 characters Max)"
           value={form?.name}
           onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Slider Description"
+          placeholder="Enter Description"
           formError={errors.name}
           showFormError={formTwo?.showFormError}
           required

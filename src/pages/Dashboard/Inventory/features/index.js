@@ -42,9 +42,6 @@ export const dateFilters = [
   },
 ];
 const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
-  const navigate = useNavigate();
-  const { warehouse_id } = useParams();
-
   const {
     getProducts,
     products,

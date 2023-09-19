@@ -15,7 +15,13 @@ import { useCallback } from "react";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import ProductsStore from "../store";
 
-const ProductCategories = ({ details, toggler, handleChange, form }) => {
+const ProductCategories = ({
+  details,
+  toggler,
+  handleChange,
+  form,
+  type = "Product",
+}) => {
   const { categories } = CategoriesStore;
   const { setProductForm } = ProductsStore;
   const [formTwo, setFormTwo] = useState({
@@ -55,16 +61,13 @@ const ProductCategories = ({ details, toggler, handleChange, form }) => {
         )}
 
         <p className="font-600 text-[20px] ">
-          Select A Category For This Product
+          Select A Category For This {type}
         </p>
 
-        <p className="mb-3 text-sm text-grey text-left">
-          You'll be able to manage pricing and inventory for this variant later
-          on
-        </p>
+        <p className="mb-3 text-sm text-grey text-left">Search Categories</p>
 
         <SearchBar
-          placeholder={"Search subcategories"}
+          placeholder={"Search categories"}
           onChange={setSearchInput}
           value={searchInput}
           className="flex"

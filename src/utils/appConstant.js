@@ -665,3 +665,16 @@ export const ROLES = [
 ];
 
 export const WALLET_ACTIONS = { Credit: "Credit", Debit: "Debit" };
+
+export const SLIDE_LINK_TYPES = [
+  { name: "Brand Page", value: "BRAND" },
+  { name: "Product Page", value: "PRODUCT" },
+];
+
+export const MEDIA_MODAL_TYPES = { BRAND: "BRAND", PRODUCT: "PRODUCT" };
+
+export const IMAGE_NAME_ENUM = [
+  { name: "1", value: "UNDER_HOME_PAGE_SLIDER_WEB_A" },
+  { name: "2", value: "UNDER_HOME_PAGE_SLIDER_WEB_B" },
+  { name: "3", value: "UNDER_HOME_PAGE_SLIDER_WEB_C" },
+];

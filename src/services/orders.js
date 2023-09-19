@@ -14,6 +14,7 @@ const getOrdersQuery = ({ page }) => gql`
             lastName
           }
         }
+        id
         deliveryMethod
         orderCode
         orderStatus
@@ -41,8 +42,8 @@ const getOrderQuery = ({ id }) => gql`
         address {
           addressText
         }
-        calculatedOrderProducts{
-          product{
+        calculatedOrderProducts {
+          product {
             name
             imageUrls
           }
@@ -60,7 +61,6 @@ const getOrderQuery = ({ id }) => gql`
           gender
         }
       }
-     
       deliveryMethod
       id
       orderCode

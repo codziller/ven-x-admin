@@ -104,7 +104,7 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
 
   const handleEdit = (row) => {
     if (isModal) {
-      handleProductSelect(row);
+      handleProductSelect?.(row);
       return;
     }
 
@@ -222,7 +222,7 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
   return (
     <>
       <div className={classNames("h-full w-full", { "md:pr-4": !isModal })}>
-        <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
+        <div className="flex flex-col justify-start items-center h-full w-full gap-y-5 mt-5">
           <div className="flex justify-between items-center w-full mb-3 gap-1">
             <div
               className={classNames({
@@ -237,13 +237,15 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
                 className="flex"
               />
             </div>
-            <Link to={`/dashboard/products/add-product/${warehouse_id}`}>
-              <Button
-                text="Add New Product"
-                icon={<Plus className="stroke-current" />}
-                className="hidden md:block"
-              />
-            </Link>
+            {!isModal && (
+              <Link to={`/dashboard/products/add/${warehouse_id}`}>
+                <Button
+                  text="Add New Product"
+                  icon={<Plus className="stroke-current" />}
+                  className="hidden md:block"
+                />
+              </Link>
+            )}
           </div>
           <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
           {isLoading ? (
@@ -258,7 +260,7 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
                     data={displayedProducts}
                     columns={
                       isModal
-                        ? columns.slice(0, 2)
+                        ? columns.slice(0, 3)
                         : width >= 640
                         ? columns
                         : columns.slice(0, 2)

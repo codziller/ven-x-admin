@@ -7,10 +7,13 @@ import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import ProductsStore from "../store";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
-import Users from "./Users";
+import { MEDIA_MODAL_TYPES, PRODUCT_MODAL_TYPES } from "utils/appConstant";
 import { observer } from "mobx-react-lite";
+import Brands from "./Brands";
+import Products from "./Products";
+import ProductCategories from "pages/Dashboard/Products/features/ProductCategories";
 
+const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
   const { product_id } = useParams();
@@ -31,13 +34,34 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
           return <Form details={details} toggler={toggler} />;
         }
 
-      case PRODUCT_CATEGORY_OPTIONS:
+      case BRAND:
         return (
-          <Users
+          <Brands
             details={details}
             toggler={toggler}
             handleChange={handleChange}
             form={form}
+          />
+        );
+
+      case PRODUCT:
+        return (
+          <Products
+            details={details}
+            toggler={toggler}
+            handleChange={handleChange}
+            form={form}
+          />
+        );
+
+      case PRODUCT_CATEGORY_OPTIONS:
+        return (
+          <ProductCategories
+            details={details}
+            toggler={toggler}
+            handleChange={handleChange}
+            form={form}
+            type="Post"
           />
         );
 

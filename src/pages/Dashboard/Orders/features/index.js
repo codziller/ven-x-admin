@@ -252,7 +252,7 @@ const OrdersPage = () => {
 
       <TransactionDetailsModal
         active={!!currentTxnDetails}
-        transaction={currentTxnDetails}
+        details={currentTxnDetails}
         toggler={() => setCurrentTxnDetails(null)}
       />
       <DateRangeModal

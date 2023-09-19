@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import _ from "lodash";
 import qs from "query-string";
-import { useNavigate } from "react-router";
+import PropTypes from "prop-types";
 
 import useTableFilter from "hooks/tableFilter";
 import ActiveFilter from "components/General/ActiveFilter";
@@ -47,7 +47,7 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
-const BrandsPage = () => {
+const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
   const { brands, getBrands, loading, brandsCount } = BrandsStore;
 
   const requiredFilters = {
@@ -133,6 +133,15 @@ const BrandsPage = () => {
     }
   }, [searchInput]);
 
+  const handleEdit = (row) => {
+    if (isModal) {
+      handleBrandSelect?.(row);
+      return;
+    }
+
+    setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" });
+  };
+
   const columns = [
     {
       name: "Brand Name",
@@ -169,9 +178,7 @@ const BrandsPage = () => {
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
           <span
-            onClick={() =>
-              setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" })
-            }
+            onClick={() => handleEdit(row)}
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
             Edit
@@ -195,28 +202,6 @@ const BrandsPage = () => {
       (item) => filterData[item] && filterData[item] !== ""
     );
 
-  const renderFilters = () => {
-    if (filterData) {
-      return containsActiveFilter().map((item) => {
-        const hasChanged = defaultFilters[item] !== filterData[item];
-        if (hasChanged) {
-          return (
-            <ActiveFilter
-              key={item}
-              type={_.lowerCase(item).replace(/ /g, " ")}
-              value={
-                moment(filterData[item]?.value || filterData[item]).isValid()
-                  ? filterData[item]?.value || filterData[item]
-                  : _.lowerCase(filterData[item]?.value).replace(/ /g, " ")
-              }
-              onRemove={() => onRemoveFilter(item)}
-            />
-          );
-        }
-        return null;
-      });
-    }
-  };
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -228,7 +213,7 @@ const BrandsPage = () => {
 
   return (
     <>
-      <div className="h-full md:pr-4">
+      <div className="h-full w-full md:pr-4">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
           <div className="flex justify-between items-center w-full mb-3 gap-1">
             <div className="w-full sm:w-[45%] sm:min-w-[300px]">
@@ -239,7 +224,8 @@ const BrandsPage = () => {
                 className="flex"
               />
             </div>
-            <CopyToClipboard text={JSON.stringify(brands)}>
+
+            {!isModal && (
               <Button
                 text="Add Brand"
                 icon={<Plus className="stroke-current" />}
@@ -248,30 +234,25 @@ const BrandsPage = () => {
                   setCurrentTxnDetails({ modalType: "add", isAdd: true })
                 }
               />
-            </CopyToClipboard>
+            )}
           </div>
 
           {loading ? (
             <CircleLoader blue />
           ) : (
             <>
-              {containsActiveFilter().length > 0 && (
-                <div className="active-filters-container flex items-center w-full">
-                  <p className="title-text mr-[8px] text-blue">Filters:</p>
-                  <div className="active-filter-list flex items-center space-x-[8px]">
-                    {renderFilters()}
-                  </div>
-                </div>
-              )}
-
               <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
                 {brands?.length > 0 ? (
                   <Table
                     data={brands}
-                    columns={width >= 640 ? columns : columns.slice(0, 2)}
-                    onRowClicked={(e) => {
-                      setCurrentTxnDetails({ ...e, modalType: "edit" });
-                    }}
+                    columns={
+                      isModal
+                        ? columns.slice(0, 2)
+                        : width >= 640
+                        ? columns
+                        : columns.slice(0, 2)
+                    }
+                    onRowClicked={(e) => handleEdit(e)}
                     pointerOnHover
                     isLoading={loading}
                     pageCount={brandsCount / pageCount}
@@ -302,5 +283,9 @@ const BrandsPage = () => {
     </>
   );
 };
-
+BrandsPage.propTypes = {
+  handleBrandSelect: PropTypes.func,
+  isModal: PropTypes.bool,
+  isSelected: PropTypes.bool,
+};
 export default observer(BrandsPage);

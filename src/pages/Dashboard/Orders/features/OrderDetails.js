@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import cerave from "assets/images/cerave.png";
-import shm from "assets/images/shm.png";
-
+import CircleLoader from "components/General/CircleLoader/CircleLoader";
+import OrdersStore from "../store";
+import { observer } from "mobx-react-lite";
+import moment from "moment";
+import { transactionAmount } from "utils/transactions";
 const DetailBlock = ({ title, value, values }) => (
   <div className={`flex flex-col justify-center items-start w-full gap-2 px-4`}>
     <h6 className="text-base">{title}</h6>
@@ -10,54 +12,86 @@ const DetailBlock = ({ title, value, values }) => (
     {values?.map((item, i) => (
       <div className="flex justify-start items-center gap-2 w-full">
         <img
-          src={item?.images?.[0]}
+          src={item?.product?.imageUrls?.[0]}
           className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
+          alt={item?.product?.name}
         />
         <p key={i} className="text-grey-label text-sm truncate max-w-[60%]">
-          {item?.name} <span className="text-red">x3</span>
+          {item?.product?.name}{" "}
+          <span className="text-red">x{item?.quantity}</span>
         </p>
       </div>
     ))}
   </div>
 );
-const OrderDetails = ({ transaction }) => {
+const OrderDetails = ({ details }) => {
+  const { getOrder, getOrderLoading, order } = OrdersStore;
+
+  console.log("details: ", details);
+
+  useEffect(() => {
+    getOrder({ data: { id: details?.id } });
+  }, [order?.id]);
+
+  console.log("order6636: ", order);
   return (
     <div className="gap-y-4 py-4 w-full h-full pb-4">
       <h3 className="text-lg mb-5">Order Details</h3>
-      <div className="flex flex-col justify-start items-start w-full border border-grey-bordercolor rounded">
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Customer" value={"Jane Doe"} />
-        </div>
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Order ID" value={"1252657612"} />
-        </div>
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock
-            title="Products"
-            values={[
-              { name: "Cerave foaming facial cleanser", images: [cerave] },
-              { name: "Simple Hydrating Moisturizer", images: [shm] },
-            ]}
-          />
-        </div>
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Order Date" value={"June 20, 2023"} />
-          <DetailBlock title="Delivery Date" value={"June 20, 2023"} />
-        </div>
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Payment Method" value={"Card"} />
-        </div>
 
-        <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock
-            title="Description"
-            value={"Payment for Cerave Moisturizer"}
-          />
+      {getOrderLoading ? (
+        <CircleLoader blue />
+      ) : (
+        <div className="flex flex-col justify-start items-start w-full border border-grey-bordercolor rounded">
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock
+              title="Customer"
+              value={`${order?.calculatedOrder?.user?.firstName} 
+          ${order?.calculatedOrder?.user?.lastName}`}
+            />
+          </div>
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock title="Order Code" value={order?.orderCode} />
+          </div>
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock
+              title="Products"
+              values={order?.calculatedOrder?.calculatedOrderProducts}
+            />
+          </div>
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock
+              title="Order Date"
+              value={moment(order?.updatedAt).format("MMM Do, YYYY hh:mma")}
+            />
+            {/* <DetailBlock title="Delivery Date" value={"June 20, 2023"} /> */}
+          </div>
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock title="Payment Method" value={order?.paymentMethod} />
+          </div>
+
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock
+              title="Delivery Address"
+              value={order?.calculatedOrder?.address?.addressText}
+            />
+          </div>
+
+          <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
+            <DetailBlock
+              title="Delivery Fee"
+              value={order?.calculatedOrder?.deliveryFee}
+            />
+
+            <DetailBlock
+              title="Service Charge"
+              value={order?.calculatedOrder?.serviceCharge}
+            />
+          </div>
+          <div className="flex justify-between items-center w-full py-[18px]">
+            <DetailBlock title="Order Total" value={transactionAmount(order)} />
+          </div>
         </div>
-        <div className="flex justify-between items-center w-full py-[18px]">
-          <DetailBlock title="Total" value={"₦6,720.00"} />
-        </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -67,6 +101,6 @@ DetailBlock.propTypes = {
   value: PropTypes.string,
 };
 OrderDetails.propTypes = {
-  transaction: PropTypes.object,
+  details: PropTypes.object,
 };
-export default OrderDetails;
+export default observer(OrderDetails);

@@ -3,11 +3,11 @@ import { Outlet } from "react-router";
 import { Helmet } from "react-helmet";
 import DashboardLayout from "components/Layout/DashboardLayout";
 
-const HomeSlider = () => {
+const Media = () => {
   return (
     <div>
       <Helmet>
-        <title>Home Slider Images - Beautyhut</title>
+        <title>App & Website Media - Beautyhut</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />
@@ -16,4 +16,4 @@ const HomeSlider = () => {
   );
 };
 
-export default HomeSlider;
+export default Media;

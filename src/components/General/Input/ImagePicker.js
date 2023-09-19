@@ -7,6 +7,7 @@ import { useDropzone } from "react-dropzone";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import { FormErrorMessage } from "../FormErrorMessage";
+import classNames from "classnames";
 
 const baseStyle = {
   flex: 1,
@@ -47,6 +48,8 @@ export default function ImagePicker({
   type = "image",
   multiple,
   isRequired,
+  isBanner,
+  isPost,
   ...rest
 }) {
   const imageArray = isString(images) ? [images] : images;
@@ -95,7 +98,12 @@ export default function ImagePicker({
       </div>
 
       {!isEmpty(imageArray) && (
-        <div className="grid grid-cols-2 gap-10 my-4">
+        <div
+          className={classNames("grid gap-10 my-4", {
+            "grid-cols-2": multiple,
+            "grid-cols-1 w-full": !multiple,
+          })}
+        >
           {type === "video"
             ? imageArray?.map((file, index) => (
                 <div key={file?.name} className="image-item w-full h-fit">
@@ -123,7 +131,14 @@ export default function ImagePicker({
                 </div>
               ))
             : imageArray?.map((file, index) => (
-                <div key={index} className="image-item w-full h-[150px]">
+                <div
+                  key={index}
+                  className={classNames("image-item w-full", {
+                    "min-h-[420px] max-h-[420px]": isBanner,
+                    "h-[250px] sm:h-[300px] rounded-[6px]": isPost,
+                    "h-[150px]": !isBanner && !isPost,
+                  })}
+                >
                   <div className="flex justify-between items-center">
                     <span className="text-grey text-xs truncate max-w-[calc(100%-30px)]">
                       {file?.name}
@@ -164,4 +179,6 @@ ImagePicker.propTypes = {
   showFormError: PropTypes.bool,
   formError: PropTypes.object,
   isRequired: PropTypes.bool,
+  isBanner: PropTypes.bool,
+  isPost: PropTypes.bool,
 };

@@ -20,7 +20,7 @@ const DashboardLayout = ({ children }) => {
 
   const [sidenavOpen, setSidenavOpen] = useState(false);
   const [sidenavCollapsed, setSidenavCollapsed] = useState(
-    location.pathname.includes("add-product") ? true : false
+    location.pathname.includes("add") ? true : false
   );
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -28,8 +28,7 @@ const DashboardLayout = ({ children }) => {
 
   useEffect(() => {
     setSidenavCollapsed(
-      location.pathname.includes("add-product") ||
-        location.pathname.includes("edit-product")
+      location.pathname.includes("add") || location.pathname.includes("edit")
         ? true
         : false
     );

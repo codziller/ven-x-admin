@@ -15,7 +15,6 @@ import { Link, useParams } from "react-router-dom";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
-import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
 import { observer } from "mobx-react-lite";
 import AffiliateMarketersStore from "../store";
 import cleanPayload from "utils/cleanPayload";
@@ -24,7 +23,7 @@ import DatePickerComponent from "components/General/DatePicker";
 import moment from "moment";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
 import UsersStore from "pages/Dashboard/Users/store";
-const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const { affiliateMarketer_id, warehouse_id } = useParams();
   console.log("affiliateMarketer_id: ", affiliateMarketer_id);
@@ -206,7 +205,7 @@ const Form = ({ details, toggler }) => {
                     <TailSpin
                       height="25"
                       width="25"
-                      color="#0000000"
+                      color="#000000"
                       ariaLabel="tail-spin-loading"
                       radius="3"
                       visible={true}
@@ -398,11 +397,6 @@ const Form = ({ details, toggler }) => {
         toggler={() => handleChangeTwo("modalType", false)}
         handleChange={handleChange}
         form={form}
-      />
-      <CategoryDetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY}
-        details={{ modalType: "add", isAdd: true }}
-        toggler={() => handleChangeTwo("modalType", false)}
       />
     </>
   );

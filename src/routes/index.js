@@ -19,12 +19,9 @@ import Staff from "pages/Dashboard/Staff";
 import PromoPage from "pages/Dashboard/Promo/features";
 import Promo from "pages/Dashboard/Promo";
 import AddPromo from "pages/Dashboard/Promo/features/AddPromo";
-import AddHomeSlider from "pages/Dashboard/HomeSlider/features/AddHomeSlider";
-import HomeSlider from "pages/Dashboard/HomeSlider";
-import HomeSliderPage from "pages/Dashboard/HomeSlider/features";
-import NewOffer from "pages/Dashboard/NewOffer";
-import AddNewOffer from "pages/Dashboard/NewOffer/features/AddNewOffer";
-import NewOfferPage from "pages/Dashboard/NewOffer/features";
+import Media from "pages/Dashboard/Media";
+import AddHomePageSlider from "pages/Dashboard/Media/features/AddHomePageSlider";
+import MediaPage from "pages/Dashboard/Media/features";
 import FeaturedSectionPage from "pages/Dashboard/FeaturedSection/features";
 import FeaturedSection from "pages/Dashboard/FeaturedSection";
 import Orders from "pages/Dashboard/Orders";
@@ -59,6 +56,8 @@ import UsersPage from "pages/Dashboard/Users/features";
 import AddUser from "pages/Dashboard/Users/features/AddUser";
 import Donations from "pages/Dashboard/Donations";
 import DonationsPage from "pages/Dashboard/Donations/features";
+import AddHomePagePost from "pages/Dashboard/Media/features/AddHomePagePost";
+import AddMobilePagePost from "pages/Dashboard/Media/features/AddMobilePagePost";
 
 const Router = () => {
   return (
@@ -105,9 +104,9 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<ProductsPage />} />
-          <Route path="add-product/:warehouse_id" element={<AddProduct />} />
+          <Route path="add/:warehouse_id" element={<AddProduct />} />
           <Route
-            path="edit-product/:warehouse_id/:product_id"
+            path="edit/:warehouse_id/:product_id"
             element={<AddProduct />}
           />
         </Route>
@@ -335,39 +334,43 @@ const Router = () => {
           <Route path=":warehouse_id" element={<PaymentsPage />} />
         </Route>
         {/* end payments */}
-        {/* home-slider-images */}
-        <Route
-          path="/dashboard/slider-images"
-          element={
-            <ProtectedRoute path="">
-              <HomeSlider />
-            </ProtectedRoute>
-          }
-        >
-          <Route path=":warehouse_id" element={<HomeSliderPage />} />
-          <Route
-            path="add-slider-images/:warehouse_id"
-            element={<AddHomeSlider />}
-          />
-        </Route>
-        {/* end home-slider-images */}
 
-        {/* new-offer-images */}
+        {/* media */}
         <Route
-          path="/dashboard/new-offer-images"
+          path="/dashboard/media"
           element={
             <ProtectedRoute path="">
-              <NewOffer />
+              <Media />
             </ProtectedRoute>
           }
         >
-          <Route path=":warehouse_id" element={<NewOfferPage />} />
+          <Route path=":warehouse_id" element={<MediaPage />} />
           <Route
-            path="add-new-offer-images/:warehouse_id"
-            element={<AddNewOffer />}
+            path="add-homepage-slider/:warehouse_id/:position"
+            element={<AddHomePageSlider />}
+          />
+          <Route
+            path="edit/:warehouse_id/:position/:media_id"
+            element={<AddHomePageSlider />}
+          />
+          <Route
+            path="add-homepage-post/:warehouse_id/:position"
+            element={<AddHomePagePost />}
+          />
+          <Route
+            path="edit-homepage-post/:warehouse_id/:position/:media_id"
+            element={<AddHomePagePost />}
+          />
+          <Route
+            path="add-mobile-post/:warehouse_id/:position"
+            element={<AddMobilePagePost />}
+          />
+          <Route
+            path="edit-mobile-post/:warehouse_id/:position/:media_id"
+            element={<AddMobilePagePost />}
           />
         </Route>
-        {/* end new-offer-images */}
+        {/* end media */}
 
         {/* featured-sections */}
         <Route

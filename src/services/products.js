@@ -71,6 +71,15 @@ archive
     }
   }
 `;
+const getProductNameQuery = ({ id }) => gql`
+  {
+    __typename
+    product(id: "${id}") {
+    id     
+    name
+    }
+  }
+`;
 const getProductsQuery = ({ page }) => gql`
   {
     __typename
@@ -355,6 +364,10 @@ const apis = {
     }),
   getProduct: ({ id }) =>
     graphQlInstance(getProductQuery({ id }), {
+      method: "GET",
+    }),
+  getProductName: ({ id }) =>
+    graphQlInstance(getProductNameQuery({ id }), {
       method: "GET",
     }),
 

@@ -5,7 +5,7 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import TransactionDetails from "./OrderDetails";
 
-const OrderDetailsModal = ({ active, toggler, transaction }) => {
+const OrderDetailsModal = ({ active, toggler, details }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     toggler();
@@ -21,7 +21,7 @@ const OrderDetailsModal = ({ active, toggler, transaction }) => {
       <form onSubmit={handleSubmit} className="w-full h-full mb-10">
         <ModalBody>
           <div className="w-full">
-            {active && <TransactionDetails transaction={transaction} />}
+            {active && <TransactionDetails details={details} />}
           </div>
         </ModalBody>
       </form>

@@ -21,7 +21,8 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
 
   useEffect(() => {
     elementsRef.current = elementsRef.current.slice(0, tabs.length);
-  }, [tabs]);
+  }, [tabs, activeTab, elementsRef.current]);
+
   return (
     <div className="w-full flex relative mb-6">
       <div className="w-full ">
@@ -56,7 +57,7 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
             style={{
               //   left: getTabRect()?.left || 0,
               transform: `translateX(${getTabRect()?.left || 0}px)`,
-              width: `${getTabRect()?.width || 0}px`,
+              width: `${getTabRect()?.width || 120}px`,
             }}
           ></div>
         </div>

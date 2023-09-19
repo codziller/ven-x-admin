@@ -36,7 +36,6 @@ const getBrandQuery = ({ id }) => gql`
         id
         updatedAt
         imageUrls
-        videoUrls
         category {
           name
           id

@@ -254,25 +254,14 @@ const getLinks = (warehouse_id, user) => [
       <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
     ),
   },
+
   {
-    title: "Home Slider Images",
-    slug: "/dashboard/slider-images",
+    title: "App & Website Media",
+    slug: "/dashboard/media",
     label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/slider-images/${warehouse_id}`,
+    link: `/dashboard/media/${warehouse_id}`,
     icon: (
       <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-    ),
-  },
-  {
-    title: "New Offer Images",
-    slug: "/dashboard/new-offer-images",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/new-offer-images/${warehouse_id}`,
-    icon: (
-      <MdOutlineImageAspectRatio
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
     ),
   },
 ];
