@@ -18,7 +18,7 @@ import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
 import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg";
 import useWindowDimensions from "hooks/useWindowDimensions";
-
+import OrdersPage from "pages/Dashboard/Orders/features";
 import { paramsObjectToQueryString } from "utils/request";
 import ProductsStore from "pages/Dashboard/Products/store";
 import OrdersStore from "pages/Dashboard/Orders/store";
@@ -76,11 +76,10 @@ const HomePage = () => {
   const [searchInput, setSearchInput] = useState("");
 
   const { getProductsCount, productsCount, loading } = ProductsStore;
-  const { getOrdersCount, ordersCount, loading: orderLoading } = OrdersStore;
+  const { ordersCount, loading: orderLoading } = OrdersStore;
   const { getUsers, usersCount, loading: usersLoading } = UsersStore;
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
-    getOrdersCount({ data: { page: 1 } });
     getUsers({ data: { page: 1 } });
   }, []);
   const searching = false;
@@ -277,56 +276,9 @@ const HomePage = () => {
             <TransactionValueCard />
           </div>
 
-          {searching ? (
-            <CircleLoader blue />
-          ) : (
-            <>
-              {containsActiveFilter().length > 0 && (
-                <div className="active-filters-container flex items-center w-full">
-                  <p className="title-text mr-[8px] text-blue">Filters:</p>
-                  <div className="active-filter-list flex items-center space-x-[8px]">
-                    {renderFilters()}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
-                {transactions?.length > 0 ? (
-                  <Table
-                    title="Recent Orders"
-                    data={
-                      transactions?.length
-                        ? transactions.slice(0, pageCount)
-                        : []
-                    }
-                    columns={width >= 640 ? columns : columns.slice(0, 2)}
-                    onRowClicked={(e) => {
-                      setCurrentTxnDetails(e);
-                    }}
-                    header
-                    dateFilter
-                    pointerOnHover
-                    isLoading={searching}
-                    pageCount={transactions?.length / pageCount}
-                    onPageChange={(page) => setCurrentPage(page)}
-                    currentPage={currentPage}
-                    tableClassName="txn-section-table"
-                    placeholder="Search by order ID"
-                    searchInput={searchInput}
-                    setSearchInput={setSearchInput}
-                    noPadding
-                  />
-                ) : (
-                  <>
-                    <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
-                      <SearchIcon className="stroke-current" />
-                      <span>Search for orders by order ID</span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
-          )}
+          <div className="w-full flex flex-col bg-white">
+            <OrdersPage isRecent />
+          </div>
         </div>
       </div>
 

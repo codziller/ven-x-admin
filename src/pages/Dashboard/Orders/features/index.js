@@ -46,7 +46,7 @@ export const dateFilters = [
     end_date: dateConstants?.endOfWeek,
   },
 ];
-const OrdersPage = () => {
+const OrdersPage = ({ isRecent }) => {
   const { warehouse_id } = useParams();
   const {
     getOrders,
@@ -183,29 +183,40 @@ const OrdersPage = () => {
 
   return (
     <>
-      <div className="h-full md:pr-4">
+      <div className="h-full w-full">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
-          <div className="flex justify-between items-center w-full mb-3 gap-1">
-            <div className="sm:min-w-[200px]">
-              <DashboardFilterDropdown
-                placeholder="Filter by: "
-                options={dateFilters}
-                name="payout_filter"
-                onClick={(e) => setDateFilter(e)}
-                value={dateFilter?.label}
-              />
-            </div>
+          {!isRecent && (
+            <div className="flex justify-between items-center w-full mb-3 gap-1">
+              <div className="sm:min-w-[200px]">
+                <DashboardFilterDropdown
+                  placeholder="Filter by: "
+                  options={dateFilters}
+                  name="payout_filter"
+                  onClick={(e) => setDateFilter(e)}
+                  value={dateFilter?.label}
+                />
+              </div>
 
-            <div className="flex justify-start items-center w-full truncate text-base">
-              {dateFilter.value === "today"
-                ? moment(dateFilter.start_date).format("MMM Do, YYYY")
-                : `${moment(dateFilter.start_date).format(
-                    "MMM Do, YYYY"
-                  )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
+              <div className="flex justify-start items-center w-full truncate text-base">
+                {dateFilter.value === "today"
+                  ? moment(dateFilter.start_date).format("MMM Do, YYYY")
+                  : `${moment(dateFilter.start_date).format(
+                      "MMM Do, YYYY"
+                    )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
+              </div>
             </div>
-          </div>
+          )}
+          {isRecent && (
+            <p className="font-700 text-start w-full pl-3 mt-5">
+              Recent Orders
+            </p>
+          )}
           <div className="flex justify-between items-center w-full mb-3 gap-1">
-            <div className="w-full sm:w-[45%] sm:min-w-[300px]">
+            <div
+              className={classNames("w-full sm:w-[45%] sm:min-w-[300px]", {
+                "ml-3 mt-3": isRecent,
+              })}
+            >
               <SearchBar
                 placeholder={"Search orders"}
                 onChange={setSearchInput}
@@ -220,6 +231,7 @@ const OrdersPage = () => {
             <>
               {isSearchMode &&
                 `Search results - ${numberWithCommas(searchResultCount)}`}
+
               <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
                 {!isEmpty(displayedItems) ? (
                   <Table
