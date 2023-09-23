@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import PropTypes from "prop-types";
 import Button from "components/General/Button/Button";
 import { ReactComponent as Plus } from "assets/icons/Plus/plus.svg";
 import { ReactComponent as NewPlus } from "assets/icons/Plus/new_plus.svg";
@@ -22,7 +23,7 @@ import Tabs from "components/General/Tabs";
 
 const TABS = ["Warehouses", "Archived warehouses"];
 
-const ListOfProviders = () => {
+const ListOfProviders = ({ isModal, handleSelect, isSelected }) => {
   const navigate = useNavigate();
   const {
     getWarehouses,
@@ -93,6 +94,13 @@ const ListOfProviders = () => {
 
   const groupedWarehouses = groupBy(warehouses, "state");
 
+  const handleEdit = (row) => {
+    if (isModal) {
+      handleSelect?.(row);
+      return;
+    }
+    navigate(`/dashboard/home/${provider?.id}`);
+  };
   return (
     <div className="flex-col justify-start items-center gap-8 inline-flex w-full sm:w-[560px] md:w-[660px] lg:w-[850px] h-full">
       <div
@@ -142,10 +150,12 @@ const ListOfProviders = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-start items-center gap-4 w-full sm:w-auto">
                       {searchResults.map((provider, i) => (
                         <ProviderCard
+                          onClick={() => handleEdit(provider)}
                           key={provider.id}
                           provider={provider}
                           setModalVisible={setModalVisible}
                           group={groupedWarehouses[provider.state]}
+                          isSelected={provider?.id === isSelected}
                         />
                       ))}
                       <div
@@ -255,5 +265,10 @@ const ListOfProviders = () => {
       )}
     </div>
   );
+};
+ListOfProviders.propTypes = {
+  handleSelect: PropTypes.func,
+  isModal: PropTypes.bool,
+  isSelected: PropTypes.bool,
 };
 export default observer(ListOfProviders);

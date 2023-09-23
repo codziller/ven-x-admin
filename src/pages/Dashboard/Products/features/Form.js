@@ -113,9 +113,9 @@ const Form = ({ details, toggler }) => {
     costPrice: product_id ? product?.costPrice : "",
     salePrice: product_id ? product?.salePrice : "",
     discountValue: product_id ? product?.discountValue : "",
-    quantity: product_id ? product?.quantity : "",
+    // quantity: product_id ? product?.quantity : "",
     weight: product_id ? product?.weight : "",
-    lowInQuantityValue: product_id ? product?.lowInQuantityValue : "",
+    // lowInQuantityValue: product_id ? product?.lowInQuantityValue : "",
     imageUrls: product_id ? product?.imageUrls : [],
     videoUrls: product_id ? product?.videoUrls : [],
     productDescription: product_id ? product?.productDescription : "",
@@ -147,9 +147,9 @@ const Form = ({ details, toggler }) => {
     brandId: watch("brandId"),
     categoryId: watch("categoryId"),
     ribbon: watch("ribbon"),
-    quantity: watch("quantity"),
+    // quantity: watch("quantity"),
     weight: watch("weight"),
-    lowInQuantityValue: watch("lowInQuantityValue"),
+    // lowInQuantityValue: watch("lowInQuantityValue"),
     productDescription: watch("productDescription"),
     howToUse: watch("howToUse"),
     productIngredients: watch("productIngredients"),
@@ -321,7 +321,7 @@ const Form = ({ details, toggler }) => {
         productVariants,
         imageUrls: imagesUrls?.[0],
         videoUrls: imagesUrls?.[1],
-        lowInQuantityValue: form?.lowInQuantityValue || "0",
+        // lowInQuantityValue: form?.lowInQuantityValue || "0",
         preOrderLimit: form?.preOrderLimit || "0",
         ...(product_id && {
           productId: product_id,
@@ -335,12 +335,12 @@ const Form = ({ details, toggler }) => {
       if (product_id) {
         await editProduct({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
       } else {
         await createProduct({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
       }
     } catch (error) {
@@ -359,13 +359,13 @@ const Form = ({ details, toggler }) => {
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
         {details?.link ? (
-          <div className="mb-5">
-            <Link
-              to={`/dashboard/products/${warehouse_id}`}
-              className="scale-90"
+          <div className="mb-5 w-full flex justify-start">
+            <div
+              onClick={() => navigate(-1)}
+              className="scale-90 cursor-pointer"
             >
               <ArrowBack />
-            </Link>
+            </div>
           </div>
         ) : (
           <button onClick={() => toggler?.()} className="scale-90 mb-5">
@@ -448,7 +448,7 @@ const Form = ({ details, toggler }) => {
               tooltip="Ribbon to be attached with this product"
               fullWidth
             />
-            <Input
+            {/* <Input
               label="Quantity"
               value={form?.quantity}
               onChangeFunc={(val) => handleChange("quantity", val)}
@@ -457,7 +457,7 @@ const Form = ({ details, toggler }) => {
               showFormError={formTwo?.showFormError}
               type="number"
               isRequired
-            />
+            /> */}
             <Input
               label="Weight (grams)"
               value={form?.weight}
@@ -469,7 +469,7 @@ const Form = ({ details, toggler }) => {
               type="number"
               isRequired
             />
-            <Input
+            {/* <Input
               label="Low in stock value (optional)"
               value={form?.lowInQuantityValue}
               onChangeFunc={(val) => handleChange("lowInQuantityValue", val)}
@@ -478,7 +478,7 @@ const Form = ({ details, toggler }) => {
               showFormError={formTwo?.showFormError}
               type="number"
               tooltip="When quantity is at this value, the product will be low in stock."
-            />
+            /> */}
 
             <Wysiwyg
               label="Product Description"

@@ -12,7 +12,10 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import { Link, useParams } from "react-router-dom";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
+import {
+  AFFILIATE_MARKETER_ORDER_TYPES,
+  PRODUCT_MODAL_TYPES,
+} from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
 import { observer } from "mobx-react-lite";
@@ -24,6 +27,7 @@ import moment from "moment";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
 import UsersStore from "pages/Dashboard/Users/store";
 const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+const { ALL, FIRST } = AFFILIATE_MARKETER_ORDER_TYPES;
 const Form = ({ details, toggler }) => {
   const { affiliateMarketer_id, warehouse_id } = useParams();
   console.log("affiliateMarketer_id: ", affiliateMarketer_id);
@@ -42,6 +46,7 @@ const Form = ({ details, toggler }) => {
     formModified: false,
     modalType: "",
     createLoading: false,
+    noExpiry: false,
   });
 
   const schema = yup.object({
@@ -51,7 +56,6 @@ const Form = ({ details, toggler }) => {
     discountCode: yup.string().required("Please enter discount code"),
     discountValue: yup.string().required("Please enter discount value"),
     discountType: yup.string().required("Please select discount type"),
-    discountExpiryTime: yup.string().required("Please select expiry time"),
   });
 
   const defaultValues = {
@@ -69,6 +73,7 @@ const Form = ({ details, toggler }) => {
     discountExpiryTime: affiliateMarketer_id
       ? affiliateMarketer?.discountExpiryTime
       : "",
+    typeOfOrder: affiliateMarketer_id ? affiliateMarketer?.typeOfOrder : FIRST,
   };
 
   const {
@@ -92,6 +97,7 @@ const Form = ({ details, toggler }) => {
     discountType: watch("discountType"),
     discountLimit: watch("discountLimit"),
     discountExpiryTime: watch("discountExpiryTime"),
+    typeOfOrder: watch("typeOfOrder"),
   };
 
   useEffect(() => {
@@ -100,9 +106,12 @@ const Form = ({ details, toggler }) => {
 
   const handleChange = async (prop, val, rest, isFormTwo) => {
     if (
-      prop === "discountValue" &&
-      form.discountType === "PERCENTAGE" &&
-      parseFloat(val) > 100
+      (prop === "discountValue" &&
+        form.discountType === "PERCENTAGE" &&
+        parseFloat(val) > 100) ||
+      (prop === "userProfitValue" &&
+        form.userProfitType === "PERCENTAGE" &&
+        parseFloat(val) > 100)
     ) {
       return;
     }
@@ -125,22 +134,33 @@ const Form = ({ details, toggler }) => {
       parseFloat(form.discountValue) > 100
     ) {
       handleChange("discountValue", "");
+    } else if (
+      form.userProfitType === "PERCENTAGE" &&
+      parseFloat(form.userProfitValue) > 100
+    ) {
+      handleChange("userProfitValue", "");
     }
-  }, [form.discountType, form.discountValue]);
+  }, [
+    form.discountType,
+    form.discountValue,
+    form.userProfitType,
+    form.userProfitValue,
+  ]);
 
   const handleOnSubmit = () => {
     let payload = {
       ...form,
-
       id: affiliateMarketer_id,
     };
 
     cleanPayload(payload);
     payload = {
       ...payload,
-      discountExpiryTime: new Date(moment(form?.discountExpiryTime)._d),
+      discountExpiryTime: formTwo?.noExpiry
+        ? null
+        : new Date(moment(form?.discountExpiryTime)._d),
     };
-
+    cleanPayload(payload);
     if (affiliateMarketer_id) {
       editAffiliateMarketer({
         data: payload,
@@ -347,30 +367,65 @@ const Form = ({ details, toggler }) => {
               suffix={" times"}
               type="number"
             />
-            <DatePickerComponent
-              label="Discount Expiry Time"
-              placeholder="Choose Discount Expiry Time"
-              name="discountExpiryTime"
-              showTimeSelect
-              isRequired
-              value={
-                moment(form?.discountExpiryTime).isValid()
-                  ? moment(form?.discountExpiryTime)._d
-                  : ""
-              }
-              minDate={
-                moment(form?.end_date).isValid()
-                  ? moment(form?.end_date).subtract(0, "days")._d
-                  : moment().subtract(1, "days")._d
-              }
-              dateFormat="dd MMMM yyyy hh:mm"
-              onChange={(value) =>
-                handleChange(
-                  "discountExpiryTime",
-                  moment(value).format("YYYY-MM-DD hh:mm")
-                )
-              }
+
+            {!formTwo.noExpiry && (
+              <DatePickerComponent
+                label="Discount Expiry Time"
+                placeholder="Choose Discount Expiry Time"
+                name="discountExpiryTime"
+                showTimeSelect
+                isRequired
+                value={
+                  moment(form?.discountExpiryTime).isValid()
+                    ? moment(form?.discountExpiryTime)._d
+                    : ""
+                }
+                minDate={
+                  moment(form?.end_date).isValid()
+                    ? moment(form?.end_date).subtract(0, "days")._d
+                    : moment().subtract(1, "days")._d
+                }
+                dateFormat="dd MMMM yyyy hh:mm"
+                onChange={(value) =>
+                  handleChange(
+                    "discountExpiryTime",
+                    moment(value).format("YYYY-MM-DD hh:mm")
+                  )
+                }
+              />
+            )}
+
+            <CheckBox
+              label="No Expiry Time"
+              onChange={() => handleChangeTwo("noExpiry", !formTwo.noExpiry)}
+              checked={formTwo.noExpiry}
+              square
             />
+          </div>
+          {/* Third section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Order Discount Type
+              </span>
+              <span className="text-grey-text text-sm">
+                Choose whether to apply the discount to either first order or to
+                all orders.
+              </span>
+            </div>
+
+            <CheckBox
+              label="First Order Only"
+              onChange={() => handleChange("typeOfOrder", FIRST)}
+              checked={form.typeOfOrder === FIRST}
+            />
+
+            <CheckBox
+              label="All Orders"
+              onChange={() => handleChange("typeOfOrder", ALL)}
+              checked={form.typeOfOrder === ALL}
+            />
+
             <Button
               onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
               type="submit"
@@ -386,8 +441,6 @@ const Form = ({ details, toggler }) => {
               fullWidth
             />
           </div>
-          {/* Third section */}
-          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
         </form>
       </div>
 

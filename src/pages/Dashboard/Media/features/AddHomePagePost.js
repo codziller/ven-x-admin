@@ -44,10 +44,6 @@ const Form = observer(() => {
   });
 
   const schema = yup.object({
-    sourceImageUrl: yup
-      .array()
-      .min(1, "Please select post image")
-      .required("Please select post image"),
     titleText: yup.string().required("Please enter post title"),
     descriptionText: yup.string().required("Please enter post description"),
   });

@@ -16,6 +16,7 @@ const getAffiliateMarketerQuery = ({ id }) => gql`
       userId
       userProfitType
       userProfitValue
+      typeOfOrder
     }
   }
 `;
@@ -51,13 +52,14 @@ const getAffiliateMarketersQuery = ({ page }) => gql`
 const createAffiliateMarketerQuery = gql`
   mutation createAffiliateMarketer(
     $discountCode: String!
-    $discountExpiryTime: DateTime!
+    $discountExpiryTime: DateTime
     $discountLimit: String
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $userId: String!
     $userProfitType: DISCOUNT_TYPE!
     $userProfitValue: String!
+    $typeOfOrder: TypeOfAffiliateMarketerOrder!
   ) {
     createAffiliateMarketer(
       createAffiliateMarketerInput: {
@@ -69,6 +71,7 @@ const createAffiliateMarketerQuery = gql`
         userId: $userId
         userProfitType: $userProfitType
         userProfitValue: $userProfitValue
+        typeOfOrder: $typeOfOrder
       }
     ) {
       id
@@ -80,13 +83,14 @@ const editAffiliateMarketerQuery = gql`
   mutation updateAffiliateMarketer(
     $id: String!
     $discountCode: String!
-    $discountExpiryTime: DateTime!
+    $discountExpiryTime: DateTime
     $discountLimit: String
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $userId: String!
     $userProfitType: DISCOUNT_TYPE!
     $userProfitValue: String!
+    $typeOfOrder: TypeOfAffiliateMarketerOrder!
   ) {
     updateAffiliateMarketer(
       updateAffiliateMarketerInput: {
@@ -99,6 +103,7 @@ const editAffiliateMarketerQuery = gql`
         userId: $userId
         userProfitType: $userProfitType
         userProfitValue: $userProfitValue
+        typeOfOrder: $typeOfOrder
       }
     ) {
       id

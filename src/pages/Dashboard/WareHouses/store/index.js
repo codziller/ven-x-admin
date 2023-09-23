@@ -37,9 +37,11 @@ class WareHousesStore {
       let res = await apis.getWarehouses(data);
       res = res?.warehouses;
       this.warehouses =
-        res?.results?.sort((a, b) =>
-          moment(b.createdAt).diff(moment(a.createdAt))
-        ) || [];
+        res?.results
+          ?.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+          ?.map((item) => {
+            return { ...item, label: item?.name, value: item?.id };
+          }) || [];
       this.warehousesCount = res?.total;
     } catch (error) {
       this.error = error;

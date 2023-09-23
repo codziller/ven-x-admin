@@ -24,7 +24,6 @@ discountValue
 enablePreOrder
 howToUse
 id
-lowInQuantityValue
 name
 preOrderLimit
 preOrderMessage
@@ -60,7 +59,6 @@ productVariants {
   visibility
   weight
 }
-quantity
 ribbon
 salePrice
 updatedAt
@@ -71,6 +69,21 @@ archive
     }
   }
 `;
+const getProductCostPriceHistoryQuery = ({ id }) => gql`
+  {
+    __typename
+    product(id: "${id}") {
+   id 
+   name
+   productCostPriceHistory {
+    createdAt
+    newCostPrice
+    oldCostPrice
+   }
+}
+}
+`;
+
 const getProductNameQuery = ({ id }) => gql`
   {
     __typename
@@ -79,6 +92,19 @@ const getProductNameQuery = ({ id }) => gql`
     name
     }
   }
+`;
+
+const checkProductQuantityInWarehouseQuery = ({
+  productId,
+  requiredQuantity,
+  warehouseId,
+}) => gql`
+{
+  __typename
+  checkProductQuantityInWarehouse(productId: "${productId}", requiredQuantity: ${requiredQuantity}, warehouseId: "${warehouseId}") {    
+  scalar
+  }
+}
 `;
 const getProductsQuery = ({ page }) => gql`
   {
@@ -123,7 +149,6 @@ const createProductQuery = gql`
     $enablePreOrder: Boolean!
     $howToUse: String
     $imageUrls: [String!]
-    $lowInQuantityValue: String!
     $name: String!
     $preOrderLimit: String!
     $preOrderMessage: String
@@ -132,7 +157,6 @@ const createProductQuery = gql`
     $productOptions: [CreateProductOptionInput!]
     $productSubscriptions: [CreateProductSubscriptionInput!]
     $productVariants: [CreateProductVariantInput!]
-    $quantity: String!
     $ribbon: RIBBON
     $salePrice: String!
     $videoUrls: [String!]
@@ -148,7 +172,6 @@ const createProductQuery = gql`
         enablePreOrder: $enablePreOrder
         howToUse: $howToUse
         imageUrls: $imageUrls
-        lowInQuantityValue: $lowInQuantityValue
         name: $name
         preOrderLimit: $preOrderLimit
         preOrderMessage: $preOrderMessage
@@ -157,7 +180,6 @@ const createProductQuery = gql`
         productOptions: $productOptions
         productSubscriptions: $productSubscriptions
         productVariants: $productVariants
-        quantity: $quantity
         ribbon: $ribbon
         salePrice: $salePrice
         videoUrls: $videoUrls
@@ -180,13 +202,11 @@ const editProductQuery = gql`
     $enablePreOrder: Boolean!
     $howToUse: String
     $imageUrls: [String!]
-    $lowInQuantityValue: String!
     $name: String!
     $preOrderLimit: String!
     $preOrderMessage: String
     $productDescription: String
     $productIngredients: String
-    $quantity: String!
     $ribbon: RIBBON
     $salePrice: String!
     $videoUrls: [String!]
@@ -202,13 +222,11 @@ const editProductQuery = gql`
         enablePreOrder: $enablePreOrder
         howToUse: $howToUse
         imageUrls: $imageUrls
-        lowInQuantityValue: $lowInQuantityValue
         name: $name
         preOrderLimit: $preOrderLimit
         preOrderMessage: $preOrderMessage
         productDescription: $productDescription
         productIngredients: $productIngredients
-        quantity: $quantity
         ribbon: $ribbon
         salePrice: $salePrice
         videoUrls: $videoUrls
@@ -298,7 +316,40 @@ const editProductSubscriptionQuery = gql`
     }
   }
 `;
-
+const editProductInventoryQuery = gql`
+  mutation updateProductInventory(
+    $lowInQuantityValue: String!
+    $productId: String!
+    $quantity: String!
+    $warehouseId: String!
+  ) {
+    updateProductInventory(
+      lowInQuantityValue: $lowInQuantityValue
+      productId: $productId
+      quantity: $quantity
+      warehouseId: $warehouseId
+    ) {
+      status
+    }
+  }
+`;
+const requestProductsQuery = gql`
+  mutation requestProducts(
+    $destinationWarehouseId: String!
+    $productTransferRequestProductQuantities: [CreateProductTransferRequestProductQuantityInput!]!
+    $sourceWarehouseId: String!
+  ) {
+    requestProducts(
+      createProductTransferRequestInput: {
+        destinationWarehouseId: $destinationWarehouseId
+        productTransferRequestProductQuantities: $productTransferRequestProductQuantities
+        sourceWarehouseId: $sourceWarehouseId
+      }
+    ) {
+      id
+    }
+  }
+`;
 const getArchivedProductsQuery = ({ page }) => gql`
   {
     __typename
@@ -366,8 +417,17 @@ const apis = {
     graphQlInstance(getProductQuery({ id }), {
       method: "GET",
     }),
+  getProductCostPriceHistory: ({ id }) =>
+    graphQlInstance(getProductCostPriceHistoryQuery({ id }), {
+      method: "GET",
+    }),
+
   getProductName: ({ id }) =>
     graphQlInstance(getProductNameQuery({ id }), {
+      method: "GET",
+    }),
+  checkProductQuantityInWarehouse: ({ id }) =>
+    graphQlInstance(checkProductQuantityInWarehouseQuery({ id }), {
       method: "GET",
     }),
 
@@ -392,6 +452,16 @@ const apis = {
     graphQlInstance(editProductSubscriptionQuery, {
       variables,
     }),
+  editProductInventory: (variables) =>
+    graphQlInstance(editProductInventoryQuery, {
+      variables,
+    }),
+
+  requestProducts: (variables) =>
+    graphQlInstance(requestProductsQuery, {
+      variables,
+    }),
+
   searchProducts: ({ page, searchQuery }) =>
     graphQlInstance(searchProductsQuery({ page, searchQuery }), {
       method: "GET",

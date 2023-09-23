@@ -173,7 +173,9 @@ const AffiliateMarketersPage = () => {
       name: "Expiry Date",
       selector: (row) => (
         <span onClick={() => handleEdit(row)}>
-          {moment(row?.discountExpiryTime).fromNow()}
+          {row?.discountExpiryTime
+            ? moment(row?.discountExpiryTime).fromNow()
+            : "No Exipry"}
         </span>
       ),
       sortable: false,

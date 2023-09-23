@@ -48,7 +48,8 @@ class MediaStore {
     try {
       let res = await apis.getImages(data);
       res = res?.images;
-      this.images = res?.results || [];
+      this.images =
+        res?.results?.sort((a, b) => a?.name.localeCompare(b?.name)) || [];
       this.imagesCount = res?.total;
     } catch (error) {
       this.error = error;
@@ -105,7 +106,10 @@ class MediaStore {
     try {
       let res = await apis.getMobilePagePosts(data);
       res = res?.homeSliderMobilePagePosts;
-      this.mobilePagePosts = res?.results || [];
+      this.mobilePagePosts =
+        res?.results?.sort(
+          (a, b) => Number(a?.position) - Number(b?.position)
+        ) || [];
       this.mobilePagePostsCount = res?.total;
     } catch (error) {
       this.error = error;

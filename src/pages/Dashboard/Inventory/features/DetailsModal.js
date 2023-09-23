@@ -5,31 +5,23 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
-import ProductOptions from "./ProductOptions";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
-import ProductVariant from "./ProductVariant";
-import ProductSubscription from "./ProductSubscription";
+import { INVENTORY_MODAL_TYPES } from "utils/appConstant";
+import CostPriceHistory from "./CostPriceHistory";
+import RequestProductForm from "./RequestProductForm";
 
-const { PRODUCT_OPTION, PRODUCT_SUBSCRIPTION, PRODUCT_VARIANT } =
-  PRODUCT_MODAL_TYPES;
+const { COST_PRICE_HISTORY, REQUEST_PRODUCT } = INVENTORY_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toggler();
-  };
-
   const renderModalBody = () => {
     switch (details?.modalType) {
       case "delete":
         return <DeleteDialog details={details} toggler={toggler} />;
       case "edit":
         return <Form details={details} toggler={toggler} />;
-      case PRODUCT_OPTION:
-        return <ProductOptions details={details} toggler={toggler} />;
-      case PRODUCT_VARIANT:
-        return <ProductVariant details={details} toggler={toggler} />;
-      case PRODUCT_SUBSCRIPTION:
-        return <ProductSubscription details={details} toggler={toggler} />;
+      case COST_PRICE_HISTORY:
+        return <CostPriceHistory details={details} toggler={toggler} />;
+      case REQUEST_PRODUCT:
+        return <RequestProductForm details={details} toggler={toggler} />;
+
       default:
         return null;
     }
@@ -41,11 +33,11 @@ const DetailsModal = ({ active, toggler, details }) => {
       toggler={toggler}
       modalClassName="overflow-y-auto overflow-x-hidden"
     >
-      <form onSubmit={handleSubmit} className="w-full h-full">
+      <div className="w-full h-full">
         <ModalBody>
           <div className="w-full">{active && renderModalBody()}</div>
         </ModalBody>
-      </form>
+      </div>
     </Modal>
   );
 };

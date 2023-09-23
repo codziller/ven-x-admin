@@ -7,14 +7,18 @@ import { ReactComponent as Caret_right_gray } from "assets/icons/caret-right-gra
 import { ReactComponent as EditIcon } from "assets/icons/editPenLine.svg";
 import Flag from "components/General/Flag";
 import { getName } from "country-list";
+import classNames from "classnames";
 
-export default function ProviderCard({ provider }) {
+export default function ProviderCard({ provider, isSelected, onClick }) {
   const navigate = useNavigate();
   const countryName = getName(provider.country) || "N/A";
   return (
     <div
-      onClick={() => navigate(`/dashboard/home/${provider?.id}`)}
-      className="p-4 bg-white rounded-lg border border-grey-bordercolor hover:border-red transition-colors duration-500 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex cursor-pointer"
+      onClick={() => onClick?.()}
+      className={classNames(
+        "p-4 bg-white rounded-lg border border-grey-bordercolor hover:border-red transition-colors duration-500 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex cursor-pointer",
+        { "border-red": isSelected }
+      )}
     >
       <div className="flex-col justify-start items-start gap-[18px] flex w-full">
         <div className="justify-start items-center w-full  inline-flex">
@@ -69,4 +73,6 @@ export default function ProviderCard({ provider }) {
 
 ProviderCard.propTypes = {
   provider: PropTypes.object,
+  onClick: PropTypes.func,
+  isSelected: PropTypes.bool,
 };

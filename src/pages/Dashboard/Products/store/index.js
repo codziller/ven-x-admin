@@ -28,7 +28,9 @@ class ProductsStore {
   loadingArchived = false;
   searchProductLoading = false;
   deleteProductLoading = false;
+  requestProductsLoading = false;
   productForm = {};
+  sourceWarehouseId = "";
   constructor() {
     makeAutoObservable(this);
   }
@@ -39,6 +41,9 @@ class ProductsStore {
 
   setProductForm = (payload) => {
     this.productForm = { ...this.productForm, ...payload };
+  };
+  setSourceWarehouseId = (payload) => {
+    this.sourceWarehouseId = payload;
   };
   getProductsCount = async ({ data }) => {
     this.loading = true;
@@ -121,6 +126,20 @@ class ProductsStore {
       this.getProductLoading = false;
     }
   };
+
+  getProductCostPriceHistory = async ({ data }) => {
+    this.getProductLoading = true;
+    try {
+      let res = await apis.getProductCostPriceHistory(data);
+      res = res?.product;
+      this.product = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.getProductLoading = false;
+    }
+  };
+
   getProductName = async ({ data }) => {
     this.getProductLoading = true;
     try {
@@ -147,6 +166,7 @@ class ProductsStore {
       this.createProductLoading = false;
     }
   };
+
   editProduct = async ({ data, onSuccess }) => {
     this.editProductLoading = true;
     try {
@@ -192,6 +212,7 @@ class ProductsStore {
       this.editProductOptionLoading = false;
     }
   };
+
   editProductSubscription = async ({ data, onSuccess, product_id }) => {
     this.editProductSubscriptionLoading = true;
     try {
@@ -206,6 +227,19 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.editProductSubscriptionLoading = false;
+    }
+  };
+
+  requestProducts = async ({ data, onSuccess }) => {
+    this.requestProductsLoading = true;
+    try {
+      await apis.requestProducts(data);
+      successToast("Operation Successful!", "Product requested Successfully.");
+      onSuccess?.();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.requestProductsLoading = false;
     }
   };
 }

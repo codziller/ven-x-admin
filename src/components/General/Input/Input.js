@@ -53,6 +53,7 @@ const Input = ({
   onBlur,
   showFormError,
   tooltip,
+  noError,
   ...rest
 }) => {
   const [active, setActive] = useState(false);
@@ -259,9 +260,11 @@ const Input = ({
         </div>
       </div>
 
-      <div className="h-[13px]">
-        {errorObject && <FormErrorMessage type={errorObject} />}
-      </div>
+      {!noError && (
+        <div className="h-[13px]">
+          {errorObject && <FormErrorMessage type={errorObject} />}
+        </div>
+      )}
     </div>
   );
 };
@@ -291,6 +294,7 @@ Input.propTypes = {
   onBlur: PropTypes.func,
   showFormError: PropTypes.bool,
   tooltip: PropTypes.string,
+  noError: PropTypes.bool,
 };
 
 export default Input;

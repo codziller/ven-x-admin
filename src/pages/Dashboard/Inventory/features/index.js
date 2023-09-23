@@ -1,26 +1,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import _, { isEmpty } from "lodash";
-import { useNavigate, useParams } from "react-router";
 import PropTypes from "prop-types";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 
-import { pageCount } from "utils/appConstant";
+import { INVENTORY_MODAL_TYPES, pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
 import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
-import { Button } from "components/General/Button";
-import { Link } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import ProductsStore from "pages/Dashboard/Products/store";
 import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import { numberWithCommas } from "utils/formatter";
+import { Link, useParams } from "react-router-dom";
+import { Button } from "components/General/Button";
+import CheckBox from "components/General/Input/CheckBox";
+import Input from "components/General/Input/Input";
 export const dateFilters = [
   {
     value: "today",
@@ -41,7 +41,9 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
+const { COST_PRICE_HISTORY, REQUEST_PRODUCT } = INVENTORY_MODAL_TYPES;
 const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
+  const { warehouse_id } = useParams();
   const {
     getProducts,
     products,
@@ -71,6 +73,8 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [activeTab, setActiveTab] = useState(TABS[0]?.name);
+  const [requestMode, setRequestMode] = useState(false);
+  const [requestProducts, setRequestProducts] = useState([]);
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
   const isArchive = activeTab === TABS[1]?.name;
@@ -99,25 +103,108 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
     }
   }, [searchInput]);
 
+  const handleRequestProductsChange = (row) => {
+    const newRequestProductsArray = requestProducts?.map((item) => {
+      if (item?.productId === row.productId) {
+        return row;
+      } else {
+        return item;
+      }
+    });
+
+    setRequestProducts(newRequestProductsArray);
+  };
+
+  const handleRequestProductsUpdate = (row) => {
+    let newRequestProductsArray = requestProducts;
+    if (
+      newRequestProductsArray?.find(
+        (item) => item?.productId === row?.productId
+      )
+    ) {
+      newRequestProductsArray = newRequestProductsArray.filter(
+        (item) => item?.productId !== row?.productId
+      );
+    } else {
+      newRequestProductsArray = [...newRequestProductsArray, row];
+    }
+
+    setRequestProducts(newRequestProductsArray);
+  };
   const handleEdit = (row) => {
     if (isModal) {
       handleProductSelect(row);
       return;
     }
 
+    if (requestMode) {
+      handleRequestProductsUpdate({
+        productId: row?.id,
+        quantity: 1,
+      });
+      return;
+    }
+
     setCurrentTxnDetails({ ...row, modalType: "edit" });
   };
+
   const columns = [
+    requestMode
+      ? {
+          name: "Request quantity",
+          maxWidth: "180px",
+          minWidth: "180px",
+          selector: (row) => {
+            const item = requestProducts.find(
+              (item) => item?.productId === row.id
+            );
+            const isChecked = !!item;
+
+            return (
+              <div className="flex justify-start items-center gap-4">
+                <div className="min-w-[20px]">
+                  <CheckBox
+                    onChange={() => handleEdit(row)}
+                    checked={isChecked}
+                    square
+                  />
+                </div>
+                {isChecked && (
+                  <Input
+                    value={item.quantity}
+                    onChangeFunc={(val) => {
+                      if (!val) {
+                        handleRequestProductsUpdate({
+                          productId: row?.id,
+                        });
+                        return;
+                      }
+                      handleRequestProductsChange({
+                        productId: row?.id,
+                        quantity: val,
+                      });
+                    }}
+                    type="number"
+                    placeholder="Product quantity"
+                    noError
+                    isRequired
+                  />
+                )}
+              </div>
+            );
+          },
+        }
+      : null,
     {
       name: "SKU",
       minWidth: "20px",
-      maxWidth: isMobile ? "10%" : "70px",
+      maxWidth: isMobile ? "10%" : "50px",
       selector: "id",
       sortable: false,
     },
     {
       name: "Product",
-      minWidth: isMobile ? "40%" : "30%",
+      minWidth: isMobile ? "25%" : "20%",
       selector: (row) => (
         <div
           className="flex justify-start items-center gap-4"
@@ -151,32 +238,46 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       selector: "lowInQuantityValue",
       sortable: true,
     },
-    {
-      name: "Price",
-      selector: (row) => (
-        <span onClick={() => handleEdit(row)} className="uppercase">
-          {transactionAmount(row)}
-        </span>
-      ),
-      sortable: true,
-    },
 
     {
       name: "Actions",
-      minWidth: isMobile ? "50%" : "25%",
+      minWidth: isMobile ? "50%" : "40%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
+          <span
+            onClick={() =>
+              setCurrentTxnDetails({ ...row, modalType: COST_PRICE_HISTORY })
+            }
+            className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
+          >
+            Cost price history
+          </span>
+
+          <span
+            onClick={() =>
+              setCurrentTxnDetails({ ...row, modalType: REQUEST_PRODUCT })
+            }
+            className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
+          >
+            Request product
+          </span>
           <span
             onClick={() => handleEdit(row)}
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
             Edit
           </span>
+
+          <Link to={`/dashboard/products/edit/${warehouse_id}/${row?.id}`}>
+            <span className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white ">
+              View
+            </span>
+          </Link>
         </div>
       ),
       sortable: true,
     },
-  ];
+  ].filter((item) => item);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -229,6 +330,19 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
                 className="flex"
               />
             </div>
+
+            {/* <Button
+              text={
+                requestMode
+                  ? `Deselect (${requestProducts?.length})`
+                  : "Request Products"
+              }
+              className="hidden md:block"
+              onClick={() => {
+                setRequestMode((prev) => !prev);
+              }}
+              whiteBg
+            /> */}
           </div>
           <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
           {isLoading ? (
@@ -249,7 +363,12 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
                         : columns.slice(0, 2)
                     }
                     onRowClicked={(e) => {
-                      handleEdit(e);
+                      requestMode
+                        ? handleRequestProductsUpdate({
+                            productId: e?.id,
+                            quantity: 1,
+                          })
+                        : handleEdit(e);
                     }}
                     pointerOnHover
                     pageCount={displayedProductsCount / pageCount}
@@ -288,6 +407,19 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
                 )}
               </div>
             </>
+          )}
+
+          {!isEmpty(requestProducts) && requestMode && (
+            <Button
+              text={`Request ${requestProducts?.length} ${
+                requestProducts?.length === 1 ? "Product" : "Products"
+              } `}
+              onClick={() =>
+                setCurrentTxnDetails({ modalType: REQUEST_PRODUCT })
+              }
+              isDisabled={isEmpty(requestProducts)}
+              className="fixed z-[200] bottom-[54.67px] left-0 right-0 mx-auto w-fit"
+            />
           )}
         </div>
       </div>

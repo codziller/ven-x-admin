@@ -635,3 +635,11 @@ div::-webkit-scrollbar-thumb {
 .provider-card-nav:hover .switch-icon {
   border-color: rgba(255, 255, 255, 0.23);
 }
+
+.line-clamp-1 {
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  -webkit-line-clamp: 2 !important;
+}

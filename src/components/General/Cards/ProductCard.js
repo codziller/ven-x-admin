@@ -37,7 +37,7 @@ const ProductCard = ({ details, className }) => {
         </div>
       </div>
 
-      <Button text="Shop Now" fullWidth className="mt-3" />
+      <Button text="Edit Me 🤲🏽" fullWidth className="mt-3" />
     </div>
   );
 };
