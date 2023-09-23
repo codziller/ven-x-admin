@@ -99,7 +99,7 @@ const ListOfProviders = ({ isModal, handleSelect, isSelected }) => {
       handleSelect?.(row);
       return;
     }
-    navigate(`/dashboard/home/${provider?.id}`);
+    navigate(`/dashboard/home/${row?.id}`);
   };
   return (
     <div className="flex-col justify-start items-center gap-8 inline-flex w-full sm:w-[560px] md:w-[660px] lg:w-[850px] h-full">
