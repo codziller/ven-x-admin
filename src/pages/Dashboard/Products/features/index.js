@@ -121,7 +121,8 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
     },
     {
       name: "Product",
-      minWidth: isMobile ? "40%" : "30%",
+      minWidth: isMobile ? "40%" : "350px",
+      maxWidth: isMobile ? "40%" : "350px",
       selector: (row) => (
         <div
           className="flex justify-start items-center gap-4"
@@ -143,11 +144,14 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
       name: "Categories",
       selector: (row) => <div>{flattenArrayToString(row.categories)}</div>,
       sortable: false,
+      maxWidth: "350px",
     },
 
     {
       name: "Qty Available",
       selector: "quantity",
+
+      maxWidth: "100px",
       sortable: true,
     },
 
@@ -158,12 +162,14 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
           {transactionAmount(row)}
         </span>
       ),
+      maxWidth: "100px",
       sortable: true,
     },
 
     {
       name: "Actions",
       minWidth: isMobile ? "50%" : "25%",
+      maxWidth: isMobile ? "50%" : "25%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
           <span
