@@ -34,6 +34,7 @@ import {
 import { FcBusinesswoman } from "react-icons/fc";
 
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
+import ProductsStore from "pages/Dashboard/Products/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
@@ -280,6 +281,7 @@ const SideNav = ({
     [warehouse_id, user]
   );
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
+  const { resetProductStore } = ProductsStore;
   useEffect(() => {
     warehouse_id && getWarehouse({ data: { id: warehouse_id } });
   }, [warehouse_id, location.pathname]);
@@ -341,11 +343,14 @@ const SideNav = ({
         </span>
         <div className="w-full md:h-full space-y-[21px] md:space-y-6 pb-[15px] pr-4">
           <div className=" flex flex-col justify-start items-start pl-3 md:pl-6 w-full cursor-pointer transition-all duration-1000 ease-in-out pb-28">
-            <ProviderCard
-              provider={warehouse}
-              sidenavCollapsed={sidenavCollapsed}
-              getWareHouseLoading={getWareHouseLoading}
-            />
+            <div onClick={resetProductStore}>
+              <ProviderCard
+                provider={warehouse}
+                sidenavCollapsed={sidenavCollapsed}
+                getWareHouseLoading={getWareHouseLoading}
+              />
+            </div>
+
             {trimArrayOfObject(links).map(({ title, icon, link, slug }) => (
               <>
                 <Link key={title} {...handleLinks(link)}>

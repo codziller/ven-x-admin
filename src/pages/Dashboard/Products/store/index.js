@@ -346,6 +346,38 @@ class ProductsStore {
       this.productTransferRequestLoading = false;
     }
   };
+  resetProductStore = () => {
+    this.products = null;
+    this.product = null;
+    this.productTransferRequest = null;
+    this.productsCount = 0;
+    this.productsArchived = [];
+    this.searchResult = [];
+    this.productTransferRequests = [];
+    this.productRequests = [];
+    this.productTransferRequestsCount = 0;
+    this.productRequestsCount = 0;
+    this.error = null;
+    this.loading = false;
+    this.createProductLoading = false;
+    this.editProductLoading = false;
+    this.getProductLoading = false;
+
+    this.editProductVariantLoading = false;
+    this.editProductOptionLoading = false;
+    this.editProductSubscriptionLoading = false;
+    this.editProductInventoryLoading = false;
+    this.loadingArchived = false;
+    this.searchProductLoading = false;
+    this.deleteProductLoading = false;
+    this.requestProductsLoading = false;
+    this.productTransferRequestLoading = false;
+    this.productTransferRequestsLoading = false;
+    this.productRequestsLoading = false;
+    this.updateProductTransferRequestStatusLoading = false;
+    this.productForm = {};
+    this.sourceWarehouseId = "";
+  };
 }
 
 export default new ProductsStore();

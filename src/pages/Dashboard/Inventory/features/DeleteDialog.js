@@ -169,23 +169,22 @@ const DeleteDialog = ({ details, toggler }) => {
           )}
         </div>
       )}
-      {modalType === INPROGRESS ||
-        (modalType === CANCELLED && (
-          <Button
-            onClick={handleOnSubmit}
-            isLoading={updateProductTransferRequestStatusLoading}
-            type="submit"
-            text={
-              modalType === INPROGRESS
-                ? "Accept Product Request"
-                : modalType === CANCELLED
-                ? "Cancel Product Request"
-                : ""
-            }
-            className="mb-2"
-            fullWidth
-          />
-        ))}
+      {(modalType === INPROGRESS || modalType === CANCELLED) && (
+        <Button
+          onClick={handleOnSubmit}
+          isLoading={updateProductTransferRequestStatusLoading}
+          type="submit"
+          text={
+            modalType === INPROGRESS
+              ? "Accept Product Request"
+              : modalType === CANCELLED
+              ? "Cancel Product Request"
+              : ""
+          }
+          className="mb-2"
+          fullWidth
+        />
+      )}
 
       <Button
         onClick={() => toggler?.()}
