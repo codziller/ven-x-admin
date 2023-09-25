@@ -625,6 +625,7 @@ export const PRODUCT_MODAL_TYPES = {
   PRODUCT_CATEGORY: "PRODUCT_CATEGORY",
   PRODUCT_CATEGORY_OPTIONS: "PRODUCT_CATEGORY_OPTIONS",
   DELETE: "DELETE",
+  INVENTORY: "INVENTORY",
 };
 
 export const subscriptionDurationOptions = [
@@ -684,3 +685,17 @@ export const INVENTORY_MODAL_TYPES = {
   COST_PRICE_HISTORY: "COST_PRICE_HISTORY",
   REQUEST_PRODUCT: "REQUEST_PRODUCT",
 };
+
+export const PRODUCT_REQUEST_STATUSES = {
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+  INPROGRESS: "INPROGRESS",
+  PENDING: "PENDING",
+};
+export const PRODUCT_REQUEST_STATUSES_LIST = [
+  { label: "Pending", value: "PENDING" },
+  { label: "In-progress", value: "INPROGRESS" },
+  { label: "Completed", value: "COMPLETED" },
+  { label: "Cancelled", value: "CANCELLED" },
+];
+export const CENTRAL_WAREHOUSE_ID = "77a9c714-eea8-4601-b8e7-bac977078490";

@@ -5,15 +5,25 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
-import { INVENTORY_MODAL_TYPES } from "utils/appConstant";
+import {
+  INVENTORY_MODAL_TYPES,
+  PRODUCT_REQUEST_STATUSES,
+} from "utils/appConstant";
 import CostPriceHistory from "./CostPriceHistory";
 import RequestProductForm from "./RequestProductForm";
 
 const { COST_PRICE_HISTORY, REQUEST_PRODUCT } = INVENTORY_MODAL_TYPES;
+const { INPROGRESS, CANCELLED, COMPLETED } = PRODUCT_REQUEST_STATUSES;
 const DetailsModal = ({ active, toggler, details }) => {
   const renderModalBody = () => {
     switch (details?.modalType) {
-      case "delete":
+      case CANCELLED:
+        return <DeleteDialog details={details} toggler={toggler} />;
+      case INPROGRESS:
+        return <DeleteDialog details={details} toggler={toggler} />;
+      case COMPLETED:
+        return <DeleteDialog details={details} toggler={toggler} />;
+      case "view":
         return <DeleteDialog details={details} toggler={toggler} />;
       case "edit":
         return <Form details={details} toggler={toggler} />;

@@ -14,6 +14,7 @@ import ProductSubscription from "./ProductSubscription";
 import ProductCategories from "./ProductCategories";
 import { observer } from "mobx-react-lite";
 import DeleteProductOptionDialog from "./DeleteProductOptionDialog";
+import ProductInventory from "./ProductInventory";
 
 const {
   PRODUCT_OPTION,
@@ -21,6 +22,7 @@ const {
   PRODUCT_VARIANT,
   PRODUCT_CATEGORY_OPTIONS,
   DELETE,
+  INVENTORY,
 } = PRODUCT_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
   const { product_id } = useParams();
@@ -79,6 +81,16 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
             toggler={toggler}
             handleChange={handleChange}
             form={form}
+          />
+        );
+
+      case INVENTORY:
+        return (
+          <ProductInventory
+            details={details}
+            toggler={toggler}
+            handleOnChange={handleChange}
+            formObj={form}
           />
         );
 

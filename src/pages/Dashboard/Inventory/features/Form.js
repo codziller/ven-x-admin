@@ -8,22 +8,26 @@ import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import ProductsStore from "pages/Dashboard/Products/store";
+import { observer } from "mobx-react-lite";
+import cleanPayload from "utils/cleanPayload";
 
-export default function Form({ details, toggler }) {
+const Form = ({ details, toggler }) => {
+  const { warehouse_id } = useParams();
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
-    description: "",
-    collapsed: [],
-    modalType: "",
   });
 
-  const schema = yup.object({});
+  const { editProductInventory, editProductInventoryLoading } = ProductsStore;
+
+  const schema = yup.object({
+    quantity: yup.string().required("Please enter product quantity"),
+  });
 
   const defaultValues = {
-    lowInQuantityValue: details?.lowInQuantityValue || "",
     quantity: details?.quantity || "",
+    lowInQuantityValue: details?.lowInQuantityValue || "",
   };
 
   const {
@@ -49,10 +53,17 @@ export default function Form({ details, toggler }) {
     quantity: watch("quantity"),
   };
   const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
-    }
+    const payload = {
+      ...form,
+      productId: details?.id,
+      warehouseId: warehouse_id,
+    };
+    cleanPayload(payload);
+    editProductInventory({
+      data: payload,
+      onSuccess: () => toggler(),
+      page: details?.currentPage,
+    });
   };
 
   return (
@@ -106,8 +117,9 @@ export default function Form({ details, toggler }) {
 
           <Button
             onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+            isLoading={editProductInventoryLoading}
             type="submit"
-            text={details?.isAdd ? "Add New Product" : "Save Changes"}
+            text={"Save Changes"}
             className="mb-5 "
             fullWidth
           />
@@ -115,8 +127,9 @@ export default function Form({ details, toggler }) {
       </div>
     </>
   );
-}
+};
 Form.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+export default observer(Form);

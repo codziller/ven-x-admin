@@ -18,14 +18,18 @@ import { ReactComponent as Edit } from "assets/icons/Edit/edit.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import Select from "components/General/Input/Select";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import BrandsStore from "pages/Dashboard/Brands/store";
 import ImagePicker from "components/General/Input/ImagePicker";
 import Wysiwyg from "components/General/Textarea/Wysiwyg";
 import { numberWithCommas } from "utils/formatter";
 import classNames from "classnames";
-import { PRODUCT_MODAL_TYPES, RIBBONS } from "utils/appConstant";
+import {
+  CENTRAL_WAREHOUSE_ID,
+  PRODUCT_MODAL_TYPES,
+  RIBBONS,
+} from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
 import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
@@ -36,20 +40,22 @@ import { errorToast } from "components/General/Toast/Toast";
 import { isEmpty } from "lodash";
 import { flattenCategories } from "utils/functions";
 import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
-
+import WareHousesStore from "pages/Dashboard/WareHouses/store";
 const {
   PRODUCT_OPTION,
   PRODUCT_SUBSCRIPTION,
   PRODUCT_VARIANT,
   PRODUCT_CATEGORY,
   PRODUCT_CATEGORY_OPTIONS,
+  INVENTORY,
   DELETE,
 } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
-  const { product_id, warehouse_id } = useParams();
+  const { product_id } = useParams();
   const { createProduct, product, editProduct } = ProductsStore;
   const { getCategories, categories } = CategoriesStore;
   const { brands, getBrands, loading } = BrandsStore;
+  const { warehouses, getWarehouses } = WareHousesStore;
   const navigate = useNavigate();
   const flattenedCategories = useMemo(
     () => !isEmpty(categories) && flattenCategories(categories),
@@ -64,6 +70,7 @@ const Form = ({ details, toggler }) => {
     currentProductVariant: {},
     currentProductOption: {},
     currentProductSubscription: {},
+    currentProductInventory: {},
     modalDeleteType: null,
     modalDeleteData: null,
     productDescription:
@@ -99,16 +106,31 @@ const Form = ({ details, toggler }) => {
   useEffect(() => {
     getCategories();
     getBrands({ data: { page: 1 } });
+    getWarehouses({ data: { page: 1 } });
   }, []);
 
   const schema = yup.object({
     name: yup.string().required("Please enter name"),
+    warehouseInventory: yup.array().of(
+      yup.object().shape({
+        quantity: yup
+          .number()
+          .required("Quantity is required")
+          .integer("Quantity must be an integer")
+          .min(1, "Quantity must be greater than 0"),
+        lowInQuantityValue: yup
+          .number()
+          .required("Low in Stock Value is required")
+          .integer("Low in Stock Value must be an integer")
+          .min(1, "Low in Stock Value must be greater than 0"),
+      })
+    ),
   });
 
   const defaultValues = {
     name: product_id ? product?.name : "",
     brandId: product_id ? product?.brandId : "",
-    categoryId: product_id ? product?.categoryId : "",
+    categoryIds: product_id ? product?.categories?.map((item) => item?.id) : "",
     ribbon: product_id ? product?.ribbon : "",
     costPrice: product_id ? product?.costPrice : "",
     salePrice: product_id ? product?.salePrice : "",
@@ -128,6 +150,15 @@ const Form = ({ details, toggler }) => {
     productVariants: product_id ? product?.productVariants : [],
     productOptions: product_id ? product?.productOptions : [],
     productSubscriptions: product_id ? product?.productSubscriptions : [],
+    warehouseInventory: product_id
+      ? product?.warehouseInventory
+      : [
+          {
+            lowInQuantityValue: 0,
+            quantity: 0,
+            warehouseId: CENTRAL_WAREHOUSE_ID,
+          },
+        ],
   };
 
   const {
@@ -145,7 +176,7 @@ const Form = ({ details, toggler }) => {
   const form = {
     name: watch("name"),
     brandId: watch("brandId"),
-    categoryId: watch("categoryId"),
+    categoryIds: watch("categoryIds"),
     ribbon: watch("ribbon"),
     // quantity: watch("quantity"),
     weight: watch("weight"),
@@ -165,17 +196,43 @@ const Form = ({ details, toggler }) => {
     productVariants: watch("productVariants"),
     productOptions: watch("productOptions"),
     productSubscriptions: watch("productSubscriptions"),
+    warehouseInventory: watch("warehouseInventory"),
   };
 
-  const selectedCategory = useMemo(
+  const selectedCategories = useMemo(
     () =>
       !isEmpty(flattenedCategories)
-        ? flattenedCategories?.find((item) => item?.id === form?.categoryId)
-            ?.name
+        ? flattenedCategories?.filter((item) =>
+            form?.categoryIds?.includes(item?.id)
+          )
         : "",
-    [flattenedCategories, form?.categoryId]
+    [flattenedCategories, form?.categoryIds]
   );
-  const handleChange = async (prop, val, rest, isFormTwo, isWysywyg) => {
+
+  const selectedInventories = useMemo(
+    () =>
+      !isEmpty(warehouses)
+        ? form?.warehouseInventory
+            ?.map((item) => {
+              const warehouseName = warehouses?.find(
+                (_) => _.id === item?.warehouseId
+              );
+              if (item?.warehouseId !== CENTRAL_WAREHOUSE_ID)
+                return { ...item, name: warehouseName?.name };
+            })
+            ?.filter((item) => item)
+        : [],
+    [warehouses, form?.warehouseInventory]
+  );
+  const handleChange = async ({
+    prop,
+    val,
+    rest,
+    isFormTwo,
+    isWysywyg,
+    isInventory,
+    objectProp,
+  }) => {
     if (
       prop === "discountValue" &&
       form.discountType === "PERCENTAGE" &&
@@ -187,11 +244,28 @@ const Form = ({ details, toggler }) => {
     isFormTwo
       ? setFormTwo({ ...formTwo, [prop]: val, formModified: true })
       : setFormTwo({ ...formTwo, formModified: true });
-    const updatedVal = isWysywyg
-      ? JSON.stringify(draftToHtml(convertToRaw(val?.getCurrentContent())))
-      : rest
-      ? [...val, ...rest]
-      : val;
+    let updatedVal;
+    if (isInventory) {
+      console.log(" form?.warehouseInventory: ", form?.warehouseInventory);
+      updatedVal = form?.warehouseInventory?.map((item) => {
+        const updatedItem =
+          item?.warehouseId === CENTRAL_WAREHOUSE_ID
+            ? { ...item, [objectProp]: val }
+            : item;
+        return updatedItem;
+      });
+
+      console.log("updatedVal: ", updatedVal);
+    } else if (isWysywyg) {
+      updatedVal = JSON.stringify(
+        draftToHtml(convertToRaw(val?.getCurrentContent()))
+      );
+    } else if (rest) {
+      updatedVal = [...val, ...rest];
+    } else {
+      updatedVal = val;
+    }
+
     setValue(prop, updatedVal);
     await trigger(prop);
   };
@@ -205,7 +279,7 @@ const Form = ({ details, toggler }) => {
       form.discountType === "PERCENTAGE" &&
       parseFloat(form.discountValue) > 100
     ) {
-      handleChange("discountValue", "");
+      handleChange({ prop: "discountValue", val: "" });
     }
   }, [form.discountType, form.discountValue]);
 
@@ -214,10 +288,10 @@ const Form = ({ details, toggler }) => {
     updatedFiles = updatedFiles.filter(
       (_) => (_?.name || _) !== (file?.name || file)
     );
-    handleChange(prop, updatedFiles);
+    handleChange({ prop, val: updatedFiles });
   };
   const handleRemoveOption = (val, prop) => {
-    if (val?.id) {
+    if (val?.id && prop !== "categoryIds") {
       if (prop === "productVariants") {
         setFormTwo({
           ...formTwo,
@@ -245,12 +319,28 @@ const Form = ({ details, toggler }) => {
         });
         return;
       }
+
+      if (prop === "warehouseInventory") {
+        setFormTwo({
+          ...formTwo,
+          modalDeleteType: INVENTORY,
+          modalDeleteData: val,
+          modalType: DELETE,
+        });
+        return;
+      }
     }
+    console.log("val, prop: ", val, prop);
     const newOptions = form?.[prop]?.filter(
       (item) =>
-        (item?.name || item?.variantName) !== (val?.name || val?.variantName)
+        (item?.id ||
+          item?.name ||
+          item?.variantName ||
+          item?.warehouseId ||
+          item) !==
+        (val?.warehouseId || val?.id || val?.name || val?.variantName)
     );
-    handleChange(prop, newOptions);
+    handleChange({ prop, val: newOptions });
   };
 
   const handleEditOption = (val, prop) => {
@@ -275,6 +365,14 @@ const Form = ({ details, toggler }) => {
         ...formTwo,
         currentProductSubscription: val,
         modalType: PRODUCT_SUBSCRIPTION,
+      });
+      return;
+    }
+    if (prop === "warehouseInventory") {
+      setFormTwo({
+        ...formTwo,
+        currentProductInventory: val,
+        modalType: INVENTORY,
       });
       return;
     }
@@ -355,6 +453,8 @@ const Form = ({ details, toggler }) => {
   };
 
   console.log("main form: ", form);
+  console.log("main form errors: ", errors);
+  console.log("selectedInventories: ", selectedInventories);
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
@@ -392,7 +492,7 @@ const Form = ({ details, toggler }) => {
             <Input
               label="Product Name"
               value={form?.name}
-              onChangeFunc={(val) => handleChange("name", val)}
+              onChangeFunc={(val) => handleChange({ prop: "name", val })}
               placeholder="Enter Product Name"
               formError={errors.name}
               showFormError={formTwo?.showFormError}
@@ -402,7 +502,9 @@ const Form = ({ details, toggler }) => {
               label="Product Brand"
               placeholder="Select Product Brand"
               options={brands}
-              onChange={(val) => handleChange("brandId", val?.value)}
+              onChange={(val) =>
+                handleChange({ prop: "brandId", val: val?.value })
+              }
               value={brands?.find((item) => item?.value === form?.brandId)}
               formError={errors.brandId}
               showFormError={formTwo?.showFormError}
@@ -412,7 +514,33 @@ const Form = ({ details, toggler }) => {
             />
 
             <div className="flex flex-col justify-start items-end gap-1 w-full">
-              {form?.categoryId && <p>{selectedCategory}</p>}
+              {/* {!isEmpty(form?.categoryIds) && <p>{selectedCategories}</p>} */}
+
+              {!isEmpty(selectedCategories) && (
+                <div className="flex flex-wrap justify-start items-start gap-2 ">
+                  {selectedCategories?.map((item, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                      >
+                        <div className="flex justify-start items-center gap-3 ">
+                          <span className="">{item?.name}</span>
+                        </div>
+
+                        <span
+                          onClick={() =>
+                            handleRemoveOption(item, "categoryIds")
+                          }
+                          className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                        >
+                          <Close className="current-svg scale-[0.7]" />
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               <Button
                 onClick={() =>
                   handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
@@ -431,8 +559,8 @@ const Form = ({ details, toggler }) => {
                 Category
               </span>
               <div className="h-[13px]">
-                {errors?.categoryId && (
-                  <FormErrorMessage type={errors?.categoryId} />
+                {errors?.categoryIds && (
+                  <FormErrorMessage type={errors?.categoryIds} />
                 )}
               </div>
             </div>
@@ -441,27 +569,20 @@ const Form = ({ details, toggler }) => {
               label="Ribbon"
               placeholder="Select Ribbon"
               options={RIBBONS}
-              onChange={(val) => handleChange("ribbon", val?.value)}
+              onChange={(val) =>
+                handleChange({ prop: "ribbon", val: val?.value })
+              }
               value={RIBBONS?.find((item) => item.value === form.ribbon)}
               formError={errors.ribbon}
               showFormError={formTwo?.showFormError}
               tooltip="Ribbon to be attached with this product"
               fullWidth
             />
-            {/* <Input
-              label="Quantity"
-              value={form?.quantity}
-              onChangeFunc={(val) => handleChange("quantity", val)}
-              placeholder="Enter Quantity"
-              formError={errors.quantity}
-              showFormError={formTwo?.showFormError}
-              type="number"
-              isRequired
-            /> */}
+
             <Input
               label="Weight (grams)"
               value={form?.weight}
-              onChangeFunc={(val) => handleChange("weight", val)}
+              onChangeFunc={(val) => handleChange({ prop: "weight", val })}
               placeholder="30g"
               formError={errors.weight}
               showFormError={formTwo?.showFormError}
@@ -469,22 +590,17 @@ const Form = ({ details, toggler }) => {
               type="number"
               isRequired
             />
-            {/* <Input
-              label="Low in stock value (optional)"
-              value={form?.lowInQuantityValue}
-              onChangeFunc={(val) => handleChange("lowInQuantityValue", val)}
-              placeholder="10"
-              formError={errors.lowInQuantityValue}
-              showFormError={formTwo?.showFormError}
-              type="number"
-              tooltip="When quantity is at this value, the product will be low in stock."
-            /> */}
 
             <Wysiwyg
               label="Product Description"
               editorState={formTwo.productDescription}
               onEditorStateChange={(val) => {
-                handleChange("productDescription", val, false, true, true);
+                handleChange({
+                  prop: "productDescription",
+                  val,
+                  isFormTwo: true,
+                  isWysywyg: true,
+                });
               }}
               placeholder="Enter Product Description"
               formError={errors.productDescription}
@@ -494,7 +610,12 @@ const Form = ({ details, toggler }) => {
               label="How To Use"
               editorState={formTwo.howToUse}
               onEditorStateChange={(val) => {
-                handleChange("howToUse", val, false, true, true);
+                handleChange({
+                  prop: "howToUse",
+                  val,
+                  isFormTwo: true,
+                  isWysywyg: true,
+                });
               }}
               placeholder="Enter How To Use"
               formError={errors.howToUse}
@@ -504,7 +625,12 @@ const Form = ({ details, toggler }) => {
               label="Product Ingredients"
               editorState={formTwo.productIngredients}
               onEditorStateChange={(val) => {
-                handleChange("productIngredients", val, false, true, true);
+                handleChange({
+                  prop: "productIngredients",
+                  val,
+                  isFormTwo: true,
+                  isWysywyg: true,
+                });
               }}
               placeholder="List Product Ingredients"
               formError={errors.productIngredients}
@@ -517,7 +643,7 @@ const Form = ({ details, toggler }) => {
             <Input
               label="Cost Price (₦‎)"
               value={form?.costPrice}
-              onChangeFunc={(val) => handleChange("costPrice", val)}
+              onChangeFunc={(val) => handleChange({ prop: "costPrice", val })}
               placeholder="Enter Cost Price"
               formError={errors.costPrice}
               showFormError={formTwo?.showFormError}
@@ -542,7 +668,7 @@ const Form = ({ details, toggler }) => {
                 )
               }
               value={form?.salePrice}
-              onChangeFunc={(val) => handleChange("salePrice", val)}
+              onChangeFunc={(val) => handleChange({ prop: "salePrice", val })}
               placeholder="Enter Sale Price"
               formError={errors.salePrice}
               showFormError={formTwo?.showFormError}
@@ -555,7 +681,9 @@ const Form = ({ details, toggler }) => {
               <Input
                 label="Discount"
                 value={form?.discountValue}
-                onChangeFunc={(val) => handleChange("discountValue", val)}
+                onChangeFunc={(val) =>
+                  handleChange({ prop: "discountValue", val })
+                }
                 placeholder="Enter Discount"
                 formError={errors.discountValue}
                 showFormError={formTwo?.showFormError}
@@ -569,10 +697,10 @@ const Form = ({ details, toggler }) => {
                 <CheckBox
                   label="₦"
                   onChange={() =>
-                    handleChange(
-                      "discountType",
-                      form.discountType !== "FIXED" ? "FIXED" : ""
-                    )
+                    handleChange({
+                      prop: "discountType",
+                      val: form.discountType !== "FIXED" ? "FIXED" : "",
+                    })
                   }
                   checked={form.discountType === "FIXED"}
                 />
@@ -580,10 +708,11 @@ const Form = ({ details, toggler }) => {
                 <CheckBox
                   label="%"
                   onChange={() =>
-                    handleChange(
-                      "discountType",
-                      form.discountType !== "PERCENTAGE" ? "PERCENTAGE" : ""
-                    )
+                    handleChange({
+                      prop: "discountType",
+                      val:
+                        form.discountType !== "PERCENTAGE" ? "PERCENTAGE" : "",
+                    })
                   }
                   checked={form.discountType === "PERCENTAGE"}
                 />
@@ -598,7 +727,7 @@ const Form = ({ details, toggler }) => {
               label=" Add Product Image "
               showFormError={formTwo?.showFormError && errors.imageUrls}
               handleDrop={(val) =>
-                handleChange("imageUrls", val, form.imageUrls)
+                handleChange({ prop: "imageUrls", val, rest: form.imageUrls })
               }
               images={form.imageUrls}
               removeImage={(file) =>
@@ -610,7 +739,7 @@ const Form = ({ details, toggler }) => {
               label=" Add Product Videos "
               showFormError={formTwo?.showFormError && errors.videoUrls}
               handleDrop={(val) =>
-                handleChange("videoUrls", val, form.videoUrls)
+                handleChange({ prop: "videoUrls", val, rest: form.videoUrls })
               }
               images={form.videoUrls}
               removeImage={(file) =>
@@ -638,7 +767,10 @@ const Form = ({ details, toggler }) => {
               square
               tooltip="Let customers buy this product before it's released or when it's out of stock"
               onChange={() =>
-                handleChange("enablePreOrder", !form.enablePreOrder)
+                handleChange({
+                  prop: "enablePreOrder",
+                  val: !form.enablePreOrder,
+                })
               }
               checked={form.enablePreOrder}
             />
@@ -648,7 +780,9 @@ const Form = ({ details, toggler }) => {
                 <Input
                   label="Pre-order Message"
                   value={form?.preOrderMessage}
-                  onChangeFunc={(val) => handleChange("preOrderMessage", val)}
+                  onChangeFunc={(val) =>
+                    handleChange({ prop: "preOrderMessage", val })
+                  }
                   placeholder="Eg: Expected to ship by the end of june"
                   formError={errors.preOrderMessage}
                   showFormError={formTwo?.showFormError}
@@ -690,7 +824,7 @@ const Form = ({ details, toggler }) => {
                         <Input
                           value={form?.preOrderLimit}
                           onChangeFunc={(val) =>
-                            handleChange("preOrderLimit", val)
+                            handleChange({ prop: "preOrderLimit", val })
                           }
                           placeholder="10"
                           formError={errors.preOrderLimit}
@@ -714,6 +848,100 @@ const Form = ({ details, toggler }) => {
               />
             )}
             <hr className="w-full" />
+
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Inventory
+              </span>
+              <span className="text-grey-text text-sm">
+                Add inventory details for this product here. The default
+                quantity field is required for the central warehouse. Hit 'Add
+                Inventory' to add inventory for other warehouses.
+              </span>
+            </div>
+
+            <Input
+              label="Central warehouse Product Quantity"
+              value={form?.warehouseInventory?.[0]?.quantity}
+              onChangeFunc={(val) =>
+                handleChange({
+                  prop: "warehouseInventory",
+                  objectProp: "quantity",
+                  val: val,
+                  isInventory: true,
+                })
+              }
+              placeholder="Enter Quantity"
+              formError={errors?.warehouseInventory?.[0]?.quantity}
+              showFormError={formTwo?.showFormError}
+              type="number"
+              isRequired
+            />
+
+            <Input
+              label="Central Warehouse Product Low in Stock Value"
+              value={form?.warehouseInventory?.[0]?.lowInQuantityValue}
+              onChangeFunc={(val) =>
+                handleChange({
+                  prop: "warehouseInventory",
+                  objectProp: "lowInQuantityValue",
+                  val: val,
+                  isInventory: true,
+                })
+              }
+              placeholder="10"
+              showFormError={formTwo?.showFormError}
+              formError={errors?.warehouseInventory?.[0]?.lowInQuantityValue}
+              type="number"
+              tooltip="When quantity is at this value, the product will be low in stock."
+            />
+
+            {!isEmpty(selectedInventories) && (
+              <div className="flex flex-wrap justify-start items-start gap-2 ">
+                {selectedInventories?.map((item, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                    >
+                      <div className="flex justify-start items-center gap-3 ">
+                        <span className="">{item?.name}</span>{" "}
+                        <span className="text-red-deep">x{item?.quantity}</span>
+                      </div>
+                      {product_id && (
+                        <span
+                          onClick={() =>
+                            handleEditOption(item, "warehouseInventory")
+                          }
+                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                        >
+                          <Edit className="current-svg scale-[0.9]" />
+                        </span>
+                      )}
+                      <span
+                        onClick={() =>
+                          handleRemoveOption(item, "warehouseInventory")
+                        }
+                        className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                      >
+                        <Close className="current-svg scale-[0.7]" />
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <Button
+              onClick={() => handleChangeTwo("modalType", INVENTORY)}
+              text="Add Inventory"
+              icon={<Plus className="text-black current-svg" />}
+              className=""
+              whiteBg
+              fullWidth
+            />
+            <hr className="w-full" />
+
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">Variants</span>
               <span className="text-grey-text text-sm">
@@ -917,6 +1145,17 @@ const Form = ({ details, toggler }) => {
         details={{
           modalType: PRODUCT_SUBSCRIPTION,
           currentProductSubscription: formTwo.currentProductSubscription,
+        }}
+        toggler={handleCloseModal}
+        handleChange={handleChange}
+        form={form}
+      />
+
+      <DetailsModal
+        active={formTwo?.modalType === INVENTORY}
+        details={{
+          modalType: INVENTORY,
+          currentProductInventory: formTwo.currentProductInventory,
         }}
         toggler={handleCloseModal}
         handleChange={handleChange}

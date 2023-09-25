@@ -13,9 +13,14 @@ class ProductsStore {
   // ====================================================
   products = null;
   product = null;
-  productsCount = null;
+  productTransferRequest = null;
+  productsCount = 0;
   productsArchived = [];
   searchResult = [];
+  productTransferRequests = [];
+  productRequests = [];
+  productTransferRequestsCount = 0;
+  productRequestsCount = 0;
   error = null;
   loading = false;
   createProductLoading = false;
@@ -25,10 +30,15 @@ class ProductsStore {
   editProductVariantLoading = false;
   editProductOptionLoading = false;
   editProductSubscriptionLoading = false;
+  editProductInventoryLoading = false;
   loadingArchived = false;
   searchProductLoading = false;
   deleteProductLoading = false;
   requestProductsLoading = false;
+  productTransferRequestLoading = false;
+  productTransferRequestsLoading = false;
+  productRequestsLoading = false;
+  updateProductTransferRequestStatusLoading = false;
   productForm = {};
   sourceWarehouseId = "";
   constructor() {
@@ -240,6 +250,100 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.requestProductsLoading = false;
+    }
+  };
+  updateProductTransferRequestStatus = async ({
+    data,
+    onSuccess,
+    message,
+    pageStatus,
+    currentPage,
+  }) => {
+    this.updateProductTransferRequestStatusLoading = true;
+    try {
+      await apis.updateProductTransferRequestStatus(data);
+      successToast("Operation Successful!", message);
+      this.getProductTransferRequests({
+        data: {
+          page: currentPage || 1,
+          warehouseId: data?.warehouseId,
+          status: pageStatus,
+        },
+      });
+      onSuccess?.();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.updateProductTransferRequestStatusLoading = false;
+    }
+  };
+  editProductInventory = async ({ data, onSuccess, page }) => {
+    this.editProductInventoryLoading = true;
+    try {
+      await apis.editProductInventory(data);
+      successToast(
+        "Operation Successful!",
+        "Product inventory updated Successfully."
+      );
+      this.getProducts({ data: { page: page || 1 } });
+      onSuccess?.();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editProductInventoryLoading = false;
+    }
+  };
+
+  getProductTransferRequests = async ({ data }) => {
+    this.productTransferRequestsLoading = true;
+    try {
+      let res = await apis.productTransferRequests({
+        ...data,
+        isSource: true,
+      });
+      res = res?.productTransferRequests;
+      this.productTransferRequests =
+        res?.results?.sort((a, b) =>
+          moment(b.createdAt).diff(moment(a.createdAt))
+        ) || [];
+      this.productTransferRequestsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.productTransferRequestsLoading = false;
+    }
+  };
+
+  getProductRequests = async ({ data }) => {
+    this.productRequestsLoading = true;
+    try {
+      let res = await apis.productTransferRequests({
+        ...data,
+        isSource: false,
+      });
+      res = res?.productTransferRequests;
+      this.productRequests =
+        res?.results?.sort((a, b) =>
+          moment(b.createdAt).diff(moment(a.createdAt))
+        ) || [];
+      this.productRequestsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.productRequestsLoading = false;
+    }
+  };
+
+  getProductTransferRequest = async ({ data }) => {
+    this.productTransferRequestLoading = true;
+    try {
+      let res = await apis.productTransferRequest(data);
+      res = res?.productTransferRequest;
+      this.productTransferRequest = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.productTransferRequestLoading = false;
     }
   };
 }

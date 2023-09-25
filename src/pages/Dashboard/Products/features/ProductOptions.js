@@ -136,7 +136,10 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     }
 
     const payload = cleanPayload(form);
-    handleOnChange("productOptions", [...productOptions, payload]);
+    handleOnChange({
+      prop: "productOptions",
+      val: [...productOptions, payload],
+    });
     toggler?.();
   };
   console.log("errors; ", errors);

@@ -12,11 +12,10 @@ brand {
   id
 }
 brandId
-category {
+categories {
   name
   id
   }
-categoryId
 costPrice
 createdAt
 discountType
@@ -64,6 +63,12 @@ salePrice
 updatedAt
 weight
 imageUrls
+warehouseInventory {
+id
+lowInQuantityValue
+quantity
+warehouseId
+}
 archive
        
     }
@@ -115,7 +120,7 @@ const getProductsQuery = ({ page }) => gql`
       brand {
         brandName
       }
-      category {
+      categories {
         name
         }
       id
@@ -142,7 +147,7 @@ const getProductsCountQuery = ({ page }) => gql`
 const createProductQuery = gql`
   mutation createProduct(
     $brandId: String!
-    $categoryId: String!
+    $categoryIds: [String!]!
     $costPrice: String!
     $discountType: DISCOUNT_TYPE
     $discountValue: String
@@ -157,6 +162,7 @@ const createProductQuery = gql`
     $productOptions: [CreateProductOptionInput!]
     $productSubscriptions: [CreateProductSubscriptionInput!]
     $productVariants: [CreateProductVariantInput!]
+    $warehouseInventory: [WareHouseInventoryInput!]!
     $ribbon: RIBBON
     $salePrice: String!
     $videoUrls: [String!]
@@ -165,7 +171,7 @@ const createProductQuery = gql`
     createProduct(
       createProductInput: {
         brandId: $brandId
-        categoryId: $categoryId
+        categoryIds: $categoryIds
         costPrice: $costPrice
         discountType: $discountType
         discountValue: $discountValue
@@ -180,6 +186,7 @@ const createProductQuery = gql`
         productOptions: $productOptions
         productSubscriptions: $productSubscriptions
         productVariants: $productVariants
+        warehouseInventory: $warehouseInventory
         ribbon: $ribbon
         salePrice: $salePrice
         videoUrls: $videoUrls
@@ -195,7 +202,7 @@ const editProductQuery = gql`
   mutation updateProduct(
     $productId: String!
     $brandId: String!
-    $categoryId: String!
+    $categoryIds: [String!]!
     $costPrice: String!
     $discountType: DISCOUNT_TYPE
     $discountValue: String
@@ -215,7 +222,7 @@ const editProductQuery = gql`
     updateProduct(
       updateProductInput: {
         brandId: $brandId
-        categoryId: $categoryId
+        categoryIds: $categoryIds
         costPrice: $costPrice
         discountType: $discountType
         discountValue: $discountValue
@@ -359,7 +366,7 @@ const getArchivedProductsQuery = ({ page }) => gql`
         brand {
           brandName
         }
-        category {
+        categories {
           name
           }
         id
@@ -404,6 +411,128 @@ const deleteProductQuery = gql`
   }
 `;
 
+const productTransferRequestQuery = ({ id }) => gql`
+  {
+    __typename
+    productTransferRequest(id: ${id}) {
+      acceptedBy {
+        firstName
+        lastName
+        id
+      }
+      cancelledBy {
+        firstName
+        lastName
+        id
+      }
+      cancelledTime
+      code
+      completedBy {
+        firstName
+        lastName
+        id
+      }
+      completedTime
+      createdAt
+      startTime
+      status
+      createdBy {
+        firstName
+        lastName
+        id
+      }
+      destinationWarehouse {
+        id
+        name
+      }
+      sourceWarehouse {
+        id
+        name
+      }
+      id
+      productTransferRequestProductQuantities {
+        quantity
+        product{
+          name
+        }
+        
+      }
+    }
+  }
+`;
+const productTransferRequestsQuery = ({
+  page,
+  warehouseId,
+  isSource,
+  status,
+}) => gql`
+  {
+    __typename
+    productTransferRequests(isSource: ${isSource}, pageNumber: "${page}", status: ${status}, warehouseId: "${warehouseId}") {
+      total
+      results {
+        acceptedBy {
+          firstName
+          lastName
+          id
+        }
+        cancelledBy {
+          firstName
+          lastName
+          id
+        }
+        cancelledTime
+        code
+        completedBy {
+          firstName
+          lastName
+          id
+        }
+        completedTime
+        createdAt
+        startTime
+        status
+        createdBy {
+          firstName
+          lastName
+          id
+        }
+        destinationWarehouse {
+          id
+          name
+        }
+        sourceWarehouse {
+          id
+          name
+        }
+        id
+        productTransferRequestProductQuantities {
+          quantity
+          product {
+            name
+          }
+          
+        }
+      }
+    }
+  }
+`;
+
+const updateProductTransferRequestStatusQuery = gql`
+  mutation updateProductTransferRequestStatus(
+    $productTransferRequestId: String!
+    $status: TRANSFER_REQUEST_STATUS!
+    $warehouseId: String!
+  ) {
+    updateProductTransferRequestStatus(
+      productTransferRequestId: $productTransferRequestId
+      status: $status
+      warehouseId: $warehouseId
+    ) {
+      status
+    }
+  }
+`;
 const apis = {
   getProducts: ({ page }) =>
     graphQlInstance(getProductsQuery({ page }), {
@@ -466,12 +595,28 @@ const apis = {
     graphQlInstance(searchProductsQuery({ page, searchQuery }), {
       method: "GET",
     }),
+
+  productTransferRequests: ({ page, warehouseId, status, isSource }) =>
+    graphQlInstance(
+      productTransferRequestsQuery({ page, warehouseId, status, isSource }),
+      {
+        method: "GET",
+      }
+    ),
+  productTransferRequest: ({ id }) =>
+    graphQlInstance(productTransferRequestQuery({ id }), {
+      method: "GET",
+    }),
   getArchivedProducts: ({ page }) =>
     graphQlInstance(getArchivedProductsQuery({ page }), {
       method: "GET",
     }),
   deleteProduct: (variables) =>
     graphQlInstance(deleteProductQuery, {
+      variables,
+    }),
+  updateProductTransferRequestStatus: (variables) =>
+    graphQlInstance(updateProductTransferRequestStatusQuery, {
       variables,
     }),
 };

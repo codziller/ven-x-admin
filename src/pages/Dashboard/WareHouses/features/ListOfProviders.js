@@ -49,7 +49,7 @@ const ListOfProviders = ({ isModal, handleSelect, isSelected }) => {
     const query = value?.toLowerCase();
     setSearchQuery(query);
 
-    const filteredResults = warehouses.filter(
+    const filteredResults = warehouses?.filter(
       ({ country, state }) =>
         country.toLowerCase().includes(query) ||
         state.toLowerCase().includes(query)

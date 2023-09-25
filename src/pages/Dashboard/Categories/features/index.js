@@ -14,6 +14,7 @@ import SearchBar from "components/General/Searchbar/SearchBar";
 import { Button } from "components/General/Button";
 import { observer } from "mobx-react-lite";
 import CategoriesStore from "../store";
+import { flattenArrayToString } from "utils/functions";
 
 export const dateFilters = [
   {
@@ -36,11 +37,6 @@ export const dateFilters = [
   },
 ];
 
-const renderSubcategoriesString = (arr) =>
-  arr
-    ?.map((item) => item?.name)
-    ?.join(", ")
-    .trim() || "N/A";
 const CategoriesPage = () => {
   const { categories, getCategories, loading } = CategoriesStore;
 
@@ -57,12 +53,11 @@ const CategoriesPage = () => {
   }, [categories]);
 
   const handleSearch = (value) => {
-    console.log("Value: ", value);
     const query = value?.toLowerCase();
     setSearchQuery(query);
 
-    const filteredResults = categories.filter(({ name }) =>
-      name.toLowerCase().includes(query)
+    const filteredResults = categories?.filter(({ name }) =>
+      name?.toLowerCase()?.includes(query)
     );
     console.log("filteredResults: ", filteredResults);
     setSearchResults(filteredResults);
@@ -77,9 +72,7 @@ const CategoriesPage = () => {
     {
       name: "Subcategories",
       minWidth: isMobile ? "35%" : "40%",
-      selector: (row) => (
-        <div>{renderSubcategoriesString(row.subCategories)}</div>
-      ),
+      selector: (row) => <div>{flattenArrayToString(row.subCategories)}</div>,
       sortable: false,
     },
     {

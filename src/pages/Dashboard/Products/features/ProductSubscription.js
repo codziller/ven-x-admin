@@ -17,6 +17,7 @@ import cleanPayload from "utils/cleanPayload";
 import { isEmpty, lowerCase } from "lodash";
 import ProductsStore from "../store";
 import { observer } from "mobx-react-lite";
+import { errorToast } from "components/General/Toast/Toast";
 const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
   const { productSubscriptions } = formObj;
   const { currentProductSubscription } = details;
@@ -118,7 +119,10 @@ const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
       return;
     }
     const payload = cleanPayload(form);
-    handleOnChange("productSubscriptions", [...productSubscriptions, payload]);
+    handleOnChange({
+      prop: "productSubscriptions",
+      val: [...productSubscriptions, payload],
+    });
     toggler?.();
   };
 
@@ -270,6 +274,8 @@ const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
 ProductSubscription.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
+  handleOnChange: PropTypes.func,
+  formObj: PropTypes.object,
 };
 
 export default observer(ProductSubscription);

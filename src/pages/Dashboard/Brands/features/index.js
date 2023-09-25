@@ -6,7 +6,6 @@ import qs from "query-string";
 import PropTypes from "prop-types";
 
 import useTableFilter from "hooks/tableFilter";
-import ActiveFilter from "components/General/ActiveFilter";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 import { ReactComponent as Filter } from "assets/icons/Filter/filter.svg";
@@ -76,7 +75,7 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
 
   const searchQuery = searchInput?.trim();
 
-  const { filterData, onRemoveFilter } = useTableFilter({
+  const { filterData } = useTableFilter({
     defaultFilters,
     currentPage,
     setCurrentPage,

@@ -6,14 +6,12 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 
 import { Link } from "react-router-dom";
-import DetailsModal from "./DetailsModal";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { observer } from "mobx-react-lite";
 import CheckBox from "components/General/Input/CheckBox";
 import { isEmpty } from "lodash";
 import { useCallback } from "react";
 import SearchBar from "components/General/Searchbar/SearchBar";
-import ProductsStore from "../store";
 
 const ProductCategories = ({
   details,
@@ -23,28 +21,31 @@ const ProductCategories = ({
   type = "Product",
 }) => {
   const { categories } = CategoriesStore;
-  const { setProductForm } = ProductsStore;
+
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
-    categoryId: form?.categoryId || "",
+    categoryIds: form?.categoryIds || [],
   });
   const [searchInput, setSearchInput] = useState("");
 
-  const handleChangeTwo = async (prop, val) => {
-    setFormTwo({ ...formTwo, [prop]: val });
-    handleChange(prop, val);
-    handleSubmit(val);
+  const handleChangeTwo = async (val) => {
+    const newCategoryIds = formTwo.categoryIds?.includes(val)
+      ? formTwo.categoryIds?.filter((item) => item !== val)
+      : [...formTwo.categoryIds, val];
+    setFormTwo({ ...formTwo, categoryIds: newCategoryIds });
+    handleChange({ prop: "categoryIds", val: newCategoryIds });
   };
 
   const isSelected = useCallback(
-    (id) => formTwo?.categoryId === id,
-    [formTwo.categoryId]
+    (id) => formTwo?.categoryIds?.includes(id),
+    [formTwo.categoryIds]
   );
 
-  const handleSubmit = (val) => {
-    setProductForm({ categoryId: val || formTwo?.categoryId });
+  const handleSubmit = () => {
     toggler?.();
   };
+
+  console.log("formTwo: ", formTwo);
   return (
     <>
       <div className="flex flex-col justify-center items-start gap-y-2 w-full h-full pb-4 overflow-y-auto">
@@ -82,9 +83,10 @@ const ProductCategories = ({
               >
                 <CheckBox
                   label={item?.name}
-                  onChange={() => handleChangeTwo("categoryId", item?.id)}
+                  onChange={() => handleChangeTwo(item?.id)}
                   checked={isSelected(item?.id)}
                   labelClass="text-[13px] font-500"
+                  square
                 />
                 {!isEmpty(item?.subCategories) && (
                   <div
@@ -101,11 +103,10 @@ const ProductCategories = ({
                           <CheckBox
                             key={subItem?.id}
                             label={subItem?.name}
-                            onChange={() =>
-                              handleChangeTwo("categoryId", subItem?.id)
-                            }
+                            onChange={() => handleChangeTwo(subItem?.id)}
                             checked={isSelected(subItem?.id)}
                             labelClass="text-[13px] font-500"
+                            square
                           />
 
                           {!isEmpty(subItem?.subCategories) && (
@@ -125,12 +126,10 @@ const ProductCategories = ({
                                       key={subSubItem?.id}
                                       label={subSubItem?.name}
                                       onChange={() =>
-                                        handleChangeTwo(
-                                          "categoryId",
-                                          subSubItem?.id
-                                        )
+                                        handleChangeTwo(subSubItem?.id)
                                       }
                                       checked={isSelected(subSubItem?.id)}
+                                      square
                                     />
                                   </div>
                                 );
@@ -156,7 +155,7 @@ const ProductCategories = ({
 
             <Button
               onClick={handleSubmit}
-              isDisabled={!formTwo?.categoryId}
+              isDisabled={!formTwo?.categoryIds}
               text="Continue"
               className="mb-2"
               fullWidth
@@ -164,11 +163,6 @@ const ProductCategories = ({
           </div>
         </div>
       </div>
-      <DetailsModal
-        active={formTwo?.showProductOption}
-        details={{ modalType: "product_option" }}
-        toggler={() => handleChangeTwo("showProductOption", false)}
-      />
     </>
   );
 };

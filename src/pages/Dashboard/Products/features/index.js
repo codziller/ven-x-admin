@@ -21,6 +21,7 @@ import ProductsStore from "../store";
 import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import { numberWithCommas } from "utils/formatter";
+import { flattenArrayToString } from "utils/functions";
 export const dateFilters = [
   {
     value: "today",
@@ -139,8 +140,8 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
     },
 
     {
-      name: "Category",
-      selector: "category.name",
+      name: "Categories",
+      selector: (row) => <div>{flattenArrayToString(row.categories)}</div>,
       sortable: false,
     },
 

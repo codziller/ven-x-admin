@@ -121,7 +121,10 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
       return;
     }
     const payload = form;
-    handleOnChange("productVariants", [...productVariants, payload]);
+    handleOnChange({
+      prop: "productVariants",
+      val: [...productVariants, payload],
+    });
     toggler?.();
   };
 

@@ -4,11 +4,14 @@ import PropTypes from "prop-types";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 
-import { INVENTORY_MODAL_TYPES, pageCount } from "utils/appConstant";
+import {
+  INVENTORY_MODAL_TYPES,
+  PRODUCT_REQUEST_STATUSES,
+  pageCount,
+} from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
-import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
@@ -21,6 +24,9 @@ import { Link, useParams } from "react-router-dom";
 import { Button } from "components/General/Button";
 import CheckBox from "components/General/Input/CheckBox";
 import Input from "components/General/Input/Input";
+import { flattenArrayToString } from "utils/functions";
+import ProductTransferRequests from "./ProductTransferRequests";
+import ProductRequests from "./ProductRequests";
 export const dateFilters = [
   {
     value: "today",
@@ -42,6 +48,7 @@ export const dateFilters = [
   },
 ];
 const { COST_PRICE_HISTORY, REQUEST_PRODUCT } = INVENTORY_MODAL_TYPES;
+const { PENDING, INPROGRESS } = PRODUCT_REQUEST_STATUSES;
 const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
   const { warehouse_id } = useParams();
   const {
@@ -57,10 +64,25 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
     searchResult,
     searchResultCount,
     searchProductLoading,
+    productTransferRequestsCount,
+    getProductTransferRequests,
+    productRequestsCount,
+    getProductRequests,
   } = ProductsStore;
 
   const TABS = [
     { name: "products", label: `Products (${productsCount || "-"})` },
+
+    {
+      name: "requests",
+      label: `Products requested (${productRequestsCount || "-"})`,
+    },
+    {
+      name: "transfer_requests",
+      label: `Product transfer requests (${
+        productTransferRequestsCount || "-"
+      })`,
+    },
     {
       name: "archived",
       label: `Archived products (${productsArchivedCount || "-"})`,
@@ -77,7 +99,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
   const [requestProducts, setRequestProducts] = useState([]);
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
-  const isArchive = activeTab === TABS[1]?.name;
+  const isArchive = activeTab === "archived";
 
   const handleSearch = async () => {
     if (!searchQuery) {
@@ -91,6 +113,21 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
     isArchive
       ? getArchivedProducts({ data: { page: currentPageArchived } })
       : getProducts({ data: { page: currentPage } });
+    getProductTransferRequests({
+      data: {
+        page: 1,
+        warehouseId: warehouse_id,
+        status: PENDING,
+      },
+    });
+
+    getProductRequests({
+      data: {
+        page: 1,
+        warehouseId: warehouse_id,
+        status: INPROGRESS,
+      },
+    });
   };
 
   useEffect(() => {
@@ -145,7 +182,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       return;
     }
 
-    setCurrentTxnDetails({ ...row, modalType: "edit" });
+    setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" });
   };
 
   const columns = [
@@ -223,18 +260,22 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
     },
 
     {
-      name: "Category",
-      selector: "category.name",
+      name: "Categories",
+      selector: (row) => <div>{flattenArrayToString(row.categories)}</div>,
       sortable: false,
     },
 
     {
       name: "Qty Available",
+      minWidth: "100px",
+      maxWidth: "100px",
       selector: "quantity",
       sortable: true,
     },
     {
       name: "Low stock at",
+      minWidth: "100px",
+      maxWidth: "100px",
       selector: "lowInQuantityValue",
       sortable: true,
     },
@@ -244,14 +285,14 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       minWidth: isMobile ? "50%" : "40%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
-          <span
+          {/* <span
             onClick={() =>
               setCurrentTxnDetails({ ...row, modalType: COST_PRICE_HISTORY })
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
             Cost price history
-          </span>
+          </span> */}
 
           <span
             onClick={() =>
@@ -259,7 +300,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
-            Request product
+            Request Product
           </span>
           <span
             onClick={() => handleEdit(row)}
@@ -345,67 +386,76 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
             /> */}
           </div>
           <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
-          {isLoading ? (
-            <CircleLoader blue />
+
+          {activeTab === "transfer_requests" ? (
+            <ProductTransferRequests />
+          ) : activeTab === "requests" ? (
+            <ProductRequests />
           ) : (
             <>
-              {isSearchMode &&
-                `Search results - ${numberWithCommas(searchResultCount)}`}
-              <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
-                {!isEmpty(displayedProducts) ? (
-                  <Table
-                    data={displayedProducts}
-                    columns={
-                      isModal
-                        ? columns.slice(0, 2)
-                        : width >= 640
-                        ? columns
-                        : columns.slice(0, 2)
-                    }
-                    onRowClicked={(e) => {
-                      requestMode
-                        ? handleRequestProductsUpdate({
-                            productId: e?.id,
-                            quantity: 1,
-                          })
-                        : handleEdit(e);
-                    }}
-                    pointerOnHover
-                    pageCount={displayedProductsCount / pageCount}
-                    onPageChange={(page) =>
-                      isSearchMode
-                        ? setCurrentPageSearch(page)
-                        : isArchive
-                        ? setCurrentPageArchived(page)
-                        : setCurrentPage(page)
-                    }
-                    currentPage={
-                      isSearchMode
-                        ? currentPageSearch
-                        : isArchive
-                        ? currentPageArchived
-                        : currentPage
-                    }
-                    tableClassName="txn-section-table"
-                    noPadding
-                  />
-                ) : (
-                  <>
-                    <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
-                      <SearchIcon className="stroke-current" />
-                      {
-                        <span>
-                          {isSearchMode && isEmpty(searchResult)
-                            ? `There are no results for your search '${searchQuery}'`
+              {isLoading ? (
+                <CircleLoader blue />
+              ) : (
+                <>
+                  {isSearchMode &&
+                    `Search results - ${numberWithCommas(searchResultCount)}`}
+                  <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
+                    {!isEmpty(displayedProducts) ? (
+                      <Table
+                        data={displayedProducts}
+                        columns={
+                          isModal
+                            ? columns.slice(0, 2)
+                            : width >= 640
+                            ? columns
+                            : columns.slice(0, 2)
+                        }
+                        onRowClicked={(e) => {
+                          requestMode
+                            ? handleRequestProductsUpdate({
+                                productId: e?.id,
+                                quantity: 1,
+                              })
+                            : handleEdit(e);
+                        }}
+                        pointerOnHover
+                        pageCount={displayedProductsCount / pageCount}
+                        onPageChange={(page) =>
+                          isSearchMode
+                            ? setCurrentPageSearch(page)
                             : isArchive
-                            ? "There are currently no archived products"
-                            : "There are currently no products"}
-                        </span>
-                      }
-                    </div>
-                  </>
-                )}
-              </div>
+                            ? setCurrentPageArchived(page)
+                            : setCurrentPage(page)
+                        }
+                        currentPage={
+                          isSearchMode
+                            ? currentPageSearch
+                            : isArchive
+                            ? currentPageArchived
+                            : currentPage
+                        }
+                        tableClassName="txn-section-table"
+                        noPadding
+                      />
+                    ) : (
+                      <>
+                        <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
+                          <SearchIcon className="stroke-current" />
+                          {
+                            <span>
+                              {isSearchMode && isEmpty(searchResult)
+                                ? `There are no results for your search '${searchQuery}'`
+                                : isArchive
+                                ? "There are currently no archived products"
+                                : "There are currently no products"}
+                            </span>
+                          }
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
 

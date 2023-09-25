@@ -256,3 +256,9 @@ export const flattenCategories = (categories) => {
 
   return flattened;
 };
+
+export const flattenArrayToString = (arr) =>
+  arr
+    ?.map((item) => item?.name)
+    ?.join(", ")
+    .trim() || "N/A";

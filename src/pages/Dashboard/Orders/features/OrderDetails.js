@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { transactionAmount } from "utils/transactions";
 import classNames from "classnames";
-const DetailBlock = ({ title, value, values, valueClassName }) => (
+export const DetailBlock = ({ title, value, values, valueClassName }) => (
   <div className={`flex flex-col justify-center items-start w-full gap-2 px-4`}>
     <h6 className="text-base">{title}</h6>
     {value && (
