@@ -14,9 +14,10 @@ function useLogin() {
     if (user?.accessToken) {
       const { accessToken, ...rest } = user;
       const warehouseId = rest?.user?.warehouseStaff?.warehouseId;
-      const defaultRoute = warehouseId
-        ? `/dashboard/home/${warehouseId}`
-        : "/warehouses";
+      const defaultRoute =
+        !rest?.user?.role?.includes("ADMIN") && warehouseId
+          ? `/dashboard/home/${warehouseId}`
+          : "/warehouses";
       saveToken(accessToken);
       saveUserInfoToStorage(rest);
       setAuthenticatedUser(user);

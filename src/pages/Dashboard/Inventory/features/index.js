@@ -314,7 +314,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
-            Cost price history
+            Cost prices
           </span>
 
           <span

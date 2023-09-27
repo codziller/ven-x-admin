@@ -133,6 +133,12 @@ const getProductsQuery = ({ page }) => gql`
       salePrice
       imageUrls
       archive
+      productCostPrice {
+        costPrice
+        updatedAt
+        id
+        quantityLeft
+      }
       }
     }
   }
@@ -205,8 +211,6 @@ const editProductQuery = gql`
   mutation updateProduct(
     $productId: String!
     $brandId: String!
-    $categoryIds: [String!]!
-    $costPrice: String!
     $discountType: DISCOUNT_TYPE
     $discountValue: String
     $enablePreOrder: Boolean!
@@ -225,8 +229,6 @@ const editProductQuery = gql`
     updateProduct(
       updateProductInput: {
         brandId: $brandId
-        categoryIds: $categoryIds
-        costPrice: $costPrice
         discountType: $discountType
         discountValue: $discountValue
         enablePreOrder: $enablePreOrder

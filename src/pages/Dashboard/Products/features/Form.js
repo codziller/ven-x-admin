@@ -648,6 +648,7 @@ const Form = ({ details, toggler }) => {
               prefix={"₦‎"}
               type="number"
               isRequired
+              isDisabled={!!product_id}
             />
 
             <Input
