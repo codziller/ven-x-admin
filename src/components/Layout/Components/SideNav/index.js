@@ -22,20 +22,18 @@ import {
   MdOutlineCardGiftcard,
   MdOutlineDiscount,
   MdOutlineForwardToInbox,
-  MdOutlineImageAspectRatio,
   MdOutlineInventory,
   MdOutlinePayments,
   MdOutlinePeopleAlt,
   MdOutlineRemoveShoppingCart,
   MdOutlineStorage,
-  MdStorage,
 } from "react-icons/md";
 import { FcBusinesswoman } from "react-icons/fc";
 
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import ProductsStore from "pages/Dashboard/Products/store";
 import { observer } from "mobx-react-lite";
-import { getUserInfoFromStorage } from "utils/storage";
+import { getUserInfoFromStorage, isAdmin } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
 
 const getLinks = (warehouse_id, user) => [
@@ -49,221 +47,226 @@ const getLinks = (warehouse_id, user) => [
       <Overview className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
     ),
   },
-  {
-    title: "Orders",
-    slug: "/dashboard/orders",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/orders/${warehouse_id}`,
-    icon: (
-      <TbPackageImport
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Products",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/products/${warehouse_id}`,
-    slug: "/dashboard/products",
-    icon: (
-      <Products className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-    ),
-  },
-  {
-    title: "Inventory",
-    slug: "/dashboard/inventory",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/inventory/${warehouse_id}`,
-    icon: (
-      <MdOutlineInventory
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Categories",
-    slug: "/dashboard/categories",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/categories/${warehouse_id}`,
-    icon: (
-      <TbCategory2
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Brands",
-    slug: "/dashboard/brands",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/brands/${warehouse_id}`,
-    icon: (
-      <TbBrandDenodo
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Back in stock",
-    slug: "/dashboard/back-in-stock",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/back-in-stock/${warehouse_id}`,
-    icon: (
-      <MdOutlineStorage
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out fill-current"
-      />
-    ),
-  },
 
-  {
-    title: "Abandoned Carts",
-    slug: "/dashboard/abandoned-carts",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/abandoned-carts/${warehouse_id}`,
-    icon: (
-      <MdOutlineRemoveShoppingCart
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
+  ...(isAdmin
+    ? [
+        {
+          title: "Orders",
+          slug: "/dashboard/orders",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/orders/${warehouse_id}`,
+          icon: (
+            <TbPackageImport
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Products",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/products/${warehouse_id}`,
+          slug: "/dashboard/products",
+          icon: (
+            <Products className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+          ),
+        },
+        {
+          title: "Inventory",
+          slug: "/dashboard/inventory",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/inventory/${warehouse_id}`,
+          icon: (
+            <MdOutlineInventory
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Categories",
+          slug: "/dashboard/categories",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/categories/${warehouse_id}`,
+          icon: (
+            <TbCategory2
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Brands",
+          slug: "/dashboard/brands",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/brands/${warehouse_id}`,
+          icon: (
+            <TbBrandDenodo
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Back in stock",
+          slug: "/dashboard/back-in-stock",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/back-in-stock/${warehouse_id}`,
+          icon: (
+            <MdOutlineStorage
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out fill-current"
+            />
+          ),
+        },
 
-  {
-    title: "Affiliate Marketers",
-    slug: "/dashboard/affiliate-marketers",
-    heading: "Manage Affiliate Marketers",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/affiliate-marketers/${warehouse_id}`,
-    icon: (
-      <FcBusinesswoman
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
+        {
+          title: "Abandoned Carts",
+          slug: "/dashboard/abandoned-carts",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/abandoned-carts/${warehouse_id}`,
+          icon: (
+            <MdOutlineRemoveShoppingCart
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
 
-  {
-    title: "Donations",
-    slug: "/dashboard/donations",
-    heading: "Manage Donations",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/donations/${warehouse_id}`,
-    icon: (
-      <GiReceiveMoney
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
+        {
+          title: "Affiliate Marketers",
+          slug: "/dashboard/affiliate-marketers",
+          heading: "Manage Affiliate Marketers",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/affiliate-marketers/${warehouse_id}`,
+          icon: (
+            <FcBusinesswoman
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
 
-  {
-    title: "Promo",
-    slug: "/dashboard/promo",
-    heading: "Manage Promo Code",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/promo/${warehouse_id}`,
-    icon: (
-      <Promo className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-    ),
-  },
-  {
-    title: "Gift Cards",
-    slug: "/dashboard/gift-cards",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/gift-cards/${warehouse_id}`,
-    icon: (
-      <MdOutlineCardGiftcard
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Subscriptions",
-    slug: "/dashboard/subscriptions",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/subscriptions/${warehouse_id}`,
-    icon: (
-      <MdOutlineForwardToInbox
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Discount Codes",
-    slug: "/dashboard/discounts",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/discounts/${warehouse_id}`,
-    icon: (
-      <MdOutlineDiscount
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Referrals",
-    slug: "/dashboard/referrals",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/referrals/${warehouse_id}`,
-    icon: (
-      <MdOutlinePeopleAlt
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Payments",
-    slug: "/dashboard/payments",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/payments/${warehouse_id}`,
-    icon: (
-      <MdOutlinePayments
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
+        {
+          title: "Donations",
+          slug: "/dashboard/donations",
+          heading: "Manage Donations",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/donations/${warehouse_id}`,
+          icon: (
+            <GiReceiveMoney
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
 
-  {
-    title: "Users",
-    slug: "/dashboard/users",
-    heading: "Manage Users",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/users/${warehouse_id}`,
-    icon: (
-      <PiUsersThree
-        size={24}
-        className="stroke-current transition-all duration-500 ease-in-out"
-      />
-    ),
-  },
-  {
-    title: "Staff",
-    slug: "/dashboard/staff",
-    heading: "Manage Staff (Lagos 1)",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/staff/${warehouse_id}`,
-    icon: (
-      <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-    ),
-  },
+        {
+          title: "Promo",
+          slug: "/dashboard/promo",
+          heading: "Manage Promo Code",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/promo/${warehouse_id}`,
+          icon: (
+            <Promo className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+          ),
+        },
+        {
+          title: "Gift Cards",
+          slug: "/dashboard/gift-cards",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/gift-cards/${warehouse_id}`,
+          icon: (
+            <MdOutlineCardGiftcard
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Subscriptions",
+          slug: "/dashboard/subscriptions",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/subscriptions/${warehouse_id}`,
+          icon: (
+            <MdOutlineForwardToInbox
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Discount Codes",
+          slug: "/dashboard/discounts",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/discounts/${warehouse_id}`,
+          icon: (
+            <MdOutlineDiscount
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Referrals",
+          slug: "/dashboard/referrals",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/referrals/${warehouse_id}`,
+          icon: (
+            <MdOutlinePeopleAlt
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Payments",
+          slug: "/dashboard/payments",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/payments/${warehouse_id}`,
+          icon: (
+            <MdOutlinePayments
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
 
-  {
-    title: "Marketing",
-    slug: "/dashboard/marketing",
-    label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/marketing/${warehouse_id}`,
-    icon: (
-      <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-    ),
-  },
+        {
+          title: "Users",
+          slug: "/dashboard/users",
+          heading: "Manage Users",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/users/${warehouse_id}`,
+          icon: (
+            <PiUsersThree
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+        {
+          title: "Staff",
+          slug: "/dashboard/staff",
+          heading: "Manage Staff (Lagos 1)",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/staff/${warehouse_id}`,
+          icon: (
+            <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+          ),
+        },
+
+        {
+          title: "Marketing",
+          slug: "/dashboard/marketing",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/marketing/${warehouse_id}`,
+          icon: (
+            <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+          ),
+        },
+      ]
+    : []),
 ];
 
 const SideNav = ({
@@ -342,13 +345,15 @@ const SideNav = ({
         </span>
         <div className="w-full md:h-full space-y-[21px] md:space-y-6 pb-[15px] pr-4">
           <div className=" flex flex-col justify-start items-start pl-3 md:pl-6 w-full cursor-pointer transition-all duration-1000 ease-in-out pb-28">
-            <div onClick={resetProductStore}>
-              <ProviderCard
-                provider={warehouse}
-                sidenavCollapsed={sidenavCollapsed}
-                getWareHouseLoading={getWareHouseLoading}
-              />
-            </div>
+            {isAdmin && (
+              <div onClick={resetProductStore}>
+                <ProviderCard
+                  provider={warehouse}
+                  sidenavCollapsed={sidenavCollapsed}
+                  getWareHouseLoading={getWareHouseLoading}
+                />
+              </div>
+            )}
 
             {trimArrayOfObject(links).map(({ title, icon, link, slug }) => (
               <>

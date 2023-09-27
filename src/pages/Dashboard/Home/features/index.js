@@ -32,6 +32,7 @@ import TransactionValueCard from "./TransactionValueCard";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
+import { isAdmin } from "utils/storage";
 
 export const dateFilters = [
   {
@@ -246,27 +247,27 @@ const HomePage = () => {
               icon={<OrdersIcon className="scale-[0.8]" />}
               title="Total Orders"
               value={numberWithCommas(ordersCount)}
-              link={`/dashboard/orders/${warehouse_id}`}
+              link={!isAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={orderLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
               value="₦‎ 2,000,000"
-              link={`/dashboard/orders/${warehouse_id}`}
+              link={!isAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Products"
               value={numberWithCommas(productsCount)}
-              link={`/dashboard/products/${warehouse_id}`}
+              link={!isAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
               isLoading={loading}
             />
             <EarningCard
               icon={<CustomersIcon className="scale-[0.8]" />}
               title="All Users"
               value={numberWithCommas(usersCount)}
-              link={`/dashboard/users/${warehouse_id}`}
+              link={!isAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
               isLoading={usersLoading}
             />
           </div>

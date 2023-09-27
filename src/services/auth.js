@@ -23,6 +23,9 @@ const loginQuery = gql`
         email
         role
         gender
+        warehouseStaff {
+          warehouseId
+        }
       }
       accessToken
     }

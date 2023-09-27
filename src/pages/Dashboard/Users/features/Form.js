@@ -154,6 +154,7 @@ const Form = ({ details, toggler }) => {
       email: user_id ? "" : form.email,
       phoneNumber: user_id ? "" : form.phoneNumber,
       password: user_id ? "" : form.password,
+      warehouseId: form?.warehouseId || warehouse_id,
     };
 
     cleanPayload(payload);

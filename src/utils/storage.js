@@ -85,6 +85,13 @@ export const getUserInfoFromStorage = () => {
     return error;
   }
 };
+export const getCurrentRole = () => {
+  const currentUser = getUserInfoFromStorage();
+  const currentUserRole = currentUser?.user?.role;
+  return currentUserRole;
+};
+const currentUserRole = getCurrentRole();
+export const isAdmin = currentUserRole?.includes("ADMIN");
 
 export const clearStorage = () => {
   try {

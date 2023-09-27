@@ -13,12 +13,15 @@ function useLogin() {
   const logUserIn = (user, route) => {
     if (user?.accessToken) {
       const { accessToken, ...rest } = user;
+      const warehouseId = rest?.user?.warehouseStaff?.warehouseId;
+      const defaultRoute = warehouseId
+        ? `/dashboard/home/${warehouseId}`
+        : "/warehouses";
       saveToken(accessToken);
       saveUserInfoToStorage(rest);
       setAuthenticatedUser(user);
-      // dispatch(fetchBusinesses());
       clearAccountCreation();
-      navigate(route || "/warehouses", { replace: true });
+      navigate(route || defaultRoute, { replace: true });
     }
   };
 
