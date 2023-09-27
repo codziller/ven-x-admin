@@ -245,16 +245,16 @@ const getLinks = (warehouse_id, user) => [
             />
           ),
         },
-        {
-          title: "Staff",
-          slug: "/dashboard/staff",
-          heading: "Manage Staff (Lagos 1)",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/staff/${warehouse_id}`,
-          icon: (
-            <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-          ),
-        },
+        // {
+        //   title: "Staff",
+        //   slug: "/dashboard/staff",
+        //   heading: "Manage Staff (Lagos 1)",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/staff/${warehouse_id}`,
+        //   icon: (
+        //     <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+        //   ),
+        // },
 
         {
           title: "Marketing",
