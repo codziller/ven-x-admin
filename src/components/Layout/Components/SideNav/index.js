@@ -161,16 +161,16 @@ const getLinks = (warehouse_id, user) => [
           ),
         },
 
-        {
-          title: "Promo",
-          slug: "/dashboard/promo",
-          heading: "Manage Promo Code",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/promo/${warehouse_id}`,
-          icon: (
-            <Promo className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-          ),
-        },
+        // {
+        //   title: "Promo",
+        //   slug: "/dashboard/promo",
+        //   heading: "Manage Promo Code",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/promo/${warehouse_id}`,
+        //   icon: (
+        //     <Promo className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+        //   ),
+        // },
         {
           title: "Gift Cards",
           slug: "/dashboard/gift-cards",
@@ -195,18 +195,18 @@ const getLinks = (warehouse_id, user) => [
             />
           ),
         },
-        {
-          title: "Discount Codes",
-          slug: "/dashboard/discounts",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/discounts/${warehouse_id}`,
-          icon: (
-            <MdOutlineDiscount
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
+        // {
+        //   title: "Discount Codes",
+        //   slug: "/dashboard/discounts",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/discounts/${warehouse_id}`,
+        //   icon: (
+        //     <MdOutlineDiscount
+        //       size={24}
+        //       className="stroke-current transition-all duration-500 ease-in-out"
+        //     />
+        //   ),
+        // },
         {
           title: "Referrals",
           slug: "/dashboard/referrals",
