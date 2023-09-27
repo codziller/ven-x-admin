@@ -28,6 +28,7 @@ const Form = ({ details, toggler }) => {
   const defaultValues = {
     quantity: details?.quantity || "",
     lowInQuantityValue: details?.lowInQuantityValue || "",
+    costPrice: details?.costPrice || "",
   };
 
   const {
@@ -51,6 +52,7 @@ const Form = ({ details, toggler }) => {
   const form = {
     lowInQuantityValue: watch("lowInQuantityValue"),
     quantity: watch("quantity"),
+    costPrice: watch("costPrice"),
   };
   const handleOnSubmit = (e) => {
     const payload = {
@@ -63,6 +65,7 @@ const Form = ({ details, toggler }) => {
       data: payload,
       onSuccess: () => toggler(),
       page: details?.currentPage,
+      warehouse_id,
     });
   };
 
@@ -85,7 +88,7 @@ const Form = ({ details, toggler }) => {
           <h2 className="section-heading my-8 text-xl">Add New Product</h2>
         ) : (
           <h2 className="section-heading mb-3 text-xl  ">
-            Edit Product Inventory
+            Edit {details?.name}
           </h2>
         )}
 
@@ -101,6 +104,7 @@ const Form = ({ details, toggler }) => {
             formError={errors.quantity}
             showFormError={formTwo?.showFormError}
             type="number"
+            isRequired
             required
           />
 
@@ -112,7 +116,16 @@ const Form = ({ details, toggler }) => {
             formError={errors.lowInQuantityValue}
             showFormError={formTwo?.showFormError}
             type="number"
-            required
+          />
+          <Input
+            label="Cost Price (₦‎)"
+            value={form?.costPrice}
+            onChangeFunc={(val) => handleChange("costPrice", val)}
+            placeholder="Enter Cost Price"
+            formError={errors.costPrice}
+            showFormError={formTwo?.showFormError}
+            prefix={"₦‎"}
+            type="number"
           />
 
           <Button

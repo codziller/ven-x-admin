@@ -28,6 +28,7 @@ import { observer } from "mobx-react-lite";
 import CopyToClipboard from "react-copy-to-clipboard";
 import Amount from "components/General/Numbers/Amount";
 import EarningCard from "pages/Dashboard/Home/features/EarningCard";
+import { numberWithCommas } from "utils/formatter";
 
 export const dateFilters = [
   {
@@ -125,7 +126,7 @@ const DonationsPage = () => {
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Donation Balance"
-              value={donationWallet?.balance || "-"}
+              value={numberWithCommas(donationWallet?.balance) || "-"}
               isLoading={loading}
               isAmount
               isDecimal

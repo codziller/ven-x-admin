@@ -19,6 +19,7 @@ const getUserQuery = ({ id }) => gql`
       lastName
       phoneNumber
       referralCode
+      brandId
       role
     }
   }
@@ -100,61 +101,57 @@ const searchUsersQuery = ({ page, searchQuery }) => gql`
 `;
 
 const createUserQuery = gql`
-  mutation createUser(
-    discountCode: String!
-    discountExpiryTime: DateTime!
-    discountLimit: String
-    discountType: DISCOUNT_TYPE!
-    discountValue: String!
-    userId: String!
-    userProfitType: DISCOUNT_TYPE!
-    userProfitValue: String!
+  mutation adminCreateUser(
+    $dob: String!
+    $email: String!
+    $firstName: String!
+    $gender: USER_GENDERS!
+    $lastName: String!
+    $password: String!
+    $phoneNumber: String!
+    $role: USER_ROLES
+    $warehouseId: String
   ) {
-    createUser(
-      createUserInput: {
-        discountCode: $discountCode
-        discountExpiryTime: $discountExpiryTime
-        discountLimit: $discountLimit
-        discountType: $discountType!
-        discountValue: $discountValue
-        userId: $userId
-        userProfitType: $userProfitType
-        userProfitValue: $userProfitValue
-      }
+    adminCreateUser(
+      dob: $dob
+      email: $email
+      firstName: $firstName
+      gender: $gender
+      lastName: $lastName
+      password: $password
+      phoneNumber: $phoneNumber
+      role: $role
+      warehouseId: $warehouseId
     ) {
-      id
+      user {
+        id
+      }
     }
   }
 `;
 
 const editUserQuery = gql`
-mutation updateUser(
-  id: String!
-  discountCode: String!
-  discountExpiryTime: DateTime!
-  discountLimit: String
-  discountType: DISCOUNT_TYPE!
-  discountValue: String!
-  userId: String!
-  userProfitType: DISCOUNT_TYPE!
-  userProfitValue: String!
-) {
-  updateUser(
-    updateUserInput: {
-      id: $id
-      discountCode: $discountCode
-      discountExpiryTime: $discountExpiryTime
-      discountLimit: $discountLimit
-      discountType: $discountType!
-      discountValue: $discountValue
-      userId: $userId
-      userProfitType: $userProfitType
-      userProfitValue: $userProfitValue
-    }
+  mutation adminUpdateUser(
+    $userId: String!
+    $firstName: String!
+    $gender: USER_GENDERS!
+    $lastName: String!
+    $brandId: String!
+    $role: USER_ROLES
+    $warehouseId: String
   ) {
-    id
+    adminUpdateUser(
+      userId: $userId
+      firstName: $firstName
+      gender: $gender
+      lastName: $lastName
+      brandId: $brandId
+      role: $role
+      warehouseId: $warehouseId
+    ) {
+      id
+    }
   }
-}
 `;
 
 const editUserWalletQuery = gql`

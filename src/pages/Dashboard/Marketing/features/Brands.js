@@ -7,23 +7,37 @@ import { Link } from "react-router-dom";
 
 import { observer } from "mobx-react-lite";
 import { useCallback } from "react";
-import ProductsPage from "pages/Dashboard/Products/features";
+import BrandsPage from "pages/Dashboard/Brands/features";
 
-const Products = ({ details, toggler, handleChange, form }) => {
+const Brands = ({ details, toggler, handleChange, form }) => {
+  const prop = details?.prop || "brandId";
+
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
-    categoryId: form?.categoryId || "",
+    [prop]: form?.[prop],
   });
 
   const isSelected = useCallback(
-    (id) => formTwo?.categoryId === id,
-    [formTwo.categoryId]
+    (id) => {
+      return !details?.isMultipleBrands
+        ? formTwo?.[prop] === id
+        : formTwo?.[prop]?.includes(id);
+    },
+    [formTwo?.[prop]]
   );
 
   const handleSubmit = (val) => {
-    setFormTwo({ ...formTwo, dataId: val });
-    handleChange("dataId", val);
-    toggler?.();
+    if (!details?.isMultipleBrands) {
+      setFormTwo({ ...formTwo, [prop]: val });
+      handleChange({ prop, val });
+      toggler?.();
+      return;
+    }
+    const newItems = formTwo?.[prop]?.includes(val)
+      ? formTwo?.[prop]?.filter((item) => item !== val)
+      : [...formTwo?.[prop], val];
+    setFormTwo({ ...formTwo, [prop]: newItems });
+    handleChange({ prop, val: newItems });
   };
   return (
     <>
@@ -40,25 +54,26 @@ const Products = ({ details, toggler, handleChange, form }) => {
           </button>
         )}
 
-        <p className="font-600 text-[20px] ">Select A Product</p>
+        <p className="font-600 text-[20px] ">Select A Brand</p>
 
         <p className="mb-3 text-sm text-grey text-left">
-          Search for a product to be linked to this slide
+          Search for a brand to be linked to this slide
         </p>
 
-        <ProductsPage
+        <BrandsPage
           isModal
-          handleProductSelect={(e) => handleSubmit(e?.id)}
+          handleBrandSelect={(e) => handleSubmit(e?.id)}
           isSelected={isSelected}
+          modalDetails={details}
         />
       </div>
     </>
   );
 };
-Products.propTypes = {
+Brands.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
   handleChange: PropTypes.func,
   form: PropTypes.object,
 };
-export default observer(Products);
+export default observer(Brands);

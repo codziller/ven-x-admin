@@ -17,11 +17,11 @@ const usePasswordValidation = ({ value }) => {
       <div className="flex flex-col justify-start items-center text-sm gap-[5px]">
         {passwordCheck.map(({ text, test }) => (
           <div
-            className="flex justify-start items-center w-full gap-[5px] transition-all duration-1000 ease-in-out"
+            className="flex justify-start items-center w-full gap-[5px] transition-all duration-500 ease-in-out"
             key={text}
           >
             <div
-              className={`min-w-[8px] min-h-[8px] max-w-[8px] max-h-[8px] gap-[5px] rounded-full transition-all duration-1000 ease-in-out
+              className={`min-w-[8px] min-h-[8px] max-w-[8px] max-h-[8px] gap-[5px] rounded-full
           border  ${
             test
               ? "bg-green-light border-green-light"
@@ -30,7 +30,7 @@ const usePasswordValidation = ({ value }) => {
             `}
             />
             <p
-              className={`transition-all duration-1000 ease-in-out ${
+              className={`transition-all duration-500 ease-in-out ${
                 test ? "text-green-light" : "text-grey-text"
               }`}
             >

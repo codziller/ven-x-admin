@@ -3,11 +3,11 @@ import { Outlet } from "react-router";
 import { Helmet } from "react-helmet";
 import DashboardLayout from "components/Layout/DashboardLayout";
 
-const Media = () => {
+const Marketing = () => {
   return (
     <div>
       <Helmet>
-        <title>App & Website Media - Beautyhut</title>
+        <title>Marketing - Beautyhut</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />
@@ -16,4 +16,4 @@ const Media = () => {
   );
 };
 
-export default Media;
+export default Marketing;

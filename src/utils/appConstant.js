@@ -651,10 +651,16 @@ export const ROLES = [
     value: "GENERAL_STAFF",
     label: "GENERAL STAFF",
   },
+
+  {
+    value: "BRAND_STAFF",
+    label: "BRAND_STAFF",
+  },
   {
     value: "GUEST",
     label: "GUEST",
   },
+
   {
     value: "WAREHOUSE_ADMIN",
     label: "WAREHOUSE ADMIN",
@@ -699,3 +705,9 @@ export const PRODUCT_REQUEST_STATUSES_LIST = [
   { label: "Cancelled", value: "CANCELLED" },
 ];
 export const CENTRAL_WAREHOUSE_ID = "77a9c714-eea8-4601-b8e7-bac977078490";
+export const GENDERS = [
+  { label: "Male", value: "MALE" },
+  { label: "Female", value: "FEMALE" },
+  { label: "Non-binary", value: "NON_BINARY" },
+  { label: "Prefer not to say", value: "UNSPECIFIED" },
+];

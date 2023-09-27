@@ -50,6 +50,7 @@ export default function ImagePicker({
   isRequired,
   isBanner,
   isPost,
+  isMarketingImg,
   ...rest
 }) {
   const imageArray = isString(images) ? [images] : images;
@@ -136,7 +137,8 @@ export default function ImagePicker({
                   className={classNames("image-item w-full", {
                     "min-h-[420px] max-h-[420px]": isBanner,
                     "h-[250px] sm:h-[300px] rounded-[6px]": isPost,
-                    "h-[150px]": !isBanner && !isPost,
+                    "h-[275px] min-w-[187px]  max-w-[187px]": isMarketingImg,
+                    "h-[150px]": !isBanner && !isPost && !isMarketingImg,
                   })}
                 >
                   <div className="flex justify-between items-center">
@@ -181,4 +183,5 @@ ImagePicker.propTypes = {
   isRequired: PropTypes.bool,
   isBanner: PropTypes.bool,
   isPost: PropTypes.bool,
+  isMarketingImg: PropTypes.bool,
 };

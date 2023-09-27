@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,34 +6,33 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { TailSpin } from "react-loader-spinner";
 import Button from "components/General/Button/Button";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
+import Textarea from "components/General/Textarea/Textarea";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CheckBox from "components/General/Input/CheckBox";
 import {
+  IMAGE_NAME_ENUM,
   MEDIA_MODAL_TYPES,
-  PRODUCT_MODAL_TYPES,
   SLIDE_LINK_TYPES,
 } from "utils/appConstant";
 import Input from "components/General/Input/Input";
 import { isArray, isEmpty, lowerCase } from "lodash";
 import BrandsStore from "pages/Dashboard/Brands/store";
 import ProductsStore from "pages/Dashboard/Products/store";
-import CategoriesStore from "pages/Dashboard/Categories/store";
-import MediaStore from "../store";
+import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import cleanPayload from "utils/cleanPayload";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
-import { flattenCategories } from "utils/functions";
-import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
-const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+
 const Form = observer(() => {
   const { warehouse_id, media_id, position } = useParams();
+  const positionName = IMAGE_NAME_ENUM.find(
+    (item) => String(item?.name) === String(position)
+  )?.value;
   const navigate = useNavigate();
   const [formTwo, setFormTwo] = useState({
     modalType: "",
@@ -41,36 +40,24 @@ const Form = observer(() => {
     createLoading: false,
   });
 
-  const schema = yup.object({});
+  const schema = yup.object({
+    titleText: yup.string().required("Please enter post title"),
+    descriptionText: yup.string().required("Please enter post description"),
+  });
 
   const { getBrand, brand, getBrandLoading } = BrandsStore;
   const { getProductName, product, getProductLoading } = ProductsStore;
-  const { getCategories, categories } = CategoriesStore;
-  const {
-    createMobilePagePost,
-    editMobilePagePost,
-    mobilePagePost,
-    loadingMobilePagePost,
-  } = MediaStore;
+  const { createImage, editImage, image, loadingImage } = MarketingStore;
 
   const defaultValues = {
-    dataId: media_id ? mobilePagePost?.dataId : "",
-    imageUrl: media_id ? mobilePagePost?.imageUrl : [],
-    pageToLinkTo: media_id
-      ? mobilePagePost?.pageToLinkTo
-      : SLIDE_LINK_TYPES[0]?.value,
-    categoryId: media_id ? mobilePagePost?.categoryId : "",
+    dataId: media_id ? image?.dataId : "",
+    descriptionText: media_id ? image?.descriptionText : "",
+    sourceImageUrl: media_id ? image?.sourceImageUrl : [],
+    pageToLinkTo: media_id ? image?.pageToLinkTo : SLIDE_LINK_TYPES[0]?.value,
+    titleText: media_id ? image?.titleText : "",
   };
 
-  useEffect(() => {
-    getCategories();
-  }, []);
-
-  const flattenedCategories = useMemo(
-    () => !isEmpty(categories) && flattenCategories(categories),
-    [categories]
-  );
-
+  console.log("image: ", image);
   const {
     handleSubmit,
     formState: { errors },
@@ -97,19 +84,13 @@ const Form = observer(() => {
 
   const form = {
     dataId: watch("dataId"),
-    imageUrl: watch("imageUrl"),
+    descriptionText: watch("descriptionText"),
+    sourceImageUrl: watch("sourceImageUrl"),
     pageToLinkTo: watch("pageToLinkTo"),
-    categoryId: watch("categoryId"),
+    titleText: watch("titleText"),
   };
 
-  const selectedCategory = useMemo(
-    () =>
-      !isEmpty(flattenedCategories)
-        ? flattenedCategories?.find((item) => item?.id === form?.categoryId)
-            ?.name
-        : "",
-    [flattenedCategories, form?.categoryId]
-  );
+  console.log("Form: ", form);
 
   useEffect(() => {
     if (!form.dataId) {
@@ -126,36 +107,38 @@ const Form = observer(() => {
 
     try {
       const imagesUrls = await uploadImageToCloud(
-        isArray(form?.imageUrl) ? form?.imageUrl?.[0] : form?.imageUrl
+        isArray(form?.sourceImageUrl)
+          ? form?.sourceImageUrl?.[0]
+          : form?.sourceImageUrl
       );
 
       if (!media_id) {
         const payload = {
           ...form,
-          position,
-          imageUrl: imagesUrls,
+          name: positionName,
+          sourceImageUrl: imagesUrls,
         };
 
         cleanPayload(payload);
 
-        await createMobilePagePost({
+        await createImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/media/${warehouse_id}`),
+          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       } else {
         const payload = {
           ...form,
-          position,
-          mobilePagePostId: media_id,
-          imageUrl: imagesUrls,
+          name: positionName,
+          id: media_id,
+          sourceImageUrl: imagesUrls,
         };
 
         cleanPayload(payload);
 
-        await editMobilePagePost({
+        await editImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/media/${warehouse_id}`),
+          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       }
@@ -170,7 +153,7 @@ const Form = observer(() => {
     }
   };
 
-  return loadingMobilePagePost ? (
+  return loadingImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -182,7 +165,7 @@ const Form = observer(() => {
             <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
               <div className="mb-5">
                 <Link
-                  to={`/dashboard/media/${warehouse_id}`}
+                  to={`/dashboard/marketing/${warehouse_id}`}
                   className="scale-90"
                 >
                   <ArrowBack />
@@ -190,11 +173,11 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Homepage Slide ({position})
+                  Edit Homepage Post ({position})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Homepage Slide ({position})
+                  Add Homepage Post ({position})
                 </h2>
               )}
 
@@ -213,7 +196,7 @@ const Form = observer(() => {
                   </label>
 
                   <span className="text-grey-text text-sm mb-3 -mt-2">
-                    Select the page type to be linked with this slide
+                    Select the page type to be linked with this post
                   </span>
                   {SLIDE_LINK_TYPES.map((item) => (
                     <CheckBox
@@ -232,7 +215,7 @@ const Form = observer(() => {
                         }
                       >
                         Select the {lowerCase(form?.pageToLinkTo)} to be linked
-                        with this slide
+                        with this post
                       </label>
 
                       <div className="flex flex-col justify-start items-end gap-1 w-full">
@@ -267,55 +250,49 @@ const Form = observer(() => {
                       </div>
                     </div>
                   )}
-
-                  <div className="flex flex-col justify-start items-end gap-1 w-full">
-                    {form?.categoryId && <p>{selectedCategory}</p>}
-                    <Button
-                      onClick={() =>
-                        handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
-                      }
-                      text="Select Category"
-                      icon={<Plus className="text-black current-svg" />}
-                      className=""
-                      whiteBg
-                      fullWidth
-                    />
-                    <span
-                      onClick={() =>
-                        handleChangeTwo("modalType", PRODUCT_CATEGORY)
-                      }
-                      className="text-sm text-blue flex justify-start items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="text-blue current-svg w-[16px]" /> Create
-                      Category
-                    </span>
-                    <div className="h-[13px]">
-                      {errors?.categoryId && (
-                        <FormErrorMessage type={errors?.categoryId} />
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {/* Second section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
                   <div className="flex flex-col justify-start items-start gap-1">
                     <span className="text-grey-text text-lg uppercase">
-                      Post Image
+                      Post Details
                     </span>
                     <span className="text-grey-text text-sm">
-                      Select Post Image
+                      Provide additional details for this post
                     </span>
                   </div>
 
-                  <ImagePicker
-                    label="Select Image "
-                    handleDrop={(val) => handleChange("imageUrl", val)}
-                    images={form.imageUrl}
-                    multiple={false}
-                    isBanner
+                  <Input
+                    label="Post Title"
+                    value={form?.titleText}
+                    onChangeFunc={(val) => handleChange("titleText", val)}
+                    placeholder="Enter Title"
+                    formError={errors.titleText}
+                    showFormError={formTwo?.showFormError}
                   />
 
+                  <Textarea
+                    label="Post Description"
+                    value={form?.descriptionText}
+                    onChangeFunc={(val) => handleChange("descriptionText", val)}
+                    placeholder="Enter Description"
+                    formError={errors.descriptionText}
+                    showFormError={formTwo?.showFormError}
+                    required
+                  />
+                </div>
+                {/* Third section */}
+                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
+                  <ImagePicker
+                    label="Select Image "
+                    handleDrop={(val) => handleChange("sourceImageUrl", val)}
+                    images={form.sourceImageUrl}
+                    formError={errors.sourceImageUrl}
+                    showFormError={formTwo?.showFormError}
+                    multiple={false}
+                    isPost
+                  />
                   <Button
                     onClick={() =>
                       setFormTwo({ ...formTwo, showFormError: true })
@@ -327,8 +304,6 @@ const Form = observer(() => {
                     fullWidth
                   />
                 </div>
-                {/* Third section */}
-                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
               </form>
             </div>
           </div>
@@ -349,31 +324,18 @@ const Form = observer(() => {
         handleChange={handleChange}
         form={form}
       />
-      <DetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
-        details={{ modalType: PRODUCT_CATEGORY_OPTIONS }}
-        toggler={() => handleChangeTwo("modalType", false)}
-        handleChange={handleChange}
-        form={form}
-        type="Post"
-      />
-      <CategoryDetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY}
-        details={{ modalType: "add", isAdd: true }}
-        toggler={() => handleChangeTwo("modalType", false)}
-      />
     </>
   );
 });
 
-const AddMobilePagePost = () => {
+const AddHomePagePost = () => {
   const { media_id } = useParams();
-  const { loadingMobilePagePost, getMobilePagePost } = MediaStore;
+  const { loadingImage, getImage } = MarketingStore;
 
   useEffect(() => {
-    media_id && getMobilePagePost({ data: { id: media_id } });
+    media_id && getImage({ data: { id: media_id } });
   }, []);
-  return loadingMobilePagePost ? (
+  return loadingImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -382,4 +344,4 @@ const AddMobilePagePost = () => {
   );
 };
 
-export default observer(AddMobilePagePost);
+export default observer(AddHomePagePost);

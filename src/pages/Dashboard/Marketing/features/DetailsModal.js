@@ -61,7 +61,8 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
             toggler={toggler}
             handleChange={handleChange}
             form={form}
-            type="Post"
+            type={details?.modalTitle}
+            isSingle={details?.isSingleCategory}
           />
         );
 

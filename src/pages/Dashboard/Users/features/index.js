@@ -9,6 +9,7 @@ import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 import { pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
+import { ReactComponent as Plus } from "assets/icons/add.svg";
 import useWindowDimensions from "hooks/useWindowDimensions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
@@ -17,6 +18,7 @@ import { numberWithCommas } from "utils/formatter";
 import Amount from "components/General/Numbers/Amount";
 import Tabs from "components/General/Tabs";
 import UsersStore from "../store";
+import { Button } from "components/General/Button";
 
 export const dateFilters = [
   {
@@ -219,14 +221,12 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
               />
             </div>
 
-            {/* <Button
+            <Button
               text="Add User"
               icon={<Plus className="stroke-current" />}
               className="hidden md:block"
-              onClick={() =>
-                setCurrentTxnDetails({ modalType: "add", isAdd: true })
-              }
-            /> */}
+              onClick={() => navigate(`/dashboard/users/add/${warehouse_id}`)}
+            />
           </div>
 
           <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />

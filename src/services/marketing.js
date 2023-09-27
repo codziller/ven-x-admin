@@ -1,6 +1,96 @@
 import { gql } from "graphql-request";
 import { graphQlInstance } from "services";
 
+const getMobileMarketingImagesQuery = ({ page }) => gql`
+  {
+    __typename
+    mobileMarketingImages(pageNumber: "${page}") {
+      total
+      results {
+        archive
+        categoryId
+        updatedAt
+        id
+        imageUrl
+        isForYou
+      }
+    }
+  }
+`;
+
+const getMobileMarketingImageQuery = ({ id }) => gql`
+  {
+    __typename
+    mobileMarketingImage(id: "${id}") {
+        archive
+        categoryId
+        updatedAt
+        id
+        imageUrl
+        isForYou
+    }
+  }
+`;
+
+const getPromoBannersQuery = ({ page }) => gql`
+  {
+    __typename
+    promoBanners {
+      id
+      showOnMobile
+      showOnWeb
+      titleText
+    }
+  }
+`;
+
+const getPromoBannerQuery = ({ id }) => gql`
+  {
+    __typename
+    promoBanner(id: "${id}") {
+      id
+      showOnMobile
+      showOnWeb
+      titleText
+    }
+  }
+`;
+
+const getDiscountsQuery = ({ page }) => gql`
+  {
+    __typename
+    discounts(pageNumber: "${page}") {
+      total
+      results {
+        id
+        imageUrl
+        showOnMobile
+        showOnWeb 
+        titleText
+        discountCode
+      }
+    }
+  }
+`;
+
+const getDiscountQuery = ({ id }) => gql`
+  {
+    __typename
+    discount(id: "${id}") {
+        archived
+        descriptionText
+        discountCode
+        discountType
+        discountValue
+        id
+        imageUrl
+        showOnMobile
+        showOnWeb
+        titleText
+    }
+  }
+`;
+
 const getImagesQuery = ({ page }) => gql`
   {
     __typename
@@ -78,7 +168,6 @@ const getMobilePagePostsQuery = ({ page }) => gql`
       total
       results {
         archive
-        categoryId
         dataId
         id
         pageToLinkTo
@@ -94,12 +183,151 @@ const getMobilePagePostQuery = ({ id }) => gql`
     __typename
     homeSliderMobilePagePost(id: "${id}") {
         archive
-        categoryId
         dataId
         id
         pageToLinkTo
         imageUrl
         position
+    }
+  }
+`;
+
+const createMobileMarketingImageQuery = gql`
+  mutation createMobileMarketingImage(
+    $categoryId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+  ) {
+    createMobileMarketingImage(
+      createMobileMarketingImageInput: {
+        categoryId: $categoryId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editMobileMarketingImageQuery = gql`
+  mutation updateMobileMarketingImage(
+    $categoryId: String
+    $imageUrl: String
+    $isForYou: Boolean
+    $id: String!
+  ) {
+    updateMobileMarketingImage(
+      updateMobileMarketingImageInput: {
+        categoryId: $categoryId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        id: $id
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const createPromoBannerQuery = gql`
+  mutation createPromoBanner(
+    $showOnMobile: Boolean!
+    $showOnWeb: Boolean!
+    $titleText: String!
+  ) {
+    createPromoBanner(
+      createPromoBannerInput: {
+        showOnMobile: $showOnMobile
+        showOnWeb: $showOnWeb
+        titleText: $titleText
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editPromoBannerQuery = gql`
+  mutation updatePromoBanner(
+    $showOnMobile: Boolean
+    $showOnWeb: Boolean
+    $titleText: String
+    $id: String!
+  ) {
+    updatePromoBanner(
+      updatePromoBannerInput: {
+        showOnMobile: $showOnMobile
+        showOnWeb: $showOnWeb
+        titleText: $titleText
+        id: $id
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const createDiscountQuery = gql`
+  mutation createDiscount(
+    $brandIds: [String!]
+    $categoryIds: [String!]
+    $descriptionText: String!
+    $discountCode: String!
+    $discountType: DISCOUNT_TYPE!
+    $discountValue: String!
+    $imageUrl: String!
+    $productIds: [String!]
+    $showOnMobile: Boolean!
+    $showOnWeb: Boolean!
+    $titleText: String!
+  ) {
+    createDiscount(
+      createDiscountInput: {
+        brandIds: $brandIds
+        categoryIds: $categoryIds
+        descriptionText: $descriptionText
+        discountCode: $discountCode
+        discountType: $discountType
+        discountValue: $discountValue
+        imageUrl: $imageUrl
+        productIds: $productIds
+        showOnMobile: $showOnMobile
+        showOnWeb: $showOnWeb
+        titleText: $titleText
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editDiscountQuery = gql`
+  mutation updateDiscount(
+    $descriptionText: String!
+    $discountCode: String!
+    $discountType: DISCOUNT_TYPE!
+    $discountValue: String!
+    $imageUrl: String!
+    $showOnMobile: Boolean!
+    $showOnWeb: Boolean!
+    $titleText: String!
+    $id: String!
+  ) {
+    updateDiscount(
+      updateDiscountInput: {
+        descriptionText: $descriptionText
+        discountCode: $discountCode
+        discountType: $discountType
+        discountValue: $discountValue
+        imageUrl: $imageUrl
+        showOnMobile: $showOnMobile
+        showOnWeb: $showOnWeb
+        titleText: $titleText
+        id: $id
+      }
+    ) {
+      id
     }
   }
 `;
@@ -207,15 +435,13 @@ const editHomeSliderImageQuery = gql`
 const createMobilePagePostQuery = gql`
   mutation createMobilePagePost(
     $dataId: String!
-    $categoryId: String!
     $pageToLinkTo: PageToLinkToEnum!
     $imageUrl: String!
     $position: String
   ) {
     createMobilePagePost(
       createMobilePagePostDto: {
-        dataId: $dataId
-        categoryId: $categoryId
+        dataId: $dataI
         pageToLinkTo: $pageToLinkTo
         imageUrl: $imageUrl
         position: $position
@@ -259,6 +485,34 @@ const deleteBrandQuery = gql`
 `;
 
 const apis = {
+  getMobileMarketingImages: ({ page }) =>
+    graphQlInstance(getMobileMarketingImagesQuery({ page }), {
+      method: "GET",
+    }),
+
+  getMobileMarketingImage: ({ id }) =>
+    graphQlInstance(getMobileMarketingImageQuery({ id }), {
+      method: "GET",
+    }),
+
+  getPromoBanners: ({ page }) =>
+    graphQlInstance(getPromoBannersQuery({ page }), {
+      method: "GET",
+    }),
+  getPromoBanner: ({ id }) =>
+    graphQlInstance(getPromoBannerQuery({ id }), {
+      method: "GET",
+    }),
+
+  getDiscounts: ({ page }) =>
+    graphQlInstance(getDiscountsQuery({ page }), {
+      method: "GET",
+    }),
+  getDiscount: ({ id }) =>
+    graphQlInstance(getDiscountQuery({ id }), {
+      method: "GET",
+    }),
+
   getImages: ({ page }) =>
     graphQlInstance(getImagesQuery({ page }), {
       method: "GET",
@@ -282,6 +536,34 @@ const apis = {
   getMobilePagePost: ({ id }) =>
     graphQlInstance(getMobilePagePostQuery({ id }), {
       method: "GET",
+    }),
+
+  createMobileMarketingImage: (variables) =>
+    graphQlInstance(createMobileMarketingImageQuery, {
+      variables,
+    }),
+
+  editMobileMarketingImage: (variables) =>
+    graphQlInstance(editMobileMarketingImageQuery, {
+      variables,
+    }),
+
+  createPromoBanner: (variables) =>
+    graphQlInstance(createPromoBannerQuery, {
+      variables,
+    }),
+  editPromoBanner: (variables) =>
+    graphQlInstance(editPromoBannerQuery, {
+      variables,
+    }),
+
+  createDiscount: (variables) =>
+    graphQlInstance(createDiscountQuery, {
+      variables,
+    }),
+  editDiscount: (variables) =>
+    graphQlInstance(editDiscountQuery, {
+      variables,
     }),
 
   createImage: (variables) =>

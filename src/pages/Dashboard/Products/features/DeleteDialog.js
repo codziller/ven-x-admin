@@ -40,6 +40,7 @@ const DeleteDialog = ({ details, toggler }) => {
     }
     const payload = { id: details?.id };
     deleteProduct({
+      warehouse_id,
       data: payload,
       onSuccess: () => {
         toggler();

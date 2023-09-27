@@ -22,6 +22,7 @@ import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import { numberWithCommas } from "utils/formatter";
 import { flattenArrayToString } from "utils/functions";
+import CheckBox from "components/General/Input/CheckBox";
 export const dateFilters = [
   {
     value: "today",
@@ -42,7 +43,12 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
-const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
+const ProductsPage = ({
+  isModal,
+  handleProductSelect,
+  isSelected,
+  modalDetails,
+}) => {
   const navigate = useNavigate();
   const { warehouse_id } = useParams();
 
@@ -84,13 +90,16 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
       return;
     }
     const payload = { page: currentPage, searchQuery };
-    await searchProducts({ data: payload });
+    await searchProducts({ data: payload, warehouse_id });
   };
 
   const handleGetData = () => {
     isArchive
-      ? getArchivedProducts({ data: { page: currentPageArchived } })
-      : getProducts({ data: { page: currentPage } });
+      ? getArchivedProducts({
+          data: { page: currentPageArchived },
+          warehouse_id,
+        })
+      : getProducts({ data: { page: currentPage }, warehouse_id });
   };
 
   useEffect(() => {
@@ -115,8 +124,24 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
     {
       name: "SKU",
       minWidth: "20px",
-      maxWidth: isMobile ? "10%" : "70px",
-      selector: "id",
+      maxWidth: isModal ? "100px" : isMobile ? "10%" : "70px",
+      selector: (row) => (
+        <div
+          className="flex justify-start items-center gap-2"
+          onClick={() => handleEdit(row)}
+        >
+          {isModal && (
+            <div className="min-w-[25px] truncate max-w-[65px]">
+              <CheckBox
+                checked={isSelected(row?.id)}
+                square={!!modalDetails?.isMultipleProducts}
+              />
+            </div>
+          )}
+
+          {row?.id}
+        </div>
+      ),
       sortable: false,
     },
     {
@@ -145,14 +170,6 @@ const ProductsPage = ({ isModal, handleProductSelect, isSelected }) => {
       selector: (row) => <div>{flattenArrayToString(row.categories)}</div>,
       sortable: false,
       maxWidth: "350px",
-    },
-
-    {
-      name: "Qty Available",
-      selector: "quantity",
-
-      maxWidth: "100px",
-      sortable: true,
     },
 
     {

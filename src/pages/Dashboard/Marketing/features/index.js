@@ -6,6 +6,9 @@ import Tabs from "components/General/Tabs";
 import HomePageSlider from "./HomePageSlider";
 import HomePagePost from "./HomePagePost";
 import MobilePagePost from "./MobilePagePost";
+import PromoBanner from "./PromoBanner";
+import MobileMarketingImage from "./MobileMarketingImage";
+import Discount from "./Discount";
 
 const options = [
   {
@@ -17,13 +20,25 @@ const options = [
     label: "Expired",
   },
 ];
-const MediaPage = () => {
+const MarketingPage = () => {
   const TABS = [
     { name: "homePageSliders", label: "Home Page Sliders" },
     { name: "homePagePosts", label: "Home Page Posts" },
     {
       name: "mobilePagePosts",
       label: "Mobile Page Posts",
+    },
+    {
+      name: "mobileMarketingImages",
+      label: "Mobile Marketing Images",
+    },
+    {
+      name: "promoBanners",
+      label: "Promo Banners",
+    },
+    {
+      name: "discounts",
+      label: "Discounts",
     },
   ];
 
@@ -48,6 +63,9 @@ const MediaPage = () => {
           {activeTab === TABS[0].name ? <HomePageSlider /> : null}
           {activeTab === TABS[1].name ? <HomePagePost /> : null}
           {activeTab === TABS[2].name ? <MobilePagePost /> : null}
+          {activeTab === TABS[3].name ? <MobileMarketingImage /> : null}
+          {activeTab === TABS[4].name ? <PromoBanner /> : null}
+          {activeTab === TABS[5].name ? <Discount /> : null}
         </div>
       </div>
 
@@ -59,4 +77,4 @@ const MediaPage = () => {
     </>
   );
 };
-export default MediaPage;
+export default MarketingPage;

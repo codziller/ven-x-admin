@@ -19,9 +19,9 @@ import Staff from "pages/Dashboard/Staff";
 import PromoPage from "pages/Dashboard/Promo/features";
 import Promo from "pages/Dashboard/Promo";
 import AddPromo from "pages/Dashboard/Promo/features/AddPromo";
-import Media from "pages/Dashboard/Media";
-import AddHomePageSlider from "pages/Dashboard/Media/features/AddHomePageSlider";
-import MediaPage from "pages/Dashboard/Media/features";
+import Marketing from "pages/Dashboard/Marketing";
+import AddHomePageSlider from "pages/Dashboard/Marketing/features/AddHomePageSlider";
+import MarketingPage from "pages/Dashboard/Marketing/features";
 import FeaturedSectionPage from "pages/Dashboard/FeaturedSection/features";
 import FeaturedSection from "pages/Dashboard/FeaturedSection";
 import Orders from "pages/Dashboard/Orders";
@@ -56,8 +56,11 @@ import UsersPage from "pages/Dashboard/Users/features";
 import AddUser from "pages/Dashboard/Users/features/AddUser";
 import Donations from "pages/Dashboard/Donations";
 import DonationsPage from "pages/Dashboard/Donations/features";
-import AddHomePagePost from "pages/Dashboard/Media/features/AddHomePagePost";
-import AddMobilePagePost from "pages/Dashboard/Media/features/AddMobilePagePost";
+import AddHomePagePost from "pages/Dashboard/Marketing/features/AddHomePagePost";
+import AddMobilePagePost from "pages/Dashboard/Marketing/features/AddMobilePagePost";
+import AddPromoBanner from "pages/Dashboard/Marketing/features/AddPromoBanner";
+import AddMobileMarketingImage from "pages/Dashboard/Marketing/features/AddMobileMarketingImage";
+import AddDiscount from "pages/Dashboard/Marketing/features/AddDiscount";
 
 const Router = () => {
   return (
@@ -244,6 +247,7 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<UsersPage />} />
+          <Route path="add/:warehouse_id" element={<AddUser />} />
           <Route path="edit/:warehouse_id/:user_id" element={<AddUser />} />
         </Route>
         {/* end users */}
@@ -337,14 +341,14 @@ const Router = () => {
 
         {/* media */}
         <Route
-          path="/dashboard/media"
+          path="/dashboard/marketing"
           element={
             <ProtectedRoute path="">
-              <Media />
+              <Marketing />
             </ProtectedRoute>
           }
         >
-          <Route path=":warehouse_id" element={<MediaPage />} />
+          <Route path=":warehouse_id" element={<MarketingPage />} />
           <Route
             path="add-homepage-slider/:warehouse_id/:position"
             element={<AddHomePageSlider />}
@@ -368,6 +372,30 @@ const Router = () => {
           <Route
             path="edit-mobile-post/:warehouse_id/:position/:media_id"
             element={<AddMobilePagePost />}
+          />
+          <Route
+            path="add-promo-banner/:warehouse_id/:position"
+            element={<AddPromoBanner />}
+          />
+          <Route
+            path="edit-promo-banner/:warehouse_id/:position/:media_id"
+            element={<AddPromoBanner />}
+          />
+          <Route
+            path="add-mobile-marketing-image/:warehouse_id/:position"
+            element={<AddMobileMarketingImage />}
+          />
+          <Route
+            path="edit-mobile-marketing-image/:warehouse_id/:position/:media_id"
+            element={<AddMobileMarketingImage />}
+          />
+          <Route
+            path="add-discount/:warehouse_id/:position"
+            element={<AddDiscount />}
+          />
+          <Route
+            path="edit-discount/:warehouse_id/:position/:media_id"
+            element={<AddDiscount />}
           />
         </Route>
         {/* end media */}

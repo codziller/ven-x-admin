@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 import moment from "moment";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import qs from "query-string";
 import PropTypes from "prop-types";
 
 import useTableFilter from "hooks/tableFilter";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { ReactComponent as Filter } from "assets/icons/Filter/filter.svg";
 import { pageCount } from "utils/appConstant";
 import { hasValue } from "utils/validations";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
@@ -25,6 +24,7 @@ import { Button } from "components/General/Button";
 import BrandsStore from "../store";
 import { observer } from "mobx-react-lite";
 import CopyToClipboard from "react-copy-to-clipboard";
+import CheckBox from "components/General/Input/CheckBox";
 
 export const dateFilters = [
   {
@@ -46,7 +46,12 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
-const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
+const BrandsPage = ({
+  isModal,
+  handleBrandSelect,
+  modalDetails,
+  isSelected,
+}) => {
   const { brands, getBrands, loading, brandsCount } = BrandsStore;
 
   const requiredFilters = {
@@ -123,12 +128,10 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
 
   useEffect(() => {
     console.log(fetchMerchants);
-    // fetchMerchants();
   }, [currentPage, filterData]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      // fetchMerchants();
     }
   }, [searchInput]);
 
@@ -144,8 +147,20 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
   const columns = [
     {
       name: "Brand Name",
+      minWidth: isModal ? "60%" : "30%",
       selector: (row) => (
-        <div className="flex justify-start items-center gap-2">
+        <div
+          onClick={() => handleEdit(row)}
+          className="flex justify-start items-center gap-2"
+        >
+          {isModal && (
+            <div className="min-w-[25px]">
+              <CheckBox
+                checked={isSelected(row?.id)}
+                square={!!modalDetails?.isMultipleBrands}
+              />
+            </div>
+          )}
           {(row?.brandLogoUrl && (
             <img
               className="object-cover w-[60px] py-2 px-2 rounded-full bg-grey-border"
@@ -196,11 +211,6 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
     },
   ];
 
-  const containsActiveFilter = () =>
-    Object.keys(filterData).filter(
-      (item) => filterData[item] && filterData[item] !== ""
-    );
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -212,7 +222,7 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
 
   return (
     <>
-      <div className="h-full w-full md:pr-4">
+      <div className="h-full w-full">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
           <div className="flex justify-between items-center w-full mb-3 gap-1">
             <div className="w-full sm:w-[45%] sm:min-w-[300px]">
@@ -236,7 +246,7 @@ const BrandsPage = ({ isModal, handleBrandSelect, isSelected }) => {
             )}
           </div>
 
-          {loading ? (
+          {loading && isEmpty(brands) ? (
             <CircleLoader blue />
           ) : (
             <>
@@ -286,5 +296,6 @@ BrandsPage.propTypes = {
   handleBrandSelect: PropTypes.func,
   isModal: PropTypes.bool,
   isSelected: PropTypes.bool,
+  modalDetails: PropTypes.object,
 };
 export default observer(BrandsPage);

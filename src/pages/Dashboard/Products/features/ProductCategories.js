@@ -19,16 +19,24 @@ const ProductCategories = ({
   handleChange,
   form,
   type = "Product",
+  isSingle,
 }) => {
   const { categories } = CategoriesStore;
 
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
     categoryIds: form?.categoryIds || [],
+    categoryId: form?.categoryId || "",
   });
   const [searchInput, setSearchInput] = useState("");
 
   const handleChangeTwo = async (val) => {
+    if (isSingle) {
+      setFormTwo({ ...formTwo, categoryId: val });
+      handleChange("categoryId", val);
+      handleSubmit();
+      return;
+    }
     const newCategoryIds = formTwo.categoryIds?.includes(val)
       ? formTwo.categoryIds?.filter((item) => item !== val)
       : [...formTwo.categoryIds, val];
@@ -37,8 +45,11 @@ const ProductCategories = ({
   };
 
   const isSelected = useCallback(
-    (id) => formTwo?.categoryIds?.includes(id),
-    [formTwo.categoryIds]
+    (id) =>
+      isSingle
+        ? formTwo?.categoryId === id
+        : formTwo?.categoryIds?.includes(id),
+    [formTwo.categoryIds, formTwo.categoryId]
   );
 
   const handleSubmit = () => {
@@ -86,7 +97,7 @@ const ProductCategories = ({
                   onChange={() => handleChangeTwo(item?.id)}
                   checked={isSelected(item?.id)}
                   labelClass="text-[13px] font-500"
-                  square
+                  square={!isSingle}
                 />
                 {!isEmpty(item?.subCategories) && (
                   <div
@@ -106,7 +117,7 @@ const ProductCategories = ({
                             onChange={() => handleChangeTwo(subItem?.id)}
                             checked={isSelected(subItem?.id)}
                             labelClass="text-[13px] font-500"
-                            square
+                            square={!isSingle}
                           />
 
                           {!isEmpty(subItem?.subCategories) && (
@@ -129,7 +140,7 @@ const ProductCategories = ({
                                         handleChangeTwo(subSubItem?.id)
                                       }
                                       checked={isSelected(subSubItem?.id)}
-                                      square
+                                      square={!isSingle}
                                     />
                                   </div>
                                 );

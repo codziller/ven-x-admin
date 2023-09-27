@@ -8,12 +8,14 @@ import { ReactComponent as InfoIcon } from "assets/icons/info-icon.svg";
 import { ReactComponent as BsCaretDownFill } from "assets/icons/Arrow/caret-down.svg";
 import { FormErrorMessage } from "../FormErrorMessage";
 import ToolTip from "../ToolTip";
+import { isObject, isString } from "lodash";
 
 const Select = ({
   label,
   options,
   name,
   onChange,
+  value,
   async,
   labelControl,
   address,
@@ -101,6 +103,14 @@ const Select = ({
       </components.DropdownIndicator>
     );
   };
+  const selectValue = useMemo(() => {
+    if (isObject(value)) {
+      return value;
+    }
+    return options?.find((_) => _?.value === value);
+  }, [rest, options]);
+
+  label === "Role" && console.log("selectValue: ", selectValue);
 
   return (
     <div className={`${fullWidth ? "w-[calc(100%-1px)]" : "w-fit"}`}>
@@ -153,6 +163,7 @@ const Select = ({
           className={classNames}
           components={{ DropdownIndicator }}
           onBlur={() => onBlur || handleBlur(true)}
+          value={selectValue}
           {...rest}
         ></ReactSelect>
       )}
@@ -178,6 +189,7 @@ Select.propTypes = {
   showFormError: PropTypes.bool,
   style: PropTypes.object,
   fullWidth: PropTypes.bool,
+  value: PropTypes.any,
 };
 
 export default Select;

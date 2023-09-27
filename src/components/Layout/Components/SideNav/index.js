@@ -16,7 +16,6 @@ import {
   PiArrowsOutLineHorizontalDuotone,
   PiUsersThree,
 } from "react-icons/pi";
-import Pol from "assets/logos/POL.png";
 import BackDrop from "components/Layout/BackDrop";
 import ProviderCard from "./ProviderCard";
 import {
@@ -257,10 +256,10 @@ const getLinks = (warehouse_id, user) => [
   },
 
   {
-    title: "App & Website Media",
-    slug: "/dashboard/media",
+    title: "Marketing",
+    slug: "/dashboard/marketing",
     label: "Here’s what’s happening with Beautyhut today.",
-    link: `/dashboard/media/${warehouse_id}`,
+    link: `/dashboard/marketing/${warehouse_id}`,
     icon: (
       <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
     ),

@@ -12,6 +12,7 @@ import ProductsStore from "pages/Dashboard/Products/store";
 import moment from "moment";
 import Amount from "components/General/Numbers/Amount";
 import { pageCount } from "utils/appConstant";
+import Table from "components/General/Table";
 
 const CostPriceHistory = ({ details, toggler }) => {
   const { product, getProductCostPriceHistory, getProductLoading } =
@@ -23,6 +24,7 @@ const CostPriceHistory = ({ details, toggler }) => {
 
   const columns = [
     {
+      minWidth: "40%",
       name: "Date",
       selector: (row) => moment(row.createdAt).format("MMM Do, YYYY hh:mma"),
       sortable: true,

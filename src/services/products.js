@@ -125,8 +125,11 @@ const getProductsQuery = ({ page }) => gql`
         }
       id
       name
-      quantity
-      lowInQuantityValue
+      warehouseInventory {
+        lowInQuantityValue
+        quantity
+        warehouseId
+      }
       salePrice
       imageUrls
       archive
@@ -324,17 +327,21 @@ const editProductSubscriptionQuery = gql`
   }
 `;
 const editProductInventoryQuery = gql`
-  mutation updateProductInventory(
+  mutation updateMultipleProductInventory(
     $lowInQuantityValue: String!
     $productId: String!
     $quantity: String!
     $warehouseId: String!
+    $costPrice: String
   ) {
-    updateProductInventory(
-      lowInQuantityValue: $lowInQuantityValue
-      productId: $productId
-      quantity: $quantity
-      warehouseId: $warehouseId
+    updateMultipleProductInventory(
+      products: {
+        lowInQuantityValue: $lowInQuantityValue
+        productId: $productId
+        quantity: $quantity
+        warehouseId: $warehouseId
+        costPrice: $costPrice
+      }
     ) {
       status
     }

@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
-import { ReactComponent as Close } from "assets/icons/close-x.svg";
-import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import { TailSpin } from "react-loader-spinner";
 import Button from "components/General/Button/Button";
 import Textarea from "components/General/Textarea/Textarea";
@@ -14,16 +12,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CheckBox from "components/General/Input/CheckBox";
-import {
-  IMAGE_NAME_ENUM,
-  MEDIA_MODAL_TYPES,
-  SLIDE_LINK_TYPES,
-} from "utils/appConstant";
+import { MEDIA_MODAL_TYPES, SLIDE_LINK_TYPES } from "utils/appConstant";
 import Input from "components/General/Input/Input";
 import { isArray, isEmpty, lowerCase } from "lodash";
 import BrandsStore from "pages/Dashboard/Brands/store";
 import ProductsStore from "pages/Dashboard/Products/store";
-import MediaStore from "../store";
+import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
@@ -33,9 +27,6 @@ const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
 const Form = observer(() => {
   const { warehouse_id, media_id, position } = useParams();
-  const positionName = IMAGE_NAME_ENUM.find(
-    (item) => String(item?.name) === String(position)
-  )?.value;
   const navigate = useNavigate();
   const [formTwo, setFormTwo] = useState({
     modalType: "",
@@ -43,24 +34,27 @@ const Form = observer(() => {
     createLoading: false,
   });
 
-  const schema = yup.object({
-    titleText: yup.string().required("Please enter post title"),
-    descriptionText: yup.string().required("Please enter post description"),
-  });
+  const schema = yup.object({});
 
   const { getBrand, brand, getBrandLoading } = BrandsStore;
   const { getProductName, product, getProductLoading } = ProductsStore;
-  const { createImage, editImage, image, loadingImage } = MediaStore;
+  const {
+    createHomeSliderImage,
+    editHomeSliderImage,
+    homeSliderImage,
+    loadingHomeSliderImage,
+  } = MarketingStore;
 
   const defaultValues = {
-    dataId: media_id ? image?.dataId : "",
-    descriptionText: media_id ? image?.descriptionText : "",
-    sourceImageUrl: media_id ? image?.sourceImageUrl : [],
-    pageToLinkTo: media_id ? image?.pageToLinkTo : SLIDE_LINK_TYPES[0]?.value,
-    titleText: media_id ? image?.titleText : "",
+    dataId: media_id ? homeSliderImage?.dataId : "",
+    descriptionText: media_id ? homeSliderImage?.descriptionText : "",
+    imageUrl: media_id ? homeSliderImage?.imageUrl : [],
+    pageToLinkTo: media_id
+      ? homeSliderImage?.pageToLinkTo
+      : SLIDE_LINK_TYPES[0]?.value,
+    titleText: media_id ? homeSliderImage?.titleText : "",
   };
 
-  console.log("image: ", image);
   const {
     handleSubmit,
     formState: { errors },
@@ -88,7 +82,7 @@ const Form = observer(() => {
   const form = {
     dataId: watch("dataId"),
     descriptionText: watch("descriptionText"),
-    sourceImageUrl: watch("sourceImageUrl"),
+    imageUrl: watch("imageUrl"),
     pageToLinkTo: watch("pageToLinkTo"),
     titleText: watch("titleText"),
   };
@@ -110,38 +104,36 @@ const Form = observer(() => {
 
     try {
       const imagesUrls = await uploadImageToCloud(
-        isArray(form?.sourceImageUrl)
-          ? form?.sourceImageUrl?.[0]
-          : form?.sourceImageUrl
+        isArray(form?.imageUrl) ? form?.imageUrl?.[0] : form?.imageUrl
       );
 
       if (!media_id) {
         const payload = {
           ...form,
-          name: positionName,
-          sourceImageUrl: imagesUrls,
+          position,
+          imageUrl: imagesUrls,
         };
 
         cleanPayload(payload);
 
-        await createImage({
+        await createHomeSliderImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/media/${warehouse_id}`),
+          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       } else {
         const payload = {
           ...form,
-          name: positionName,
-          id: media_id,
-          sourceImageUrl: imagesUrls,
+          position,
+          homeSliderImageId: media_id,
+          imageUrl: imagesUrls,
         };
 
         cleanPayload(payload);
 
-        await editImage({
+        await editHomeSliderImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/media/${warehouse_id}`),
+          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       }
@@ -156,7 +148,7 @@ const Form = observer(() => {
     }
   };
 
-  return loadingImage ? (
+  return loadingHomeSliderImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -168,7 +160,7 @@ const Form = observer(() => {
             <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
               <div className="mb-5">
                 <Link
-                  to={`/dashboard/media/${warehouse_id}`}
+                  to={`/dashboard/marketing/${warehouse_id}`}
                   className="scale-90"
                 >
                   <ArrowBack />
@@ -176,11 +168,11 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Homepage Post ({position})
+                  Edit Homepage Slide ({position})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Homepage Post ({position})
+                  Add Homepage Slide ({position})
                 </h2>
               )}
 
@@ -199,7 +191,7 @@ const Form = observer(() => {
                   </label>
 
                   <span className="text-grey-text text-sm mb-3 -mt-2">
-                    Select the page type to be linked with this post
+                    Select the page type to be linked with this slide
                   </span>
                   {SLIDE_LINK_TYPES.map((item) => (
                     <CheckBox
@@ -218,7 +210,7 @@ const Form = observer(() => {
                         }
                       >
                         Select the {lowerCase(form?.pageToLinkTo)} to be linked
-                        with this post
+                        with this slide
                       </label>
 
                       <div className="flex flex-col justify-start items-end gap-1 w-full">
@@ -259,15 +251,15 @@ const Form = observer(() => {
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
                   <div className="flex flex-col justify-start items-start gap-1">
                     <span className="text-grey-text text-lg uppercase">
-                      Post Details
+                      Slide Details
                     </span>
                     <span className="text-grey-text text-sm">
-                      Provide additional details for this post
+                      Provide additional details for this slide (optional)
                     </span>
                   </div>
 
                   <Input
-                    label="Post Title"
+                    label="Slide Title"
                     value={form?.titleText}
                     onChangeFunc={(val) => handleChange("titleText", val)}
                     placeholder="Enter Title"
@@ -276,7 +268,7 @@ const Form = observer(() => {
                   />
 
                   <Textarea
-                    label="Post Description"
+                    label="Slide Description"
                     value={form?.descriptionText}
                     onChangeFunc={(val) => handleChange("descriptionText", val)}
                     placeholder="Enter Description"
@@ -287,15 +279,6 @@ const Form = observer(() => {
                 </div>
                 {/* Third section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
-                  <ImagePicker
-                    label="Select Image "
-                    handleDrop={(val) => handleChange("sourceImageUrl", val)}
-                    images={form.sourceImageUrl}
-                    formError={errors.sourceImageUrl}
-                    showFormError={formTwo?.showFormError}
-                    multiple={false}
-                    isPost
-                  />
                   <Button
                     onClick={() =>
                       setFormTwo({ ...formTwo, showFormError: true })
@@ -308,6 +291,14 @@ const Form = observer(() => {
                   />
                 </div>
               </form>
+
+              <ImagePicker
+                label="Select Image "
+                handleDrop={(val) => handleChange("imageUrl", val)}
+                images={form.imageUrl}
+                multiple={false}
+                isBanner
+              />
             </div>
           </div>
         </div>
@@ -331,14 +322,14 @@ const Form = observer(() => {
   );
 });
 
-const AddHomePagePost = () => {
+const AddHomePageSlider = () => {
   const { media_id } = useParams();
-  const { loadingImage, getImage } = MediaStore;
+  const { loadingHomeSliderImage, getHomeSliderImage } = MarketingStore;
 
   useEffect(() => {
-    media_id && getImage({ data: { id: media_id } });
+    media_id && getHomeSliderImage({ data: { id: media_id } });
   }, []);
-  return loadingImage ? (
+  return loadingHomeSliderImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -347,4 +338,4 @@ const AddHomePagePost = () => {
   );
 };
 
-export default observer(AddHomePagePost);
+export default observer(AddHomePageSlider);

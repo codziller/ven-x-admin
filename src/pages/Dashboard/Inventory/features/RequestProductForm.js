@@ -3,27 +3,14 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
-import {
-  EditorState,
-  convertToRaw,
-  ContentState,
-  convertFromHTML,
-} from "draft-js";
-import draftToHtml from "draftjs-to-html";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
-import { ReactComponent as Edit } from "assets/icons/Edit/edit.svg";
-import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
 import { Link } from "react-router-dom";
 import ProductsStore from "pages/Dashboard/Products/store";
-import Wysiwyg from "components/General/Textarea/Wysiwyg";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
-import ImagePicker from "components/General/Input/ImagePicker";
 import { observer } from "mobx-react-lite";
 import cleanPayload from "utils/cleanPayload";
 

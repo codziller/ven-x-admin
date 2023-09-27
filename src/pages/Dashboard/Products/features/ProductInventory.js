@@ -93,6 +93,7 @@ const ProductInventory = ({ details, toggler, handleOnChange, formObj }) => {
         product_id,
         data: payload,
         onSuccess: () => toggler?.(),
+        warehouse_id,
       });
       return;
     }

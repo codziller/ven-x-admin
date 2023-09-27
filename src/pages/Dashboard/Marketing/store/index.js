@@ -4,9 +4,9 @@
 
 import { successToast } from "components/General/Toast/Toast";
 import { makeAutoObservable } from "mobx";
-import apis from "services/media";
+import apis from "services/marketing";
 
-class MediaStore {
+class MarketingStore {
   // ====================================================
   // State
   // ====================================================
@@ -17,6 +17,30 @@ class MediaStore {
   loadingImage = false;
   createImageLoading = false;
   editImageLoading = false;
+
+  mobileMarketingImages = [];
+  mobileMarketingImage = null;
+  mobileMarketingImagesCount = null;
+  loadingMobileMarketingImages = false;
+  loadingMobileMarketingImage = false;
+  createMobileMarketingImageLoading = false;
+  editMobileMarketingImageLoading = false;
+
+  promoBanners = [];
+  promoBanner = null;
+  promoBannersCount = null;
+  loadingPromoBanners = false;
+  loadingPromoBanner = false;
+  createPromoBannerLoading = false;
+  editPromoBannerLoading = false;
+
+  discounts = [];
+  discount = null;
+  discountsCount = null;
+  loadingDiscounts = false;
+  loadingDiscount = false;
+  createDiscountLoading = false;
+  editDiscountLoading = false;
 
   homeSliderImages = [];
   homeSliderImage = null;
@@ -68,6 +92,86 @@ class MediaStore {
       this.error = error;
     } finally {
       this.loadingImage = false;
+    }
+  };
+
+  getMobileMarketingImages = async ({ data }) => {
+    this.loadingMobileMarketingImages = true;
+    try {
+      let res = await apis.getMobileMarketingImages(data);
+      res = res?.mobileMarketingImages;
+      this.mobileMarketingImages = res?.results || [];
+      this.mobileMarketingImagesCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingMobileMarketingImages = false;
+    }
+  };
+
+  getMobileMarketingImage = async ({ data }) => {
+    this.loadingMobileMarketingImage = true;
+    try {
+      let res = await apis.getMobileMarketingImage(data);
+      res = res?.mobileMarketingImage;
+      this.mobileMarketingImage = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingMobileMarketingImage = false;
+    }
+  };
+
+  getPromoBanners = async ({ data }) => {
+    this.loadingPromoBanners = true;
+    try {
+      let res = await apis.getPromoBanners(data);
+      res = res?.promoBanners;
+      this.promoBanners = res || [];
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingPromoBanners = false;
+    }
+  };
+
+  getPromoBanner = async ({ data }) => {
+    this.loadingPromoBanner = true;
+    try {
+      let res = await apis.getPromoBanner(data);
+      res = res?.promoBanner;
+      this.promoBanner = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingPromoBanner = false;
+    }
+  };
+
+  getDiscounts = async ({ data }) => {
+    this.loadingDiscounts = true;
+    try {
+      let res = await apis.getDiscounts(data);
+      res = res?.discounts;
+      this.discounts = res?.results || [];
+      this.discountsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingDiscounts = false;
+    }
+  };
+
+  getDiscount = async ({ data }) => {
+    this.loadingDiscount = true;
+    try {
+      let res = await apis.getDiscount(data);
+      res = res?.discount;
+      this.discount = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingDiscount = false;
     }
   };
 
@@ -147,6 +251,7 @@ class MediaStore {
       this.createImageLoading = false;
     }
   };
+
   editImage = async ({ data, onSuccess, page }) => {
     this.editImageLoading = true;
     try {
@@ -161,6 +266,96 @@ class MediaStore {
       this.error = error;
     } finally {
       this.editImageLoading = false;
+    }
+  };
+
+  createPromoBanner = async ({ data, onSuccess, page }) => {
+    this.createPromoBannerLoading = true;
+    try {
+      await apis.createPromoBanner(data);
+      successToast("Operation Successful!", "Banner created Successfully.");
+      onSuccess?.();
+      await this.getPromoBanners({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createPromoBannerLoading = false;
+    }
+  };
+
+  editPromoBanner = async ({ data, onSuccess, page }) => {
+    this.editPromoBannerLoading = true;
+    try {
+      await apis.editPromoBanner(data);
+      successToast("Operation Successful!", "Banner updated Successfully.");
+      onSuccess?.();
+      await this.getPromoBanners({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editPromoBannerLoading = false;
+    }
+  };
+
+  createMobileMarketingImage = async ({ data, onSuccess, page }) => {
+    this.createMobileMarketingImageLoading = true;
+    try {
+      await apis.createMobileMarketingImage(data);
+      successToast(
+        "Operation Successful!",
+        "Mobile Marketing Image Created Successfully."
+      );
+      onSuccess?.();
+      await this.getMobileMarketingImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createMobileMarketingImageLoading = false;
+    }
+  };
+
+  editMobileMarketingImage = async ({ data, onSuccess, page }) => {
+    this.editMobileMarketingImageLoading = true;
+    try {
+      await apis.editMobileMarketingImage(data);
+      successToast(
+        "Operation Successful!",
+        "Mobile Marketing Image Updated Successfully."
+      );
+      onSuccess?.();
+      await this.getMobileMarketingImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editMobileMarketingImageLoading = false;
+    }
+  };
+
+  createDiscount = async ({ data, onSuccess, page }) => {
+    this.createDiscountLoading = true;
+    try {
+      await apis.createDiscount(data);
+      successToast("Operation Successful!", "Discount created Successfully.");
+      onSuccess?.();
+      await this.getDiscounts({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createDiscountLoading = false;
+    }
+  };
+
+  editDiscount = async ({ data, onSuccess, page }) => {
+    this.editDiscountLoading = true;
+    try {
+      await apis.editDiscount(data);
+      successToast("Operation Successful!", "Discount updated Successfully.");
+      onSuccess?.();
+      await this.getDiscounts({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editDiscountLoading = false;
     }
   };
 
@@ -231,4 +426,4 @@ class MediaStore {
   };
 }
 
-export default new MediaStore();
+export default new MarketingStore();

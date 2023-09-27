@@ -33,6 +33,7 @@ const DeleteDialog = ({ details, toggler }) => {
     acceptedBy,
     completedBy,
     completedTime,
+    code,
   } = details;
   const handleOnSubmit = () => {
     const payload = {
@@ -76,7 +77,9 @@ const DeleteDialog = ({ details, toggler }) => {
           : "Product Request Details"}
       </p>
 
-      <p className="mb-3 text-sm text-grey-text text-center">Request Details</p>
+      <p className="mb-3 text-sm text-grey-text text-center">
+        Request Details - <span className="text-black">{code}</span>
+      </p>
 
       <div className="flex justify-between items-center w-full border-y border-grey-bordercolor py-[18px]">
         <DetailBlock
@@ -153,13 +156,13 @@ const DeleteDialog = ({ details, toggler }) => {
       {status === COMPLETED && completedBy && (
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
           <DetailBlock
-            title="Cancelled By"
+            title="Completed By"
             value={`${completedBy?.firstName} ${completedBy?.lastName}`}
           />
 
           {completedTime && (
             <DetailBlock
-              title="Cancelled Time"
+              title="Completed Time"
               value={
                 <span>
                   {moment(completedTime).format("MMM Do, YYYY hh:mma")}
@@ -169,7 +172,9 @@ const DeleteDialog = ({ details, toggler }) => {
           )}
         </div>
       )}
-      {(modalType === INPROGRESS || modalType === CANCELLED) && (
+      {(modalType === INPROGRESS ||
+        modalType === CANCELLED ||
+        modalType === COMPLETED) && (
         <Button
           onClick={handleOnSubmit}
           isLoading={updateProductTransferRequestStatusLoading}
@@ -179,6 +184,8 @@ const DeleteDialog = ({ details, toggler }) => {
               ? "Accept Product Request"
               : modalType === CANCELLED
               ? "Cancel Product Request"
+              : modalType === COMPLETED
+              ? "Complete Product Request"
               : ""
           }
           className="mb-2"

@@ -67,15 +67,21 @@ class ProductsStore {
       this.loading = false;
     }
   };
-  getProducts = async ({ data }) => {
+  getProducts = async ({ data, warehouse_id }) => {
     this.loading = true;
     try {
       let res = await apis.getProducts(data);
       res = res?.products;
       this.products =
-        res?.results?.sort((a, b) =>
-          moment(b.createdAt).diff(moment(a.createdAt))
-        ) || [];
+        res?.results
+          ?.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+          ?.map((item) => {
+            const inventoryDetails = item?.warehouseInventory?.find(
+              (_) => _?.warehouseId === warehouse_id
+            );
+
+            return { ...item, inventoryDetails };
+          }) || [];
       this.productsCount = res?.total;
     } catch (error) {
       this.error = error;
@@ -111,13 +117,13 @@ class ProductsStore {
       this.searchProductLoading = false;
     }
   };
-  deleteProduct = async ({ data, onSuccess, page }) => {
+  deleteProduct = async ({ data, onSuccess, page, warehouse_id }) => {
     this.deleteProductLoading = true;
     try {
       await apis.deleteProduct(data);
       successToast("Operation Successful!", "Product archived Successfully.");
       onSuccess?.();
-      await this.getProducts({ data: { page: page || 1 } });
+      await this.getProducts({ data: { page: page || 1 }, warehouse_id });
     } catch (error) {
       this.error = error;
     } finally {
@@ -277,7 +283,7 @@ class ProductsStore {
       this.updateProductTransferRequestStatusLoading = false;
     }
   };
-  editProductInventory = async ({ data, onSuccess, page }) => {
+  editProductInventory = async ({ data, onSuccess, page, warehouse_id }) => {
     this.editProductInventoryLoading = true;
     try {
       await apis.editProductInventory(data);
@@ -285,7 +291,7 @@ class ProductsStore {
         "Operation Successful!",
         "Product inventory updated Successfully."
       );
-      this.getProducts({ data: { page: page || 1 } });
+      this.getProducts({ data: { page: page || 1 }, warehouse_id });
       onSuccess?.();
     } catch (error) {
       this.error = error;

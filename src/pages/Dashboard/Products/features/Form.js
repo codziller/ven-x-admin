@@ -254,8 +254,6 @@ const Form = ({ details, toggler }) => {
             : item;
         return updatedItem;
       });
-
-      console.log("updatedVal: ", updatedVal);
     } else if (isWysywyg) {
       updatedVal = JSON.stringify(
         draftToHtml(convertToRaw(val?.getCurrentContent()))
@@ -545,7 +543,7 @@ const Form = ({ details, toggler }) => {
                 onClick={() =>
                   handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
                 }
-                text="Select Category"
+                text="Select Categories"
                 icon={<Plus className="text-black current-svg" />}
                 className=""
                 whiteBg

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import { ReactComponent as NewPlus } from "assets/icons/Plus/new_plus.svg";
-import MediaStore from "../store";
+import MarketingStore from "../store";
 import { observer } from "mobx-react-lite";
 import ProductCard from "components/General/Cards/ProductCard";
 import classNames from "classnames";
@@ -10,7 +10,7 @@ import classNames from "classnames";
 const HomePagePost = () => {
   const { warehouse_id } = useParams();
 
-  const { loadingImages, getImages, images } = MediaStore;
+  const { loadingImages, getImages, images } = MarketingStore;
   useEffect(() => {
     getImages({ data: { page: 1 } });
   }, []);
@@ -40,10 +40,10 @@ const HomePagePost = () => {
                       key={i + "card"}
                       to={
                         slide
-                          ? `/dashboard/media/edit-homepage-post/${warehouse_id}/${
+                          ? `/dashboard/marketing/edit-homepage-post/${warehouse_id}/${
                               i + 1
                             }/${slide?.id}`
-                          : `/dashboard/media/add-homepage-post/${warehouse_id}/${
+                          : `/dashboard/marketing/add-homepage-post/${warehouse_id}/${
                               i + 1
                             }`
                       }

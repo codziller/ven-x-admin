@@ -27,6 +27,7 @@ import Input from "components/General/Input/Input";
 import { flattenArrayToString } from "utils/functions";
 import ProductTransferRequests from "./ProductTransferRequests";
 import ProductRequests from "./ProductRequests";
+import { toJS } from "mobx";
 export const dateFilters = [
   {
     value: "today",
@@ -106,13 +107,16 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       return;
     }
     const payload = { page: currentPage, searchQuery };
-    await searchProducts({ data: payload });
+    await searchProducts({ data: payload, warehouse_id });
   };
 
   const handleGetData = () => {
     isArchive
-      ? getArchivedProducts({ data: { page: currentPageArchived } })
-      : getProducts({ data: { page: currentPage } });
+      ? getArchivedProducts({
+          data: { page: currentPageArchived },
+          warehouse_id,
+        })
+      : getProducts({ data: { page: currentPage }, warehouse_id });
     getProductTransferRequests({
       data: {
         page: 1,
@@ -241,7 +245,8 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
     },
     {
       name: "Product",
-      minWidth: isMobile ? "25%" : "20%",
+      minWidth: isMobile ? "40%" : "350px",
+      maxWidth: isMobile ? "40%" : "350px",
       selector: (row) => (
         <div
           className="flex justify-start items-center gap-4"
@@ -261,38 +266,56 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
 
     {
       name: "Categories",
-      selector: (row) => <div>{flattenArrayToString(row.categories)}</div>,
+      selector: (row) => (
+        <div onClick={() => handleEdit(row)}>
+          {flattenArrayToString(row.categories)}
+        </div>
+      ),
       sortable: false,
+      maxWidth: "350px",
     },
 
     {
       name: "Qty Available",
       minWidth: "100px",
       maxWidth: "100px",
-      selector: "quantity",
+      selector: (row) => (
+        <div onClick={() => handleEdit(row)}>
+          {row?.inventoryDetails?.quantity}
+        </div>
+      ),
+      sortable: false,
       sortable: true,
     },
     {
       name: "Low stock at",
       minWidth: "100px",
       maxWidth: "100px",
-      selector: "lowInQuantityValue",
+      selector: (row) => (
+        <div onClick={() => handleEdit(row)}>
+          {row?.inventoryDetails?.lowInQuantityValue}
+        </div>
+      ),
       sortable: true,
     },
 
     {
       name: "Actions",
-      minWidth: isMobile ? "50%" : "40%",
+      minWidth: isMobile ? "50%" : "45%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
-          {/* <span
+          <span
             onClick={() =>
-              setCurrentTxnDetails({ ...row, modalType: COST_PRICE_HISTORY })
+              setCurrentTxnDetails({
+                ...row,
+                modalSize: "lg",
+                modalType: COST_PRICE_HISTORY,
+              })
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
             Cost price history
-          </span> */}
+          </span>
 
           <span
             onClick={() =>
@@ -300,7 +323,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor "
           >
-            Request Product
+            Request
           </span>
           <span
             onClick={() => handleEdit(row)}
@@ -353,6 +376,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
 
   useEffect(() => scrollToTop(), [displayedProducts]);
 
+  console.log("products: ", toJS(products));
   return (
     <>
       <div className={classNames("h-full w-full", { "md:pr-4": !isModal })}>
