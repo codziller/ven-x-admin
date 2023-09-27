@@ -578,13 +578,13 @@ const Form = ({ details, toggler }) => {
             />
 
             <Input
-              label="Weight (grams)"
+              label="Weight (ml)"
               value={form?.weight}
               onChangeFunc={(val) => handleChange({ prop: "weight", val })}
-              placeholder="30g"
+              placeholder="30ml"
               formError={errors.weight}
               showFormError={formTwo?.showFormError}
-              suffix={"g"}
+              suffix={"ml"}
               type="number"
               isRequired
             />
