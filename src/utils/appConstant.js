@@ -711,3 +711,5 @@ export const GENDERS = [
   { label: "Non-binary", value: "NON_BINARY" },
   { label: "Prefer not to say", value: "UNSPECIFIED" },
 ];
+
+export const WEIGHT_TYPES = { grams: "grams", milliliters: "milliliters" };

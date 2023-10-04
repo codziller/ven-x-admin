@@ -11,6 +11,7 @@ import {
 } from "utils/appConstant";
 import CostPriceHistory from "./CostPriceHistory";
 import RequestProductForm from "./RequestProductForm";
+import QuantityLeft from "./QuantityLeft";
 
 const { COST_PRICE_HISTORY, REQUEST_PRODUCT } = INVENTORY_MODAL_TYPES;
 const { INPROGRESS, CANCELLED, COMPLETED } = PRODUCT_REQUEST_STATUSES;
@@ -28,7 +29,7 @@ const DetailsModal = ({ active, toggler, details }) => {
       case "edit":
         return <Form details={details} toggler={toggler} />;
       case COST_PRICE_HISTORY:
-        return <CostPriceHistory details={details} toggler={toggler} />;
+        return <QuantityLeft details={details} toggler={toggler} />;
       case REQUEST_PRODUCT:
         return <RequestProductForm details={details} toggler={toggler} />;
 

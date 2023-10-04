@@ -29,6 +29,7 @@ import {
   CENTRAL_WAREHOUSE_ID,
   PRODUCT_MODAL_TYPES,
   RIBBONS,
+  WEIGHT_TYPES,
 } from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
@@ -41,6 +42,7 @@ import { isEmpty } from "lodash";
 import { flattenCategories } from "utils/functions";
 import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
+import { FormErrorMessage } from "components/General/FormErrorMessage";
 const {
   PRODUCT_OPTION,
   PRODUCT_SUBSCRIPTION,
@@ -50,6 +52,7 @@ const {
   INVENTORY,
   DELETE,
 } = PRODUCT_MODAL_TYPES;
+const { grams, milliliters } = WEIGHT_TYPES;
 const Form = ({ details, toggler }) => {
   const { product_id } = useParams();
   const { createProduct, product, editProduct } = ProductsStore;
@@ -125,18 +128,23 @@ const Form = ({ details, toggler }) => {
           .min(1, "Low in Stock Value must be greater than 0"),
       })
     ),
+    categoryIds: yup
+      .array()
+      .min(1, "Select at least one category for this product")
+      .required("Select at least one category for this product"),
   });
 
   const defaultValues = {
     name: product_id ? product?.name : "",
     brandId: product_id ? product?.brandId : "",
-    categoryIds: product_id ? product?.categories?.map((item) => item?.id) : "",
+    categoryIds: product_id ? product?.categories?.map((item) => item?.id) : [],
     ribbon: product_id ? product?.ribbon : "",
     costPrice: product_id ? product?.costPrice : "",
     salePrice: product_id ? product?.salePrice : "",
     discountValue: product_id ? product?.discountValue : "",
     // quantity: product_id ? product?.quantity : "",
     weight: product_id ? product?.weight : "",
+    weightType: product_id ? product?.weightType : milliliters,
     // lowInQuantityValue: product_id ? product?.lowInQuantityValue : "",
     imageUrls: product_id ? product?.imageUrls : [],
     videoUrls: product_id ? product?.videoUrls : [],
@@ -144,6 +152,7 @@ const Form = ({ details, toggler }) => {
     howToUse: product_id ? product?.howToUse : "",
     productIngredients: product_id ? product?.productIngredients : "",
     enablePreOrder: product_id ? product?.enablePreOrder : false,
+    isDiscountAllowed: product_id ? product?.isDiscountAllowed : false,
     preOrderMessage: product_id ? product?.preOrderMessage : "",
     preOrderLimit: product_id ? product?.preOrderLimit : "",
     discountType: product_id ? product?.discountType : "",
@@ -190,9 +199,11 @@ const Form = ({ details, toggler }) => {
     imageUrls: watch("imageUrls"),
     videoUrls: watch("videoUrls"),
     enablePreOrder: watch("enablePreOrder"),
+    isDiscountAllowed: watch("isDiscountAllowed"),
     preOrderMessage: watch("preOrderMessage"),
     preOrderLimit: watch("preOrderLimit"),
     discountType: watch("discountType"),
+    weightType: watch("weightType"),
     productVariants: watch("productVariants"),
     productOptions: watch("productOptions"),
     productSubscriptions: watch("productSubscriptions"),
@@ -246,7 +257,6 @@ const Form = ({ details, toggler }) => {
       : setFormTwo({ ...formTwo, formModified: true });
     let updatedVal;
     if (isInventory) {
-      console.log(" form?.warehouseInventory: ", form?.warehouseInventory);
       updatedVal = form?.warehouseInventory?.map((item) => {
         const updatedItem =
           item?.warehouseId === CENTRAL_WAREHOUSE_ID
@@ -259,7 +269,7 @@ const Form = ({ details, toggler }) => {
         draftToHtml(convertToRaw(val?.getCurrentContent()))
       );
     } else if (rest) {
-      updatedVal = [...val, ...rest];
+      updatedVal = [...rest, ...val];
     } else {
       updatedVal = val;
     }
@@ -341,11 +351,12 @@ const Form = ({ details, toggler }) => {
     handleChange({ prop, val: newOptions });
   };
 
-  const handleEditOption = (val, prop) => {
+  const handleEditOption = (val, prop, rest) => {
     if (prop === "productVariants") {
       setFormTwo({
         ...formTwo,
         currentProductVariant: val,
+        currentProductOption: rest,
         modalType: PRODUCT_VARIANT,
       });
       return;
@@ -382,6 +393,7 @@ const Form = ({ details, toggler }) => {
     setFormTwo({
       ...formTwo,
       currentProductVariant: {},
+      currentProductOption: {},
       modalType: false,
     });
   };
@@ -426,6 +438,7 @@ const Form = ({ details, toggler }) => {
           productSubscriptions: null,
         }),
       };
+      console.log("payload: ", payload);
       cleanPayload(payload);
 
       if (product_id) {
@@ -486,7 +499,6 @@ const Form = ({ details, toggler }) => {
             <span className="text-grey-text text-lg uppercase">
               Product info
             </span>
-
             <Input
               label="Product Name"
               value={form?.name}
@@ -511,58 +523,6 @@ const Form = ({ details, toggler }) => {
               isRequired
             />
 
-            <div className="flex flex-col justify-start items-end gap-1 w-full">
-              {/* {!isEmpty(form?.categoryIds) && <p>{selectedCategories}</p>} */}
-
-              {!isEmpty(selectedCategories) && (
-                <div className="flex flex-wrap justify-start items-start gap-2 ">
-                  {selectedCategories?.map((item, i) => {
-                    return (
-                      <div
-                        key={i}
-                        className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
-                      >
-                        <div className="flex justify-start items-center gap-3 ">
-                          <span className="">{item?.name}</span>
-                        </div>
-
-                        <span
-                          onClick={() =>
-                            handleRemoveOption(item, "categoryIds")
-                          }
-                          className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
-                        >
-                          <Close className="current-svg scale-[0.7]" />
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              <Button
-                onClick={() =>
-                  handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
-                }
-                text="Select Categories"
-                icon={<Plus className="text-black current-svg" />}
-                className=""
-                whiteBg
-                fullWidth
-              />
-              <span
-                onClick={() => handleChangeTwo("modalType", PRODUCT_CATEGORY)}
-                className="text-sm text-blue flex justify-start items-center gap-1 cursor-pointer"
-              >
-                <Plus className="text-blue current-svg w-[16px]" /> Create
-                Category
-              </span>
-              <div className="h-[13px]">
-                {errors?.categoryIds && (
-                  <FormErrorMessage type={errors?.categoryIds} />
-                )}
-              </div>
-            </div>
-
             <Select
               label="Ribbon"
               placeholder="Select Ribbon"
@@ -577,18 +537,44 @@ const Form = ({ details, toggler }) => {
               fullWidth
             />
 
-            <Input
-              label="Weight (ml)"
-              value={form?.weight}
-              onChangeFunc={(val) => handleChange({ prop: "weight", val })}
-              placeholder="30ml"
-              formError={errors.weight}
-              showFormError={formTwo?.showFormError}
-              suffix={"ml"}
-              type="number"
-              isRequired
-            />
+            <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
+              <Input
+                label="Weight"
+                value={form?.weight}
+                onChangeFunc={(val) => handleChange({ prop: "weight", val })}
+                placeholder="Enter Weight"
+                formError={errors.weight}
+                showFormError={formTwo?.showFormError}
+                suffix={form.weightType === grams ? "g" : "ml"}
+                isRequired
+                tooltip="Weight in millimeters or grams"
+                type="number"
+                isDisabled={!form?.weightType}
+              />
+              <div className="flex justify-center items-center w-full gap-6">
+                <CheckBox
+                  label="ml"
+                  onChange={() =>
+                    handleChange({
+                      prop: "weightType",
+                      val: form.weightType !== milliliters ? milliliters : "",
+                    })
+                  }
+                  checked={form.weightType === milliliters}
+                />
 
+                <CheckBox
+                  label="g"
+                  onChange={() =>
+                    handleChange({
+                      prop: "weightType",
+                      val: form.weightType !== grams ? grams : "",
+                    })
+                  }
+                  checked={form.weightType === grams}
+                />
+              </div>
+            </div>
             <Wysiwyg
               label="Product Description"
               editorState={formTwo.productDescription}
@@ -676,47 +662,72 @@ const Form = ({ details, toggler }) => {
               type="number"
               isRequired
             />
-            <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
-              <Input
-                label="Discount"
-                value={form?.discountValue}
-                onChangeFunc={(val) =>
-                  handleChange({ prop: "discountValue", val })
-                }
-                placeholder="Enter Discount"
-                formError={errors.discountValue}
-                showFormError={formTwo?.showFormError}
-                prefix={form.discountType === "FIXED" ? "₦" : ""}
-                suffix={form.discountType === "PERCENTAGE" ? "%" : ""}
-                tooltip="Discount"
-                type="number"
-                isDisabled={!form?.discountType}
-              />
-              <div className="flex justify-center items-center w-full gap-6">
-                <CheckBox
-                  label="₦"
-                  onChange={() =>
-                    handleChange({
-                      prop: "discountType",
-                      val: form.discountType !== "FIXED" ? "FIXED" : "",
-                    })
-                  }
-                  checked={form.discountType === "FIXED"}
-                />
 
-                <CheckBox
-                  label="%"
-                  onChange={() =>
-                    handleChange({
-                      prop: "discountType",
-                      val:
-                        form.discountType !== "PERCENTAGE" ? "PERCENTAGE" : "",
-                    })
-                  }
-                  checked={form.discountType === "PERCENTAGE"}
-                />
-              </div>
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">Discount</span>
+              <span className="text-grey-text text-sm">
+                Enable discount to apply discount to this product now or later
+                in the future.
+              </span>
             </div>
+
+            <CheckBox
+              label="Enable Discount"
+              square
+              tooltip="Enable discount to apply discount to this product now or later in the future."
+              onChange={() =>
+                handleChange({
+                  prop: "isDiscountAllowed",
+                  val: !form.isDiscountAllowed,
+                })
+              }
+              checked={form.isDiscountAllowed}
+            />
+            {form.isDiscountAllowed && (
+              <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
+                <Input
+                  label="Discount"
+                  value={form?.discountValue}
+                  onChangeFunc={(val) =>
+                    handleChange({ prop: "discountValue", val })
+                  }
+                  placeholder="Enter Discount"
+                  formError={errors.discountValue}
+                  showFormError={formTwo?.showFormError}
+                  prefix={form.discountType === "FIXED" ? "₦" : ""}
+                  suffix={form.discountType === "PERCENTAGE" ? "%" : ""}
+                  tooltip="Discount"
+                  type="number"
+                  isDisabled={!form?.discountType}
+                />
+                <div className="flex justify-center items-center w-full gap-6">
+                  <CheckBox
+                    label="₦"
+                    onChange={() =>
+                      handleChange({
+                        prop: "discountType",
+                        val: form.discountType !== "FIXED" ? "FIXED" : "",
+                      })
+                    }
+                    checked={form.discountType === "FIXED"}
+                  />
+
+                  <CheckBox
+                    label="%"
+                    onChange={() =>
+                      handleChange({
+                        prop: "discountType",
+                        val:
+                          form.discountType !== "PERCENTAGE"
+                            ? "PERCENTAGE"
+                            : "",
+                      })
+                    }
+                    checked={form.discountType === "PERCENTAGE"}
+                  />
+                </div>
+              </div>
+            )}
             <hr className="w-full" />
             <span className="text-grey-text text-lg uppercase">
               Images & Videos
@@ -729,6 +740,9 @@ const Form = ({ details, toggler }) => {
                 handleChange({ prop: "imageUrls", val, rest: form.imageUrls })
               }
               images={form.imageUrls}
+              setImages={(imgs) => {
+                handleChange({ prop: "imageUrls", val: imgs });
+              }}
               removeImage={(file) =>
                 removeFile(file, "imageUrls", form.imageUrls)
               }
@@ -848,6 +862,57 @@ const Form = ({ details, toggler }) => {
             )}
             <hr className="w-full" />
 
+            <div className="flex flex-col justify-start items-end gap-1 w-full">
+              {!isEmpty(selectedCategories) && (
+                <div className="flex flex-wrap justify-start items-start gap-2 ">
+                  {selectedCategories?.map((item, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                      >
+                        <div className="flex justify-start items-center gap-3 ">
+                          <span className="">{item?.name}</span>
+                        </div>
+
+                        <span
+                          onClick={() =>
+                            handleRemoveOption(item, "categoryIds")
+                          }
+                          className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                        >
+                          <Close className="current-svg scale-[0.7]" />
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              <Button
+                onClick={() =>
+                  handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
+                }
+                text="Select Categories"
+                icon={<Plus className="text-black current-svg" />}
+                className=""
+                whiteBg
+                fullWidth
+              />
+              <span
+                onClick={() => handleChangeTwo("modalType", PRODUCT_CATEGORY)}
+                className="text-sm text-blue flex justify-start items-center gap-1 cursor-pointer"
+              >
+                <Plus className="text-blue current-svg w-[16px]" /> Create
+                Category
+              </span>
+              <div className="h-[13px]">
+                {errors?.categoryIds && (
+                  <FormErrorMessage type={errors?.categoryIds} />
+                )}
+              </div>
+            </div>
+
+            <hr className="w-full" />
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">
                 Inventory
@@ -941,7 +1006,7 @@ const Form = ({ details, toggler }) => {
             />
             <hr className="w-full" />
 
-            <div className="flex flex-col justify-start items-start gap-1">
+            {/* <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">Variants</span>
               <span className="text-grey-text text-sm">
                 Add variants of this product and configure their prices and
@@ -990,8 +1055,8 @@ const Form = ({ details, toggler }) => {
               className=""
               whiteBg
               fullWidth
-            />
-            <hr className="w-full" />
+            /> */}
+            {/* <hr className="w-full" /> */}
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">
                 Product Options
@@ -1001,38 +1066,66 @@ const Form = ({ details, toggler }) => {
               </span>
             </div>
             {!isEmpty(form.productOptions) && (
-              <div className="flex flex-wrap justify-start items-start gap-2 ">
+              <div className="flex flex-wrap justify-start items-start gap-2 w-full">
                 {form.productOptions?.map((item, i) => {
                   return (
                     <div
                       key={i}
-                      className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                      className="flex flex-col gap-3 w-full justify-start items-start"
                     >
-                      <div className="flex justify-start items-center gap-3 ">
-                        <span className="">{item?.name}</span>
-                        <span className=" text-red">
-                          {item?.choices?.length}{" "}
-                          {item?.choices?.length > 1 ? "choices" : "choice"}
+                      <div className="w-full flex justify-between items-center bg-white border-1/2 border-grey-border p-2 gap-2">
+                        <span className="font-bold text-red w-full">
+                          {item?.name}
                         </span>
-                      </div>
-                      {product_id && (
+
                         <span
                           onClick={() =>
                             handleEditOption(item, "productOptions")
                           }
-                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1 text-sm underline"
                         >
-                          <Edit className="current-svg scale-[0.9]" />
+                          Edit
                         </span>
-                      )}
-                      <span
-                        onClick={() =>
-                          handleRemoveOption(item, "productOptions")
-                        }
-                        className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
-                      >
-                        <Close className="current-svg scale-[0.7]" />
+                        <span
+                          onClick={() =>
+                            handleRemoveOption(item, "productOptions")
+                          }
+                          className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                        >
+                          <Close className="current-svg scale-[0.7]" />
+                        </span>
+                      </div>
+                      <span className="text-sm font-bold">
+                        Choices ({item?.choices?.length})
                       </span>
+
+                      <div className="flex justify-start items-center gap-3">
+                        {item?.choices?.map((choice) => {
+                          return (
+                            <div
+                              key={choice?.variantName}
+                              className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
+                            >
+                              <div className="flex justify-start items-center gap-3 ">
+                                <span className="">{choice?.variantName}</span>
+                              </div>
+
+                              <span
+                                onClick={() =>
+                                  handleEditOption(
+                                    choice,
+                                    "productVariants",
+                                    item
+                                  )
+                                }
+                                className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                              >
+                                <Edit className="current-svg scale-[0.9]" />
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
                 })}
@@ -1133,6 +1226,7 @@ const Form = ({ details, toggler }) => {
         details={{
           modalType: PRODUCT_VARIANT,
           currentProductVariant: formTwo.currentProductVariant,
+          currentProductOption: formTwo.currentProductOption,
         }}
         toggler={handleCloseModal}
         handleChange={handleChange}

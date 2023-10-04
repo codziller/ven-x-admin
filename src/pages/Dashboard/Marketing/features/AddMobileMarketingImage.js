@@ -15,7 +15,6 @@ import { observer } from "mobx-react-lite";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
-import cleanPayload from "utils/cleanPayload";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
 import { flattenCategories } from "utils/functions";
 import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
@@ -56,7 +55,7 @@ const Form = observer(() => {
   } = MarketingStore;
 
   const defaultValues = {
-    categoryId: media_id ? mobileMarketingImage?.categoryId : "",
+    categoryId: position !== "forYou" ? position : "",
     imageUrl: media_id ? mobileMarketingImage?.imageUrl : [],
   };
 
@@ -152,11 +151,13 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Banner ({position})
+                  Edit Banner (
+                  {position === "forYou" ? "For You" : selectedCategory})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Banner ({position})
+                  Add Banner (
+                  {position === "forYou" ? "For You" : selectedCategory})
                 </h2>
               )}
 

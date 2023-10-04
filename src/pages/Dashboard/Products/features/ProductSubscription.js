@@ -23,7 +23,7 @@ const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
   const { currentProductSubscription } = details;
   const { product_id } = useParams();
   const isEdit = !isEmpty(currentProductSubscription);
-  console.log("currentProductSubscription: ", currentProductSubscription);
+
   const { editProductSubscription, editProductSubscriptionLoading } =
     ProductsStore;
 
@@ -43,10 +43,6 @@ const ProductSubscription = ({ details, toggler, handleOnChange, formObj }) => {
       .string()
       .required("Please enter subscription frequency"),
   });
-
-  //
-
-  //   const { actions } = signInSlice;
 
   const defaultValues = {
     name: currentProductSubscription?.name || "",

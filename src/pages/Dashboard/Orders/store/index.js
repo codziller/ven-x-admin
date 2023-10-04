@@ -50,11 +50,9 @@ class OrdersStore {
       let res = await apis.getOrders(data);
       res = res?.orders;
       this.orders =
-        res?.results
-          ?.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
-          ?.map((item) => {
-            return { ...item, label: item?.orderName, value: item?.id };
-          }) || [];
+        res?.results?.sort((a, b) =>
+          moment(b.createdAt).diff(moment(a.createdAt))
+        ) || [];
       this.ordersCount = res?.total;
     } catch (error) {
       this.error = error;

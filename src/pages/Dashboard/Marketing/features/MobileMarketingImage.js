@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import { ReactComponent as NewPlus } from "assets/icons/Plus/new_plus.svg";
+import CategoriesStore from "pages/Dashboard/Categories/store";
 import MarketingStore from "../store";
-import { observer } from "mobx-react-lite";
 
 const MobileMarketingImage = () => {
   const { warehouse_id } = useParams();
@@ -13,8 +14,10 @@ const MobileMarketingImage = () => {
     getMobileMarketingImages,
     mobileMarketingImages,
   } = MarketingStore;
+  const { categories, loading, getCategories } = CategoriesStore;
   useEffect(() => {
     getMobileMarketingImages({ data: { page: 1 } });
+    getCategories();
   }, []);
 
   const forYouMobileMarketingImage = mobileMarketingImages?.filter(
@@ -67,36 +70,44 @@ const MobileMarketingImage = () => {
 
               <hr className="w-full" />
 
-              <span className="text-black text-lg sm:text-xl font-700 my-5">
-                Marketing Images (Categories)
-              </span>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-5">
-                {postArray?.map((item, i) => {
-                  const slide = categoryMobileMarketingImage?.[i];
-                  return (
-                    <Link
-                      key={i + "card"}
-                      to={
-                        slide
-                          ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/category/${slide?.id}`
-                          : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/category`
-                      }
-                      className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
-                    >
-                      {slide ? (
-                        <img
-                          src={slide?.imageUrl}
-                          alt="slide"
-                          className="object-cover w-full h-full  min-h-[275px]  max-h-[275px]"
-                        />
-                      ) : (
-                        <NewPlus className="stroke-current" />
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
+              {categories?.map((category) => {
+                return (
+                  <div
+                    className="w-full flex flex-col justify-start items-start gap-1"
+                    key={category?.name}
+                  >
+                    <span className="text-black text-lg sm:text-xl font-700 my-5">
+                      Marketing Images ({category?.name})
+                    </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-5">
+                      {postArray?.map((item, i) => {
+                        const slide = categoryMobileMarketingImage?.[i];
+                        return (
+                          <Link
+                            key={i + "card"}
+                            to={
+                              slide
+                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${slide?.categoryId}/${slide?.id}`
+                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${slide?.categoryId}`
+                            }
+                            className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
+                          >
+                            {slide ? (
+                              <img
+                                src={slide?.imageUrl}
+                                alt="slide"
+                                className="object-cover w-full h-full  min-h-[275px]  max-h-[275px]"
+                              />
+                            ) : (
+                              <NewPlus className="stroke-current" />
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}

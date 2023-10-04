@@ -281,7 +281,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       maxWidth: "100px",
       selector: (row) => (
         <div onClick={() => handleEdit(row)}>
-          {row?.inventoryDetails?.quantity}
+          {numberWithCommas(row?.inventoryDetails?.quantity)}
         </div>
       ),
       sortable: false,
@@ -293,7 +293,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       maxWidth: "100px",
       selector: (row) => (
         <div onClick={() => handleEdit(row)}>
-          {row?.inventoryDetails?.lowInQuantityValue}
+          {numberWithCommas(row?.inventoryDetails?.lowInQuantityValue)}
         </div>
       ),
       sortable: true,

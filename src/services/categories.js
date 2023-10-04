@@ -29,6 +29,24 @@ const getCategoriesQuery = () => gql`
   }
 `;
 
+const getHeaderNavsQuery = () => gql`
+  {
+    __typename
+    headerNavs {
+      archive
+      categories {
+        name
+        subCategories {
+          name
+          id
+        }
+      }
+      id
+      name
+      createdAt
+    }
+  }
+`;
 const getCategoryQuery = ({ id }) => gql`
   {
     __typename
@@ -58,17 +76,34 @@ const createCategoryQuery = gql`
   }
 `;
 
+const createHeaderNavQuery = gql`
+  mutation createHeaderNav($name: String!) {
+    createHeaderNav(createHeaderNavInput: { name: $name }) {
+      name
+    }
+  }
+`;
+
+const editHeaderNavQuery = gql`
+  mutation updateHeaderNav($name: String!, $id: String!) {
+    updateHeaderNav(updateHeaderNavInput: { name: $name, id: $id }) {
+      id
+    }
+  }
+`;
 const editCategoryQuery = gql`
   mutation updateCategory(
     $id: String!
     $name: String!
     $parentCategoryId: String
+    $headerNavId: String
   ) {
     updateCategory(
       updateCategoryInput: {
         id: $id
         name: $name
         parentCategoryId: $parentCategoryId
+        headerNavId: $headerNavId
       }
     ) {
       id
@@ -86,9 +121,21 @@ const deleteCategoryQuery = gql`
   }
 `;
 
+const deleteHeaderNavQuery = gql`
+  mutation removeHeaderNav($id: String!) {
+    removeHeaderNav(id: $id) {
+      status
+    }
+  }
+`;
+
 const apis = {
   getCategories: () =>
     graphQlInstance(getCategoriesQuery(), {
+      method: "GET",
+    }),
+  getHeaderNavs: () =>
+    graphQlInstance(getHeaderNavsQuery(), {
       method: "GET",
     }),
   getCategory: ({ id }) =>
@@ -108,6 +155,21 @@ const apis = {
 
   deleteCategory: (variables) =>
     graphQlInstance(deleteCategoryQuery, {
+      variables,
+    }),
+
+  createHeaderNav: (variables) =>
+    graphQlInstance(createHeaderNavQuery, {
+      variables,
+    }),
+
+  editHeaderNav: (variables) =>
+    graphQlInstance(editHeaderNavQuery, {
+      variables,
+    }),
+
+  deleteHeaderNav: (variables) =>
+    graphQlInstance(deleteHeaderNavQuery, {
       variables,
     }),
 };

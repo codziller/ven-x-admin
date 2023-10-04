@@ -532,7 +532,7 @@ const Form = ({ details, toggler }) => {
                 />
               </div>
             )}
-            <Select
+            {/* <Select
               label="User Warehouse"
               placeholder="Select User Warehouse"
               options={warehouses}
@@ -547,7 +547,7 @@ const Form = ({ details, toggler }) => {
               isLoading={loading}
               tooltip="Select a warehouse for warehouse staffs"
               fullWidth
-            />
+            /> */}
 
             <Button
               onClick={() => setFormTwo({ ...formTwo, showFormError: true })}

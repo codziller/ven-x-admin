@@ -22,11 +22,11 @@ import ProductsStore from "../store";
 import { observer } from "mobx-react-lite";
 
 const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
-  const { productVariants } = formObj;
-  const { currentProductVariant } = details;
+  const { productVariants, productOptions } = formObj;
+  const { currentProductVariant, currentProductOption } = details;
   const { product_id } = useParams();
   const isEdit = !isEmpty(currentProductVariant);
-
+  console.log("currentProductVariant: ", currentProductVariant);
   const { editProductVariant } = ProductsStore;
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
@@ -44,9 +44,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     variantQuantity: currentProductVariant?.variantQuantity || "",
     imageUrls: currentProductVariant?.imageUrls || [],
     videoUrls: currentProductVariant?.videoUrls || [],
-    visibility: currentProductVariant?.variantName
-      ? currentProductVariant?.visibility
-      : true,
+    visibility: currentProductVariant.visibility === false ? false : true,
     description: currentProductVariant?.description || "",
   };
 
@@ -98,34 +96,37 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
           videoUrls: imagesUrls?.[1],
         };
         cleanPayload(payload);
-        await editProductVariant({
-          product_id,
-          data: payload,
-          onSuccess: () => toggler?.(),
-        });
+        if (currentProductVariant?.id) {
+          await editProductVariant({
+            product_id,
+            data: payload,
+            onSuccess: () => toggler?.(),
+          });
+        } else {
+          const newChoices = currentProductOption?.choices?.map((item) =>
+            item?.variantName === payload.variantName ? payload : item
+          );
+          const newProductOptions = productOptions?.map((item) => {
+            if (item?.name === currentProductOption?.name) {
+              return { ...currentProductOption, choices: newChoices };
+            } else {
+              return item;
+            }
+          });
+
+          handleOnChange({
+            prop: "productOptions",
+            val: newProductOptions,
+          });
+          toggler?.();
+        }
       } catch (error) {
+        console.log("ERRor: ", error);
       } finally {
         handleChangeTwo("editLoading", false);
       }
       return;
     }
-
-    const prevOption = productVariants?.find(
-      (item) => lowerCase(item?.variantName) === lowerCase(form.variantName)
-    );
-    if (prevOption?.variantName) {
-      errorToast(
-        "Error!",
-        "You've already added a product variant with this name"
-      );
-      return;
-    }
-    const payload = form;
-    handleOnChange({
-      prop: "productVariants",
-      val: [...productVariants, payload],
-    });
-    toggler?.();
   };
 
   const profitMargin =
@@ -177,6 +178,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
             formError={errors.variantName}
             showFormError={formTwo?.showFormError}
             isRequired
+            isDisabled={!currentProductVariant?.id}
           />
 
           <div className="flex flex-col md:flex-row justify-center items-start w-full gap-3 md:gap-6">

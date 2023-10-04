@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,15 +15,20 @@ import { TailSpin } from "react-loader-spinner";
 import { isEmpty, uniq } from "lodash";
 import CategoriesStore from "../store";
 import { errorToast, successToast } from "components/General/Toast/Toast";
+import Select from "components/General/Input/Select";
+import cleanPayload from "utils/cleanPayload";
 
 const Form = ({ details, toggler }) => {
   const {
     createCategory,
     createCategoryLoading,
     editCategory,
-    editCategoryLoading,
     deleteCategory,
+    headerNavs,
+    getHeaderNavs,
+    loadingHeaderNavs,
   } = CategoriesStore;
+
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
     subcategories: details?.subCategories,
@@ -32,6 +37,9 @@ const Form = ({ details, toggler }) => {
     editLoading: false,
   });
 
+  useEffect(() => {
+    getHeaderNavs();
+  }, []);
   const schema = yup.object({
     name: yup.string().required("Please enter category name"),
   });
@@ -39,11 +47,12 @@ const Form = ({ details, toggler }) => {
   const defaultValues = {
     name: details?.name,
     parentCategoryId: "",
+    headerNavId: details?.headerNavId,
   };
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -64,12 +73,12 @@ const Form = ({ details, toggler }) => {
   const form = {
     name: watch("name"),
     parentCategoryId: watch("parentCategoryId"),
+    headerNavId: watch("headerNavId"),
   };
 
   const handleAdd = () => {
     let choice = formTwo.subcategory?.split(",").map((item) => item?.trim());
     choice = uniq(choice);
-    console.log("choice: ", choice);
     const newArr = choice?.map?.((itm) => {
       return { name: itm };
     });
@@ -122,8 +131,12 @@ const Form = ({ details, toggler }) => {
       return;
     }
     handleChangeTwo("editLoading", true);
-    const payload = { name: form.name, id: details?.id };
-
+    const payload = {
+      name: form.name,
+      id: details?.id,
+      headerNavId: form?.headerNavId,
+    };
+    cleanPayload(payload);
     const newSubcategories = formTwo.subcategories?.filter((item) => !item?.id);
 
     await Promise.all([
@@ -180,7 +193,7 @@ const Form = ({ details, toggler }) => {
                 label="Add subcategories to this category"
                 value={formTwo?.subcategory}
                 onChangeFunc={(val) => handleChangeTwo("subcategory", val)}
-                placeholder="Enter Choice"
+                placeholder="Enter subcategory"
                 tooltip="Use comma to separate multiple subcategories"
                 extraElement={
                   <Button
@@ -236,6 +249,18 @@ const Form = ({ details, toggler }) => {
                   </div>
                 </div>
               )}
+
+              <Select
+                label="Add this category to a header nav"
+                placeholder="Select Header Nav"
+                options={headerNavs}
+                onChange={(val) => handleChange("headerNavId", val?.value)}
+                value={headerNavs?.find(
+                  (item) => item?.value === form?.headerNavId
+                )}
+                isLoading={loadingHeaderNavs}
+                fullWidth
+              />
             </>
           )}
 

@@ -15,6 +15,8 @@ import { Button } from "components/General/Button";
 import { observer } from "mobx-react-lite";
 import CategoriesStore from "../store";
 import { flattenArrayToString } from "utils/functions";
+import Tabs from "components/General/Tabs";
+import HeaderNavs from "./HeaderNavs";
 
 export const dateFilters = [
   {
@@ -36,7 +38,10 @@ export const dateFilters = [
     end_date: dateConstants?.today,
   },
 ];
-
+const TABS = [
+  { name: "categories", label: "Categories" },
+  { name: "headerNavs", label: "Header Navs" },
+];
 const CategoriesPage = () => {
   const { categories, getCategories, loading } = CategoriesStore;
 
@@ -45,6 +50,7 @@ const CategoriesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [activeTab, setActiveTab] = useState(TABS[0]?.name);
   useEffect(() => {
     getCategories();
   }, []);
@@ -122,61 +128,69 @@ const CategoriesPage = () => {
   return (
     <>
       <div className="h-full md:pr-4">
-        <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
-          <div className="flex justify-between items-center w-full mb-3 gap-1">
-            <div className="w-full sm:w-[45%] sm:min-w-[300px]">
-              <SearchBar
-                placeholder={"Search for a category"}
-                onChange={handleSearch}
-                value={searchQuery}
-                className="flex"
+        <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
+
+        {activeTab === TABS[0].name && (
+          <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
+            <div className="flex justify-between items-center w-full mb-3 gap-1">
+              <div className="w-full sm:w-[45%] sm:min-w-[300px]">
+                <SearchBar
+                  placeholder={"Search for a category"}
+                  onChange={handleSearch}
+                  value={searchQuery}
+                  className="flex"
+                />
+              </div>
+              <Button
+                text="Add Category"
+                icon={<Plus className="stroke-current" />}
+                className="hidden md:block"
+                onClick={() =>
+                  setCurrentTxnDetails({ modalType: "add", isAdd: true })
+                }
               />
             </div>
-            <Button
-              text="Add Category"
-              icon={<Plus className="stroke-current" />}
-              className="hidden md:block"
-              onClick={() =>
-                setCurrentTxnDetails({ modalType: "add", isAdd: true })
-              }
-            />
-          </div>
 
-          {loading ? (
-            <CircleLoader blue />
-          ) : (
-            <>
-              <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
-                {searchResults?.length > 0 ? (
-                  <Table
-                    data={searchResults}
-                    columns={width >= 640 ? columns : columns.slice(0, 2)}
-                    onRowClicked={(e) => {
-                      setCurrentTxnDetails({ ...e, modalType: "edit" });
-                    }}
-                    pointerOnHover
-                    isLoading={loading}
-                    pageCount={categories?.length / pageCount}
-                    onPageChange={(page) => setCurrentPage(page)}
-                    currentPage={currentPage}
-                    tableClassName="txn-section-table"
-                    noPadding
-                  />
-                ) : (
-                  <>
-                    <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
-                      {searchResultsEmpty ? (
-                        <span>No results found for "{searchQuery}"</span>
-                      ) : (
-                        <span>There are no categories for this warehouse</span>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            </>
-          )}
-        </div>
+            {loading ? (
+              <CircleLoader blue />
+            ) : (
+              <>
+                <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
+                  {searchResults?.length > 0 ? (
+                    <Table
+                      data={searchResults}
+                      columns={width >= 640 ? columns : columns.slice(0, 2)}
+                      onRowClicked={(e) => {
+                        setCurrentTxnDetails({ ...e, modalType: "edit" });
+                      }}
+                      pointerOnHover
+                      isLoading={loading}
+                      pageCount={categories?.length / pageCount}
+                      onPageChange={(page) => setCurrentPage(page)}
+                      currentPage={currentPage}
+                      tableClassName="txn-section-table"
+                      noPadding
+                    />
+                  ) : (
+                    <>
+                      <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
+                        {searchResultsEmpty ? (
+                          <span>No results found for "{searchQuery}"</span>
+                        ) : (
+                          <span>
+                            There are no categories for this warehouse
+                          </span>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {activeTab === TABS[1].name && <HeaderNavs />}
       </div>
 
       <TransactionDetailsModal

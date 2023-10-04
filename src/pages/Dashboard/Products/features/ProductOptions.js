@@ -46,8 +46,8 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     name: yup.string().required("Please enter option name"),
     choices: yup
       .array()
-      .min(1, "Enter at lease one choice for this option")
-      .required("Enter at lease one choice for this option"),
+      .min(1, "Enter at least one choice for this option")
+      .required("Enter at least one choice for this option"),
   });
 
   const { COLOR, LIST } = CHOICE_DISPLAY;
@@ -87,12 +87,15 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
   const handleSave = (e) => {
     let choice = formTwo.choice?.split(",").map((item) => item?.trim());
     choice = uniq(choice);
-    const choiceObj = choice?.map?.((itm) => {
-      return { name: itm, choice: "#000000" };
-    });
+    const choiceObj = choice
+      ?.map?.((itm) => {
+        if (itm)
+          return { variantName: itm, choice: "#000000", visibility: true };
+      })
+      .filter((item) => item?.variantName);
 
     if (isEmpty(choice)) return;
-    if (form.choices?.find((itm) => choice?.includes(itm?.name))) {
+    if (form.choices?.find((itm) => choice?.includes(itm?.variantName))) {
       errorToast("Cannot add the same choice twice");
     } else {
       handleChangeTwo("choice", "");
@@ -100,28 +103,50 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     }
   };
   const handleRemoveChoice = (val) => {
-    const newChoices = form.choices.filter((item) => item?.name !== val?.name);
+    const newChoices = form.choices.filter(
+      (item) => item?.variantName !== val?.variantName
+    );
     handleChange("choices", newChoices);
   };
-  const handleSetColor = ({ index, name, choice }) => {
-    console.log("index, name, color: ", index, name, choice);
+  const handleSetColor = ({ index, choice, rest }) => {
     let choices = [...form.choices];
-    choices[index] = { name, choice };
+    choices[index] = { ...rest, choice };
     handleChange("choices", choices);
   };
 
   const handleOnSubmit = () => {
+    console.log(form.choices);
+    const choices = form.choices?.map((item) => {
+      return cleanPayload({ ...item, choice: "" });
+    });
+    const payload = {
+      ...form,
+      choices,
+      productOptionId: currentProductOption?.id,
+    };
+    cleanPayload(payload);
     if (isEdit) {
-      const payload = {
-        ...form,
-        productOptionId: currentProductOption?.id,
-      };
-      cleanPayload(payload);
-      editProductOption({
-        product_id,
-        data: payload,
-        onSuccess: () => toggler?.(),
-      });
+      if (currentProductOption?.id) {
+        editProductOption({
+          product_id,
+          data: payload,
+          onSuccess: () => toggler?.(),
+        });
+      } else {
+        const newProductOptions = productOptions?.map((item) => {
+          if (item?.name === currentProductOption?.name) {
+            return { ...currentProductOption, ...payload };
+          } else {
+            return item;
+          }
+        });
+
+        handleOnChange({
+          prop: "productOptions",
+          val: newProductOptions,
+        });
+        toggler?.();
+      }
       return;
     }
     const prevOption = productOptions?.find(
@@ -135,7 +160,6 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
       return;
     }
 
-    const payload = cleanPayload(form);
     handleOnChange({
       prop: "productOptions",
       val: [...productOptions, payload],
@@ -246,10 +270,11 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
           <div className="flex flex-wrap gap-3 w-full my-3 justify-start items-center border-1/2 border-grey-border p-2">
             {form?.choices?.map((item, index) => {
               const backgroundColor = item?.choice;
-              const isActive = formTwo?.activeChoice?.name === item?.name;
+              const isActive =
+                formTwo?.activeChoice?.variantName === item?.variantName;
               return (
                 <div
-                  key={item?.name}
+                  key={item?.variantName}
                   className="flex justify-center items-center w-fit transition-colors duration-300 ease-in-out gap-1 bg-grey-fadeLight text-sm px-1 relative"
                   onMouseEnter={() => handleChange("activeChoice", item, true)}
                   onMouseLeave={() => handleChange("activeChoice", "", true)}
@@ -260,7 +285,7 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
                       className="w-3 h-3 rounded-full  hover:bg-grey-alt transition-colors duration-300 ease-in-out cursor-pointer mr-1"
                     ></span>
                   )}
-                  <span>{item?.name}</span>
+                  <span>{item?.variantName}</span>
 
                   <span
                     onClick={() => handleRemoveChoice(item)}
@@ -282,7 +307,7 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
                       <HexColorPicker
                         color={backgroundColor}
                         onChange={(choice) =>
-                          handleSetColor({ ...item, choice, index })
+                          handleSetColor({ rest: item, choice, index })
                         }
                       />
                     </div>

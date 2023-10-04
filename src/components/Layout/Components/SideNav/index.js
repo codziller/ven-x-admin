@@ -8,7 +8,6 @@ import { ReactComponent as Overview } from "assets/icons/overview.svg";
 import { ReactComponent as Products } from "assets/icons/products.svg";
 import { ReactComponent as Staff } from "assets/icons/staff.svg";
 import { ReactComponent as Gallery } from "assets/icons/gallery.svg";
-import { ReactComponent as Promo } from "assets/icons/promo.svg";
 
 import { TbBrandDenodo, TbCategory2, TbPackageImport } from "react-icons/tb";
 import {
@@ -231,7 +230,16 @@ const getLinks = (warehouse_id, user) => [
             />
           ),
         },
-
+        {
+          title: "Staff",
+          slug: "/dashboard/staffs",
+          heading: "Manage Staffs",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/staffs/${warehouse_id}`,
+          icon: (
+            <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
+          ),
+        },
         {
           title: "Users",
           slug: "/dashboard/users",
@@ -245,16 +253,6 @@ const getLinks = (warehouse_id, user) => [
             />
           ),
         },
-        // {
-        //   title: "Staff",
-        //   slug: "/dashboard/staff",
-        //   heading: "Manage Staff (Lagos 1)",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/staff/${warehouse_id}`,
-        //   icon: (
-        //     <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-        //   ),
-        // },
 
         {
           title: "Marketing",

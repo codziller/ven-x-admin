@@ -5,17 +5,8 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
-import ProductOptions from "./ProductOptions";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
-import ProductVariant from "./ProductVariant";
-import ProductSubscription from "./ProductSubscription";
+import AddHeaderNav from "./AddHeaderNav";
 
-const {
-  PRODUCT_OPTION,
-  PRODUCT_SUBSCRIPTION,
-  PRODUCT_VARIANT,
-  PRODUCT_CATEGORY,
-} = PRODUCT_MODAL_TYPES;
 const CategoryDetailsModal = ({ active, toggler, details }) => {
   const renderModalBody = () => {
     switch (details?.modalType) {
@@ -25,14 +16,10 @@ const CategoryDetailsModal = ({ active, toggler, details }) => {
         return <Form details={details} toggler={toggler} />;
       case "add":
         return <Form details={details} toggler={toggler} />;
-      case PRODUCT_OPTION:
-        return <ProductOptions details={details} toggler={toggler} />;
-      case PRODUCT_VARIANT:
-        return <ProductVariant details={details} toggler={toggler} />;
-      case PRODUCT_SUBSCRIPTION:
-        return <ProductSubscription details={details} toggler={toggler} />;
-      case PRODUCT_CATEGORY:
-        return <Form details={details} toggler={toggler} />;
+      case "editHeaderNav":
+        return <AddHeaderNav details={details} toggler={toggler} />;
+      case "addHeaderNav":
+        return <AddHeaderNav details={details} toggler={toggler} />;
       default:
         return null;
     }

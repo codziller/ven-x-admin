@@ -20,6 +20,7 @@ costPrice
 createdAt
 discountType
 discountValue
+isDiscountAllowed
 enablePreOrder
 howToUse
 id
@@ -31,8 +32,15 @@ productIngredients
 productOptions {
   choiceDisplay
   choices{
-    choice
-    name
+    description
+    imageUrls
+    variantCostPrice
+    variantName
+    variantQuantity
+    variantSalePrice
+    videoUrls
+    visibility
+    weight
   }
   name
   id
@@ -47,21 +55,11 @@ productSubscriptions {
   subscriptionFrequency
   tagline
 }
-productVariants {
-  id
-  description
-  imageUrls
-  variantCostPrice
-  variantName
-  variantQuantity
-  variantSalePrice
-  visibility
-  weight
-}
 ribbon
 salePrice
 updatedAt
 weight
+weightType
 imageUrls
 warehouseInventory {
 id
@@ -160,6 +158,7 @@ const createProductQuery = gql`
     $costPrice: String!
     $discountType: DISCOUNT_TYPE
     $discountValue: String
+    $isDiscountAllowed: Boolean!
     $enablePreOrder: Boolean!
     $howToUse: String
     $imageUrls: [String!]
@@ -170,12 +169,12 @@ const createProductQuery = gql`
     $productIngredients: String
     $productOptions: [CreateProductOptionInput!]
     $productSubscriptions: [CreateProductSubscriptionInput!]
-    $productVariants: [CreateProductVariantInput!]
     $warehouseInventory: [WareHouseInventoryInput!]!
     $ribbon: RIBBON
     $salePrice: String!
     $videoUrls: [String!]
     $weight: String!
+    $weightType: WEIGHT_TYPE!
   ) {
     createProduct(
       createProductInput: {
@@ -184,6 +183,7 @@ const createProductQuery = gql`
         costPrice: $costPrice
         discountType: $discountType
         discountValue: $discountValue
+        isDiscountAllowed: $isDiscountAllowed
         enablePreOrder: $enablePreOrder
         howToUse: $howToUse
         imageUrls: $imageUrls
@@ -194,12 +194,12 @@ const createProductQuery = gql`
         productIngredients: $productIngredients
         productOptions: $productOptions
         productSubscriptions: $productSubscriptions
-        productVariants: $productVariants
         warehouseInventory: $warehouseInventory
         ribbon: $ribbon
         salePrice: $salePrice
         videoUrls: $videoUrls
         weight: $weight
+        weightType: $weightType
       }
     ) {
       id
@@ -213,6 +213,7 @@ const editProductQuery = gql`
     $brandId: String!
     $discountType: DISCOUNT_TYPE
     $discountValue: String
+    $isDiscountAllowed: Boolean!
     $enablePreOrder: Boolean!
     $howToUse: String
     $imageUrls: [String!]
@@ -225,12 +226,14 @@ const editProductQuery = gql`
     $salePrice: String!
     $videoUrls: [String!]
     $weight: String!
+    $weightType: WEIGHT_TYPE!
   ) {
     updateProduct(
       updateProductInput: {
         brandId: $brandId
         discountType: $discountType
         discountValue: $discountValue
+        isDiscountAllowed: $isDiscountAllowed
         enablePreOrder: $enablePreOrder
         howToUse: $howToUse
         imageUrls: $imageUrls
@@ -243,6 +246,7 @@ const editProductQuery = gql`
         salePrice: $salePrice
         videoUrls: $videoUrls
         weight: $weight
+        weightType: $weightType
       }
       productId: $productId
     ) {

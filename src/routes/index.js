@@ -61,6 +61,7 @@ import AddMobilePagePost from "pages/Dashboard/Marketing/features/AddMobilePageP
 import AddPromoBanner from "pages/Dashboard/Marketing/features/AddPromoBanner";
 import AddMobileMarketingImage from "pages/Dashboard/Marketing/features/AddMobileMarketingImage";
 import AddDiscount from "pages/Dashboard/Marketing/features/AddDiscount";
+import AddStaff from "pages/Dashboard/Staff/features/AddStaff";
 
 const Router = () => {
   return (
@@ -226,7 +227,7 @@ const Router = () => {
 
         {/* staff */}
         <Route
-          path="/dashboard/staff"
+          path="/dashboard/staffs"
           element={
             <ProtectedRoute path="">
               <Staff />
@@ -234,6 +235,8 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<StaffPage />} />
+          <Route path="add/:warehouse_id" element={<AddStaff />} />
+          <Route path="edit/:warehouse_id/:staff_id" element={<AddStaff />} />
         </Route>
         {/* end staff */}
 

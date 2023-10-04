@@ -1,43 +1,101 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 
+import { TailSpin } from "react-loader-spinner";
+import { ReactComponent as Plus } from "assets/icons/add.svg";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
-import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import {
+  GENDERS,
+  MEDIA_MODAL_TYPES,
+  NAIRA,
+  PRODUCT_MODAL_TYPES,
+  ROLES,
+  WALLET_ACTIONS,
+} from "utils/appConstant";
+import DetailsModal from "./DetailsModal";
+import CheckBox from "components/General/Input/CheckBox";
+import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
+import { observer } from "mobx-react-lite";
+import AffiliateMarketersStore from "../store";
+import cleanPayload from "utils/cleanPayload";
+import { isEmpty } from "lodash";
+import DatePickerComponent from "components/General/DatePicker";
+import moment from "moment";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
+import StaffsStore from "../store";
+import WareHousesStore from "pages/Dashboard/WareHouses/store";
+import BrandsStore from "pages/Dashboard/Brands/store";
+import { numberWithCommas } from "utils/formatter";
+import Select from "components/General/Input/Select";
+import PhoneNumber from "components/General/PhoneNumber/PhoneNumber";
+import usePasswordValidation from "hooks/usePasswordValidation";
 
-export default function Form({ details, toggler }) {
+const { BRAND } = MEDIA_MODAL_TYPES;
+const { Credit, Debit } = WALLET_ACTIONS;
+const Form = ({ details, toggler }) => {
+  const { staff_id, warehouse_id } = useParams();
+
+  const {
+    editStaffWallet,
+    staff,
+    editStaffWalletLoading,
+    editStaff,
+    editStaffLoading,
+    createStaff,
+    createStaffLoading,
+  } = StaffsStore;
+  const { warehouses, loading, getWarehouses } = WareHousesStore;
+  const { getBrand, brand, getBrandLoading } = BrandsStore;
+  useEffect(() => {
+    getWarehouses({ data: { page: 1 } });
+  }, []);
+  const navigate = useNavigate();
+
   const [formTwo, setFormTwo] = useState({
-    country: "NG",
     showFormError: false,
+    formModified: false,
+    modalType: "",
+    createLoading: false,
   });
+
+  const addSchema = {
+    dob: yup.string().required("Please select date of birth"),
+    email: yup.string().required("Please enter email"),
+    password: yup.string().required("Please enter password"),
+    phoneNumber: yup.string().required("Please enter phone number"),
+  };
 
   const schema = yup.object({
-    name: yup.string().required("Please enter your name"),
+    ...(staff_id ? { ...addSchema } : {}),
+    firstName: yup.string().required("Please enter first name"),
+    gender: yup.string().required("Please select gender"),
+    lastName: yup.string().required("Please enter last name"),
   });
 
-  //
-
-  //   const { actions } = signInSlice;
-
   const defaultValues = {
-    name: "",
-    country: "",
-    amount: "",
-    quantity: "",
+    dob: staff_id ? staff?.dob : "",
+    email: staff_id ? staff?.email : "",
+    firstName: staff_id ? staff?.firstName : "",
+    gender: staff_id ? staff?.gender : "",
+    lastName: staff_id ? staff?.lastName : "",
+    password: "P@55word",
+    phoneNumber: staff_id ? staff?.phoneNumber?.replace("0", "+234") : "",
+    role: staff_id ? staff?.role : "",
+    warehouseId: staff_id ? staff?.warehouseId : "",
+    brandId: staff_id ? staff?.brandId : "",
   };
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -47,132 +105,476 @@ export default function Form({ details, toggler }) {
     resolver: yupResolver(schema),
   });
 
-  const handleChange = async (prop, val) => {
-    setValue(prop, val);
+  const form = {
+    dob: watch("dob"),
+    email: watch("email"),
+    firstName: watch("firstName"),
+    gender: watch("gender"),
+    lastName: watch("lastName"),
+    password: watch("password"),
+    phoneNumber: watch("phoneNumber"),
+    role: watch("role"),
+    warehouseId: watch("warehouseId"),
+    brandId: watch("brandId"),
+    transactionType: watch("transactionType"),
+    amount: watch("amount"),
+  };
+
+  useEffect(() => {
+    if (!form.brandId) {
+      return;
+    }
+    getBrand({ data: { id: form?.brandId } });
+  }, [form.brandId]);
+  const { PasswordCheckComp } = usePasswordValidation({
+    value: form?.password,
+  });
+
+  const handleChange = async ({ prop, val, rest, isFormTwo }) => {
+    isFormTwo
+      ? setFormTwo({ ...formTwo, [prop]: val, formModified: true })
+      : setFormTwo({ ...formTwo, formModified: true });
+    const updatedVal = rest ? [...rest, ...val] : val;
+    setValue(prop, updatedVal);
     await trigger(prop);
   };
 
-  const form = {
-    name: watch("name"),
-    country: watch("country"),
-    amount: watch("amount"),
-    quantity: watch("quantity"),
+  const handleChangeTwo = async (prop, val) => {
+    setFormTwo({ ...formTwo, [prop]: val });
   };
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
+
+  const handleOnSubmit = () => {
+    let payload = {
+      ...form,
+      amount: "",
+      transactionType: "",
+      staffId: staff_id,
+      phoneNumber: form.phoneNumber?.replace("+234", "0"),
+      dob: staff_id ? "" : form.dob,
+      email: staff_id ? "" : form.email,
+      phoneNumber: staff_id ? "" : form.phoneNumber,
+      password: staff_id ? "" : form.password,
+      warehouseId: form?.warehouseId || warehouse_id,
+    };
+
+    cleanPayload(payload);
+    if (staff_id) {
+      editStaff({
+        data: payload,
+        onSuccess: () => navigate(`/dashboard/staffs/${warehouse_id}`),
+      });
+      return;
     }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
+    createStaff({
+      data: payload,
+      onSuccess: () => navigate(`/dashboard/staffs/${warehouse_id}`),
+    });
   };
 
+  const handleOnWalletSubmit = () => {
+    let payload = {
+      amount: parseFloat(form.amount),
+      transactionType: form.transactionType,
+      staffId: staff_id,
+    };
+
+    if (staff_id) {
+      editStaffWallet({
+        data: payload,
+        onSuccess: () => navigate(`/dashboard/staffs/${warehouse_id}`),
+      });
+      return;
+    }
+  };
+  console.log("formm: ", form);
   return (
-    <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
-      {details?.link ? (
-        <div className="mb-5">
-          <Link to={details?.link} className="scale-90">
-            <ArrowBack />
-          </Link>
-        </div>
-      ) : (
-        <button onClick={() => toggler?.()} className="scale-90 mb-5">
-          <Close />
-        </button>
-      )}
-
-      {details?.isAdd ? (
-        <h2 className="section-heading mb-3 text-xl">Add a New Staff</h2>
-      ) : (
-        <h2 className="section-heading mb-3 text-xl">Edit Staff</h2>
-      )}
-
-      <form
-        onSubmit={handleSubmit(handleOnSubmit)}
-        className="flex flex-col justify-start items-start gap-y-3 w-full overflow-y-auto"
-      >
-        <div className="flex-col justify-start items-start flex w-full">
-          <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark">
-            Add Staff Image
+    <>
+      <div className="gap-y-4 py-4 w-full h-full pb-4 ">
+        {details?.link ? (
+          <div className="mb-5">
+            <Link to={`/dashboard/staffs/${warehouse_id}`} className="scale-90">
+              <ArrowBack />
+            </Link>
           </div>
-          <div className="w-full h-[204px] px-[127px] py-16 bg-stone-50 rounded-lg border border-dashed border-black  flex-col justify-center items-center gap-2.5 flex cursor-pointer">
-            <div className="w-[86px] h-[86px] min-w-[86px] min-h-[86px] bg-[#EAEAEA] rounded-full flex items-center justify-center">
-              <Gallery className="stroke-current" />
-            </div>
-          </div>
+        ) : (
+          <button onClick={() => toggler?.()} className="scale-90 mb-5">
+            <Close />
+          </button>
+        )}
 
-          <div className="min-h-[13px]">
-            {formTwo?.showFormError && errors.name && (
-              <FormErrorMessage type={errors.name} />
+        {!staff_id ? (
+          <h2 className="section-heading my-8 text-xl">Add Staff</h2>
+        ) : (
+          <h2 className="section-heading my-8 text-xl  ">Edit Staff</h2>
+        )}
+
+        <form
+          onSubmit={handleSubmit(handleOnSubmit)}
+          className="flex flex-col md:flex-row justify-start items-start gap-10 w-full "
+        >
+          {/* First section */}
+
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
+            {staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Update Wallet
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Select the transaction type to be performed on this
+                    staff&apos;s wallet <br />
+                    Wallet Balance -{" "}
+                    <span className="text-black">
+                      {NAIRA}
+                      {numberWithCommas(staff?.balance)}
+                    </span>
+                  </span>
+                </div>
+
+                <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
+                  <div className="flex justify-start items-center w-full gap-6">
+                    <CheckBox
+                      label={Credit}
+                      onChange={() =>
+                        handleChange({ prop: "transactionType", val: Credit })
+                      }
+                      checked={form.transactionType === Credit}
+                    />
+
+                    <CheckBox
+                      label={Debit}
+                      onChange={() =>
+                        handleChange({ prop: "transactionType", val: Debit })
+                      }
+                      checked={form.transactionType === Debit}
+                    />
+                  </div>
+                </div>
+
+                {form?.transactionType && (
+                  <Input
+                    label="Amount"
+                    value={form?.amount}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "amount", val })
+                    }
+                    placeholder="Enter Amount"
+                    formError={errors.amount}
+                    showFormError={formTwo?.showFormError}
+                    prefix={NAIRA}
+                    tooltip={`Amount to be ${
+                      form.transactionType === Debit ? "debited" : "credited"
+                    }`}
+                    type="number"
+                    isRequired
+                  />
+                )}
+                <Button
+                  text={"Update Wallet"}
+                  isLoading={editStaffWalletLoading}
+                  isDisabled={!parseFloat(form.amount) || !form.transactionType}
+                  onClick={handleOnWalletSubmit}
+                  className="mt-10 mb-5 "
+                  fullWidth
+                />
+              </>
+            )}
+
+            {!staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Staff info
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Fill in staff details
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[7px] md:gap-5 justify-between items-start w-full">
+                  <Input
+                    label="First name"
+                    value={form?.firstName}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "firstName", val })
+                    }
+                    placeholder="Enter first name"
+                    formError={errors.firstName}
+                    showFormError={formTwo?.showFormError}
+                  />
+
+                  <Input
+                    label="Last name"
+                    value={form?.lastName}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "lastName", val })
+                    }
+                    placeholder="Enter last name"
+                    formError={errors.lastName}
+                    showFormError={formTwo?.showFormError}
+                  />
+                </div>
+
+                <Select
+                  label="Gender"
+                  placeholder="Select your gender"
+                  options={GENDERS}
+                  onChange={(val) =>
+                    handleChange({ prop: "gender", val: val?.value })
+                  }
+                  value={form.gender}
+                  formError={errors.gender}
+                  showFormError={formTwo?.showFormError}
+                  fullWidth
+                />
+                <Input
+                  label="Email address"
+                  value={form?.email}
+                  onChangeFunc={(val) => handleChange({ prop: "email", val })}
+                  placeholder="Enter your email address"
+                  type="email"
+                  formError={errors.email}
+                  showFormError={formTwo?.showFormError}
+                />
+                <PhoneNumber
+                  label="Phone number"
+                  value={form.phoneNumber}
+                  countryClicked={formTwo.country}
+                  onPhoneChange={(val) =>
+                    handleChange({ prop: "phoneNumber", val })
+                  }
+                  onCountryChange={(val) =>
+                    setFormTwo({ ...formTwo, country: val })
+                  }
+                  placeholder="Enter phone number"
+                  formError={errors.phoneNumber}
+                  showFormError={formTwo?.showFormError}
+                />
+              </>
             )}
           </div>
-        </div>
-        <Input
-          label="Full Name"
-          value={form?.name}
-          onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Full Name"
-          formError={errors.name}
-          showFormError={formTwo?.showFormError}
-          required
-        />
 
-        <Input
-          label="Email Address"
-          value={form?.name}
-          onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Enter Email Address"
-          formError={errors.name}
-          showFormError={formTwo?.showFormError}
-          required
-        />
+          {/* Second section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 ">
+            {staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Staff info
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Fill in staff details
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[7px] md:gap-5 justify-between items-start w-full">
+                  <Input
+                    label="First name"
+                    value={form?.firstName}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "firstName", val })
+                    }
+                    placeholder="Enter first name"
+                    formError={errors.firstName}
+                    showFormError={formTwo?.showFormError}
+                  />
 
-        <Select
-          label="Staff Role "
-          placeholder="Select Staff Role "
-          options={[
-            {
-              value: "Admin",
-              label: "Admin",
-            },
-            {
-              value: "Basic Staff",
-              label: "Basic Staff",
-            },
-          ]}
-          onChange={(val) => handleChange("country", val)}
-          value={form.country}
-          formError={errors.country}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
+                  <Input
+                    label="Last name"
+                    value={form?.lastName}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "lastName", val })
+                    }
+                    placeholder="Enter last name"
+                    formError={errors.lastName}
+                    showFormError={formTwo?.showFormError}
+                  />
+                </div>
 
-        <Select
-          label="Staff Status "
-          placeholder="Select Staff Status "
-          options={[
-            { label: "Active", value: "Active" },
-            { label: "Disabled", value: "Disabled" },
-          ]}
-          onChange={(val) => handleChange("country", val)}
-          value={form.country}
-          formError={errors.country}
-          showFormError={formTwo?.showFormError}
-          fullWidth
-        />
+                <Select
+                  label="Gender"
+                  placeholder="Select your gender"
+                  options={GENDERS}
+                  onChange={(val) =>
+                    handleChange({ prop: "gender", val: val?.value })
+                  }
+                  value={form.gender}
+                  formError={errors.gender}
+                  showFormError={formTwo?.showFormError}
+                  fullWidth
+                />
 
-        <Button
-          onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-          type="submit"
-          text={details?.isAdd ? "Add New Staff" : "Save Changes"}
-          className="mt-8 mb-5"
-          fullWidth
-        />
-      </form>
-    </div>
+                <Input
+                  label="Email address"
+                  value={form?.email}
+                  onChangeFunc={(val) => handleChange({ prop: "email", val })}
+                  placeholder="Enter your email address"
+                  type="email"
+                  formError={errors.email}
+                  showFormError={formTwo?.showFormError}
+                  isDisabled={staff_id}
+                />
+                <PhoneNumber
+                  label="Phone number"
+                  value={form.phoneNumber}
+                  countryClicked={formTwo.country}
+                  onPhoneChange={(val) =>
+                    handleChange({ prop: "phoneNumber", val })
+                  }
+                  onCountryChange={(val) =>
+                    setFormTwo({ ...formTwo, country: val })
+                  }
+                  placeholder="Enter phone number"
+                  formError={errors.phoneNumber}
+                  showFormError={formTwo?.showFormError}
+                  isDisabled={staff_id}
+                />
+              </>
+            )}
+
+            {!staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Staff info
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Fill in staff details <br /> Default password: P@55word
+                  </span>
+                </div>
+                <DatePickerComponent
+                  label="Date Of Birth"
+                  placeholder="Select Date Of Birth"
+                  name="dob"
+                  isRequired
+                  value={
+                    moment(form?.dob).isValid() ? moment(form?.dob)._d : ""
+                  }
+                  maxDate={
+                    moment(form?.end_date).isValid()
+                      ? moment(form?.end_date).subtract(0, "days")._d
+                      : moment().subtract(1, "days")._d
+                  }
+                  dateFormat="dd MMMM yyyy"
+                  onChange={(value) =>
+                    handleChange({
+                      prop: "dob",
+                      val: moment(value).format("YYYY-MM-DD"),
+                    })
+                  }
+                  formError={errors.dob}
+                  showFormError={formTwo?.showFormError}
+                />
+
+                <Input
+                  label="Password"
+                  value={form?.password}
+                  onChangeFunc={(val) =>
+                    handleChange({ prop: "password", val })
+                  }
+                  placeholder="Enter your password"
+                  type="password"
+                  formError={errors.password}
+                  showFormError={formTwo?.showFormError}
+                />
+                <PasswordCheckComp />
+              </>
+            )}
+          </div>
+          {/* Third section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3">
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Optional Staff Info
+              </span>
+              <span className="text-grey-text text-sm">
+                Fill in staff details
+              </span>
+            </div>
+
+            <Select
+              label="Role"
+              placeholder="Select staff role"
+              options={ROLES}
+              onChange={(val) =>
+                handleChange({ prop: "role", val: val?.value })
+              }
+              value={form.role}
+              formError={errors.role}
+              showFormError={formTwo?.showFormError}
+              fullWidth
+            />
+
+            {staff_id && form?.role?.includes("BRAND") && (
+              <div className="flex flex-col justify-start items-end gap-1 w-full">
+                {!isEmpty(form?.brandId) && (
+                  <p>
+                    {getBrandLoading ? (
+                      <TailSpin
+                        height="25"
+                        width="25"
+                        color="#000000"
+                        ariaLabel="tail-spin-loading"
+                        radius="3"
+                        visible={true}
+                      />
+                    ) : (
+                      brand?.brandName
+                    )}
+                  </p>
+                )}
+
+                <Button
+                  onClick={() => handleChangeTwo("modalType", BRAND)}
+                  text={`Select Brand`}
+                  className=""
+                  whiteBg
+                  fullWidth
+                />
+              </div>
+            )}
+            {/* <Select
+              label="Staff Warehouse"
+              placeholder="Select Staff Warehouse"
+              options={warehouses}
+              onChange={(val) =>
+                handleChange({ prop: "warehouseId", val: val?.value })
+              }
+              value={warehouses?.find(
+                (item) => item?.value === form?.warehouseId
+              )}
+              formError={errors.warehouseId}
+              showFormError={formTwo?.showFormError}
+              isLoading={loading}
+              tooltip="Select a warehouse for warehouse staffs"
+              fullWidth
+            /> */}
+
+            <Button
+              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              type="submit"
+              text={!staff_id ? "Add Staff" : "Save Changes"}
+              isLoading={createStaffLoading || editStaffLoading}
+              className="mt-10 mb-5 "
+              fullWidth
+            />
+          </div>
+        </form>
+      </div>
+
+      <DetailsModal
+        active={formTwo?.modalType === BRAND}
+        details={{ modalType: BRAND, size: "lg" }}
+        toggler={() => handleChangeTwo("modalType", false)}
+        handleChange={handleChange}
+        form={form}
+      />
+    </>
   );
-}
+};
+
 Form.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(Form);

@@ -11,15 +11,21 @@ class CategoriesStore {
   // ====================================================
   // State
   // ====================================================
-  categories = null;
+  categories = [];
+  headerNavs = [];
   category = null;
   categoriesCount = null;
   error = null;
   loading = false;
+  loadingHeaderNavs = false;
   createCategoryLoading = false;
   editCategoryLoading = false;
   getCategoryLoading = false;
   deleteCategoryLoading = false;
+  createHeaderNavLoading = false;
+  editHeaderNavLoading = false;
+  deleteHeaderNavLoading = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -28,6 +34,24 @@ class CategoriesStore {
   // Actions
   // ====================================================
 
+  getHeaderNavs = async () => {
+    this.loadingHeaderNavs = true;
+    try {
+      let res = await apis.getHeaderNavs();
+      res = res?.headerNavs;
+
+      this.headerNavs =
+        res
+          ?.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+          ?.map((item) => {
+            return { ...item, label: item?.name, value: item?.id };
+          }) || [];
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingHeaderNavs = false;
+    }
+  };
   getCategories = async () => {
     this.loading = true;
     try {
@@ -94,13 +118,63 @@ class CategoriesStore {
     this.deleteCategoryLoading = true;
     try {
       await apis.deleteCategory(data);
-      successToast("Operation Successful!", "Category deleted Successfully.");
+      successToast("Operation Successful!", "Category archived Successfully.");
       onSuccess?.();
       await this.getCategories();
     } catch (error) {
       this.error = error;
     } finally {
       this.deleteCategoryLoading = false;
+    }
+  };
+
+  createHeaderNav = async ({ data, onSuccess, noAlert }) => {
+    this.createHeaderNavLoading = true;
+    try {
+      await apis.createHeaderNav(data);
+      !noAlert &&
+        successToast(
+          "Operation Successful!",
+          "HeaderNav created Successfully."
+        );
+      onSuccess?.();
+      await this.getHeaderNavs();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createHeaderNavLoading = false;
+    }
+  };
+
+  editHeaderNav = async ({ data, onSuccess, noAlert }) => {
+    this.editHeaderNavLoading = true;
+    try {
+      await apis.editHeaderNav(data);
+      !noAlert &&
+        successToast(
+          "Operation Successful!",
+          "HeaderNav updated Successfully."
+        );
+      onSuccess?.();
+      await this.getHeaderNavs();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editHeaderNavLoading = false;
+    }
+  };
+
+  deleteHeaderNav = async ({ data, onSuccess }) => {
+    this.deleteHeaderNavLoading = true;
+    try {
+      await apis.deleteHeaderNav(data);
+      successToast("Operation Successful!", "HeaderNav deleted Successfully.");
+      onSuccess?.();
+      await this.getCategories();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteHeaderNavLoading = false;
     }
   };
 }

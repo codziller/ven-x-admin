@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import Dropzone from "react-dropzone";
 import { isEmpty, isString } from "lodash";
@@ -8,6 +8,7 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import { FormErrorMessage } from "../FormErrorMessage";
 import classNames from "classnames";
+import ImageList from "./ImageList";
 
 const baseStyle = {
   flex: 1,
@@ -40,6 +41,7 @@ const rejectStyle = {
 export default function ImagePicker({
   handleDrop,
   images,
+  setImages,
   label,
   showFormError,
   formError,
@@ -51,9 +53,11 @@ export default function ImagePicker({
   isBanner,
   isPost,
   isMarketingImg,
+
   ...rest
 }) {
   const imageArray = isString(images) ? [images] : images;
+
   const isError = formError && showFormError;
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
@@ -75,7 +79,6 @@ export default function ImagePicker({
     [isFocused, isDragAccept, isDragReject, isError]
   );
 
-  console.log("images: ", images);
   return (
     <div className="flex-col justify-start items-start flex w-full">
       <div className="general-input-label mb-2 relative text-[13px] font-bold text-grey-dark !flex justify-start items-center gap-1.5">
@@ -98,72 +101,16 @@ export default function ImagePicker({
         )}
       </div>
 
-      {!isEmpty(imageArray) && (
-        <div
-          className={classNames("grid gap-10 my-4", {
-            "grid-cols-2": multiple,
-            "grid-cols-1 w-full": !multiple,
-          })}
-        >
-          {type === "video"
-            ? imageArray?.map((file, index) => (
-                <div key={file?.name} className="image-item w-full h-fit">
-                  <div className="flex justify-between items-center">
-                    <span className="text-grey text-xs truncate max-w-[calc(100%-30px)]">
-                      {file?.name}
-                    </span>
-                    {multiple && (
-                      <button
-                        onClick={() => removeImage?.(file)}
-                        className="text-red "
-                        type="button"
-                      >
-                        <Close className="current-svg w-[20px]" />
-                      </button>
-                    )}
-                  </div>
-                  <video controls width="400" height="100">
-                    <source
-                      src={isString(file) ? file : URL.createObjectURL(file)}
-                      type="video/mp4"
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              ))
-            : imageArray?.map((file, index) => (
-                <div
-                  key={index}
-                  className={classNames("image-item w-full", {
-                    "min-h-[420px] max-h-[420px]": isBanner,
-                    "h-[250px] sm:h-[300px] rounded-[6px]": isPost,
-                    "h-[275px] min-w-[187px]  max-w-[187px]": isMarketingImg,
-                    "h-[150px]": !isBanner && !isPost && !isMarketingImg,
-                  })}
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-grey text-xs truncate max-w-[calc(100%-30px)]">
-                      {file?.name}
-                    </span>
-                    {multiple && (
-                      <button
-                        onClick={() => removeImage?.(file)}
-                        className="text-red "
-                        type="button"
-                      >
-                        <Close className="current-svg w-[20px]" />
-                      </button>
-                    )}
-                  </div>
-                  <img
-                    src={isString(file) ? file : URL.createObjectURL(file)}
-                    alt={`Image ${index}`}
-                    className="object-cover object-center w-full h-full min-w-full min-h-full"
-                  />
-                </div>
-              ))}
-        </div>
-      )}
+      <ImageList
+        images={imageArray || []}
+        multiple={multiple}
+        type={type}
+        removeImage={removeImage}
+        isBanner={isBanner}
+        isPost={isPost}
+        isMarketingImg={isMarketingImg}
+        setImages={setImages}
+      />
 
       <div className="min-h-[13px] mb-4">
         {isError && <FormErrorMessage type={formError} />}
