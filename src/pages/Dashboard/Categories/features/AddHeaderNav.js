@@ -11,6 +11,7 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import CategoriesStore from "../store";
+import cleanPayload from "utils/cleanPayload";
 
 const AddHeaderNav = ({ details, toggler }) => {
   const {
@@ -65,7 +66,8 @@ const AddHeaderNav = ({ details, toggler }) => {
   };
 
   const handleOnSubmit = async (e) => {
-    const payload = { name: form.name };
+    const payload = { name: form.name, id: details?.id };
+    cleanPayload(payload);
     if (details.isAdd) {
       createHeaderNav({ data: payload, onSuccess: () => toggler() });
     } else {

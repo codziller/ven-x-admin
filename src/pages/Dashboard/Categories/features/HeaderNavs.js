@@ -80,7 +80,7 @@ const HeaderNavs = () => {
                       className={`hidden md:flex justify-end items-center px-10  w-fit transition-all duration-150 ease-in-out  rounded-[87px] relative`}
                       // onMouseLeave={() => setActiveNav("")}
                     >
-                      {headerNavs?.map(({ name, categories }, i, arr) => (
+                      {headerNavs?.map(({ name, categories, id }, i, arr) => (
                         <div
                           className={classNames(
                             " w-full h-full cursor-pointer"
@@ -90,6 +90,7 @@ const HeaderNavs = () => {
                           }}
                           onClick={() =>
                             setCurrentTxnDetails({
+                              id,
                               name,
                               modalType: "editHeaderNav",
                               isAdd: false,

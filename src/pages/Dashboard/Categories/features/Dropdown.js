@@ -10,7 +10,7 @@ const Dropdown = ({ categories }) => {
             key={name}
             className={`flex flex-col justify-start align-start gap-y-3 h-fit`}
           >
-            <h3 className="font-bold mb-1 whitespace-nowrap">{name}</h3>
+            <h3 className="font-bold mb-1">{name}</h3>
             {subCategories?.map(({ name }, i) => (
               <div
                 key={name}
