@@ -38,7 +38,7 @@ class StaffsStore {
     this.loading = true;
     try {
       let res = await apis.getStaffs(data);
-      res = res?.staffs;
+      res = res?.users_staff;
       this.staffs = res?.results || [];
       this.staffsCount = res?.total;
     } catch (error) {
@@ -80,7 +80,7 @@ class StaffsStore {
     this.getStaffLoading = true;
     try {
       let res = await apis.getStaff(data);
-      res = res?.staff;
+      res = res?.user;
       this.staff = res;
     } catch (error) {
       this.error = error;

@@ -4,7 +4,7 @@ import { graphQlInstance } from "services";
 const getStaffQuery = ({ id }) => gql`
   {
     __typename
-    staff(id: "${id}") {
+    user(id: "${id}") {
       balance
       baniCustomerRef
       createdAt
@@ -27,7 +27,7 @@ const getStaffQuery = ({ id }) => gql`
 const getStaffsQuery = ({ page }) => gql`
   {
     __typename
-    staffs(pageNumber: "${page}") {
+    users_staff(pageNumber: "${page}") {
       total
       results {
         balance

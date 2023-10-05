@@ -215,222 +215,75 @@ const Form = ({ details, toggler }) => {
           {/* First section */}
 
           <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
-            {staff_id && (
-              <>
-                <div className="flex flex-col justify-start items-start gap-1">
-                  <span className="text-grey-text text-lg uppercase">
-                    Update Wallet
-                  </span>
-                  <span className="text-grey-text text-sm">
-                    Select the transaction type to be performed on this
-                    staff&apos;s wallet <br />
-                    Wallet Balance -{" "}
-                    <span className="text-black">
-                      {NAIRA}
-                      {numberWithCommas(staff?.balance)}
-                    </span>
-                  </span>
-                </div>
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Staff info
+              </span>
+              <span className="text-grey-text text-sm">
+                Fill in staff details
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-[7px] md:gap-5 justify-between items-start w-full">
+              <Input
+                label="First name"
+                value={form?.firstName}
+                onChangeFunc={(val) => handleChange({ prop: "firstName", val })}
+                placeholder="Enter first name"
+                formError={errors.firstName}
+                showFormError={formTwo?.showFormError}
+              />
 
-                <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
-                  <div className="flex justify-start items-center w-full gap-6">
-                    <CheckBox
-                      label={Credit}
-                      onChange={() =>
-                        handleChange({ prop: "transactionType", val: Credit })
-                      }
-                      checked={form.transactionType === Credit}
-                    />
+              <Input
+                label="Last name"
+                value={form?.lastName}
+                onChangeFunc={(val) => handleChange({ prop: "lastName", val })}
+                placeholder="Enter last name"
+                formError={errors.lastName}
+                showFormError={formTwo?.showFormError}
+              />
+            </div>
 
-                    <CheckBox
-                      label={Debit}
-                      onChange={() =>
-                        handleChange({ prop: "transactionType", val: Debit })
-                      }
-                      checked={form.transactionType === Debit}
-                    />
-                  </div>
-                </div>
-
-                {form?.transactionType && (
-                  <Input
-                    label="Amount"
-                    value={form?.amount}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "amount", val })
-                    }
-                    placeholder="Enter Amount"
-                    formError={errors.amount}
-                    showFormError={formTwo?.showFormError}
-                    prefix={NAIRA}
-                    tooltip={`Amount to be ${
-                      form.transactionType === Debit ? "debited" : "credited"
-                    }`}
-                    type="number"
-                    isRequired
-                  />
-                )}
-                <Button
-                  text={"Update Wallet"}
-                  isLoading={editStaffWalletLoading}
-                  isDisabled={!parseFloat(form.amount) || !form.transactionType}
-                  onClick={handleOnWalletSubmit}
-                  className="mt-10 mb-5 "
-                  fullWidth
-                />
-              </>
-            )}
-
-            {!staff_id && (
-              <>
-                <div className="flex flex-col justify-start items-start gap-1">
-                  <span className="text-grey-text text-lg uppercase">
-                    Staff info
-                  </span>
-                  <span className="text-grey-text text-sm">
-                    Fill in staff details
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-[7px] md:gap-5 justify-between items-start w-full">
-                  <Input
-                    label="First name"
-                    value={form?.firstName}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "firstName", val })
-                    }
-                    placeholder="Enter first name"
-                    formError={errors.firstName}
-                    showFormError={formTwo?.showFormError}
-                  />
-
-                  <Input
-                    label="Last name"
-                    value={form?.lastName}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "lastName", val })
-                    }
-                    placeholder="Enter last name"
-                    formError={errors.lastName}
-                    showFormError={formTwo?.showFormError}
-                  />
-                </div>
-
-                <Select
-                  label="Gender"
-                  placeholder="Select your gender"
-                  options={GENDERS}
-                  onChange={(val) =>
-                    handleChange({ prop: "gender", val: val?.value })
-                  }
-                  value={form.gender}
-                  formError={errors.gender}
-                  showFormError={formTwo?.showFormError}
-                  fullWidth
-                />
-                <Input
-                  label="Email address"
-                  value={form?.email}
-                  onChangeFunc={(val) => handleChange({ prop: "email", val })}
-                  placeholder="Enter your email address"
-                  type="email"
-                  formError={errors.email}
-                  showFormError={formTwo?.showFormError}
-                />
-                <PhoneNumber
-                  label="Phone number"
-                  value={form.phoneNumber}
-                  countryClicked={formTwo.country}
-                  onPhoneChange={(val) =>
-                    handleChange({ prop: "phoneNumber", val })
-                  }
-                  onCountryChange={(val) =>
-                    setFormTwo({ ...formTwo, country: val })
-                  }
-                  placeholder="Enter phone number"
-                  formError={errors.phoneNumber}
-                  showFormError={formTwo?.showFormError}
-                />
-              </>
-            )}
+            <Select
+              label="Gender"
+              placeholder="Select your gender"
+              options={GENDERS}
+              onChange={(val) =>
+                handleChange({ prop: "gender", val: val?.value })
+              }
+              value={form.gender}
+              formError={errors.gender}
+              showFormError={formTwo?.showFormError}
+              fullWidth
+            />
+            <Input
+              label="Email address"
+              value={form?.email}
+              onChangeFunc={(val) => handleChange({ prop: "email", val })}
+              placeholder="Enter your email address"
+              type="email"
+              formError={errors.email}
+              showFormError={formTwo?.showFormError}
+              isDisabled={staff_id}
+            />
+            <PhoneNumber
+              label="Phone number"
+              value={form.phoneNumber}
+              countryClicked={formTwo.country}
+              onPhoneChange={(val) =>
+                handleChange({ prop: "phoneNumber", val })
+              }
+              onCountryChange={(val) =>
+                setFormTwo({ ...formTwo, country: val })
+              }
+              placeholder="Enter phone number"
+              formError={errors.phoneNumber}
+              showFormError={formTwo?.showFormError}
+              isDisabled={staff_id}
+            />
           </div>
 
           {/* Second section */}
           <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 ">
-            {staff_id && (
-              <>
-                <div className="flex flex-col justify-start items-start gap-1">
-                  <span className="text-grey-text text-lg uppercase">
-                    Staff info
-                  </span>
-                  <span className="text-grey-text text-sm">
-                    Fill in staff details
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-[7px] md:gap-5 justify-between items-start w-full">
-                  <Input
-                    label="First name"
-                    value={form?.firstName}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "firstName", val })
-                    }
-                    placeholder="Enter first name"
-                    formError={errors.firstName}
-                    showFormError={formTwo?.showFormError}
-                  />
-
-                  <Input
-                    label="Last name"
-                    value={form?.lastName}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "lastName", val })
-                    }
-                    placeholder="Enter last name"
-                    formError={errors.lastName}
-                    showFormError={formTwo?.showFormError}
-                  />
-                </div>
-
-                <Select
-                  label="Gender"
-                  placeholder="Select your gender"
-                  options={GENDERS}
-                  onChange={(val) =>
-                    handleChange({ prop: "gender", val: val?.value })
-                  }
-                  value={form.gender}
-                  formError={errors.gender}
-                  showFormError={formTwo?.showFormError}
-                  fullWidth
-                />
-
-                <Input
-                  label="Email address"
-                  value={form?.email}
-                  onChangeFunc={(val) => handleChange({ prop: "email", val })}
-                  placeholder="Enter your email address"
-                  type="email"
-                  formError={errors.email}
-                  showFormError={formTwo?.showFormError}
-                  isDisabled={staff_id}
-                />
-                <PhoneNumber
-                  label="Phone number"
-                  value={form.phoneNumber}
-                  countryClicked={formTwo.country}
-                  onPhoneChange={(val) =>
-                    handleChange({ prop: "phoneNumber", val })
-                  }
-                  onCountryChange={(val) =>
-                    setFormTwo({ ...formTwo, country: val })
-                  }
-                  placeholder="Enter phone number"
-                  formError={errors.phoneNumber}
-                  showFormError={formTwo?.showFormError}
-                  isDisabled={staff_id}
-                />
-              </>
-            )}
-
             {!staff_id && (
               <>
                 <div className="flex flex-col justify-start items-start gap-1">
@@ -479,60 +332,60 @@ const Form = ({ details, toggler }) => {
                 <PasswordCheckComp />
               </>
             )}
-          </div>
-          {/* Third section */}
-          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3">
-            <div className="flex flex-col justify-start items-start gap-1">
-              <span className="text-grey-text text-lg uppercase">
-                Optional Staff Info
-              </span>
-              <span className="text-grey-text text-sm">
-                Fill in staff details
-              </span>
-            </div>
 
-            <Select
-              label="Role"
-              placeholder="Select staff role"
-              options={ROLES}
-              onChange={(val) =>
-                handleChange({ prop: "role", val: val?.value })
-              }
-              value={form.role}
-              formError={errors.role}
-              showFormError={formTwo?.showFormError}
-              fullWidth
-            />
+            {staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Optional Staff Info
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Fill in staff details
+                  </span>
+                </div>
 
-            {staff_id && form?.role?.includes("BRAND") && (
-              <div className="flex flex-col justify-start items-end gap-1 w-full">
-                {!isEmpty(form?.brandId) && (
-                  <p>
-                    {getBrandLoading ? (
-                      <TailSpin
-                        height="25"
-                        width="25"
-                        color="#000000"
-                        ariaLabel="tail-spin-loading"
-                        radius="3"
-                        visible={true}
-                      />
-                    ) : (
-                      brand?.brandName
-                    )}
-                  </p>
-                )}
-
-                <Button
-                  onClick={() => handleChangeTwo("modalType", BRAND)}
-                  text={`Select Brand`}
-                  className=""
-                  whiteBg
+                <Select
+                  label="Role"
+                  placeholder="Select staff role"
+                  options={ROLES}
+                  onChange={(val) =>
+                    handleChange({ prop: "role", val: val?.value })
+                  }
+                  value={form.role}
+                  formError={errors.role}
+                  showFormError={formTwo?.showFormError}
                   fullWidth
                 />
-              </div>
-            )}
-            {/* <Select
+
+                {staff_id && form?.role?.includes("BRAND") && (
+                  <div className="flex flex-col justify-start items-end gap-1 w-full">
+                    {!isEmpty(form?.brandId) && (
+                      <p>
+                        {getBrandLoading ? (
+                          <TailSpin
+                            height="25"
+                            width="25"
+                            color="#000000"
+                            ariaLabel="tail-spin-loading"
+                            radius="3"
+                            visible={true}
+                          />
+                        ) : (
+                          brand?.brandName
+                        )}
+                      </p>
+                    )}
+
+                    <Button
+                      onClick={() => handleChangeTwo("modalType", BRAND)}
+                      text={`Select Brand`}
+                      className=""
+                      whiteBg
+                      fullWidth
+                    />
+                  </div>
+                )}
+                {/* <Select
               label="Staff Warehouse"
               placeholder="Select Staff Warehouse"
               options={warehouses}
@@ -549,14 +402,102 @@ const Form = ({ details, toggler }) => {
               fullWidth
             /> */}
 
-            <Button
-              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-              type="submit"
-              text={!staff_id ? "Add Staff" : "Save Changes"}
-              isLoading={createStaffLoading || editStaffLoading}
-              className="mt-10 mb-5 "
+                <Button
+                  onClick={() =>
+                    setFormTwo({ ...formTwo, showFormError: true })
+                  }
+                  type="submit"
+                  text={!staff_id ? "Add Staff" : "Save Changes"}
+                  isLoading={createStaffLoading || editStaffLoading}
+                  className="mt-10 mb-5 "
+                  fullWidth
+                />
+              </>
+            )}
+          </div>
+          {/* Third section */}
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3">
+            {!staff_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Optional Staff Info
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Fill in staff details
+                  </span>
+                </div>
+
+                <Select
+                  label="Role"
+                  placeholder="Select staff role"
+                  options={ROLES}
+                  onChange={(val) =>
+                    handleChange({ prop: "role", val: val?.value })
+                  }
+                  value={form.role}
+                  formError={errors.role}
+                  showFormError={formTwo?.showFormError}
+                  fullWidth
+                />
+
+                {staff_id && form?.role?.includes("BRAND") && (
+                  <div className="flex flex-col justify-start items-end gap-1 w-full">
+                    {!isEmpty(form?.brandId) && (
+                      <p>
+                        {getBrandLoading ? (
+                          <TailSpin
+                            height="25"
+                            width="25"
+                            color="#000000"
+                            ariaLabel="tail-spin-loading"
+                            radius="3"
+                            visible={true}
+                          />
+                        ) : (
+                          brand?.brandName
+                        )}
+                      </p>
+                    )}
+
+                    <Button
+                      onClick={() => handleChangeTwo("modalType", BRAND)}
+                      text={`Select Brand`}
+                      className=""
+                      whiteBg
+                      fullWidth
+                    />
+                  </div>
+                )}
+                {/* <Select
+              label="Staff Warehouse"
+              placeholder="Select Staff Warehouse"
+              options={warehouses}
+              onChange={(val) =>
+                handleChange({ prop: "warehouseId", val: val?.value })
+              }
+              value={warehouses?.find(
+                (item) => item?.value === form?.warehouseId
+              )}
+              formError={errors.warehouseId}
+              showFormError={formTwo?.showFormError}
+              isLoading={loading}
+              tooltip="Select a warehouse for warehouse staffs"
               fullWidth
-            />
+            /> */}
+
+                <Button
+                  onClick={() =>
+                    setFormTwo({ ...formTwo, showFormError: true })
+                  }
+                  type="submit"
+                  text={!staff_id ? "Add Staff" : "Save Changes"}
+                  isLoading={createStaffLoading || editStaffLoading}
+                  className="mt-10 mb-5 "
+                  fullWidth
+                />
+              </>
+            )}
           </div>
         </form>
       </div>

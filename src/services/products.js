@@ -402,7 +402,7 @@ const searchProductsQuery = ({ page, searchQuery }) => gql`
         brand {
           brandName
         }
-        category {
+        categories {
           name
           }
         id

@@ -58,13 +58,7 @@ const StaffsPage = ({ isModal, handleStaffSelect, isSelected }) => {
     staffsArchivedCount,
   } = StaffsStore;
 
-  const TABS = [
-    { name: "staffs", label: `Staffs (${staffsCount || "-"})` },
-    {
-      name: "archived",
-      label: `Archived staffs (${staffsArchivedCount || "-"})`,
-    },
-  ];
+  const TABS = [{ name: "staffs", label: `Staffs (${staffsCount || "-"})` }];
   const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -152,14 +146,14 @@ const StaffsPage = ({ isModal, handleStaffSelect, isSelected }) => {
       minWidth: isMobile ? "50%" : "25%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
-          <span
+          {/* <span
             onClick={() =>
               setCurrentTxnDetails({ ...row, modalType: "delete" })
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-red-deep text-[11px] text-white "
           >
             {row?.isDeleted ? "Unarchive" : "Archive"}
-          </span>
+          </span> */}
 
           <span
             onClick={() => handleEdit(row)}
