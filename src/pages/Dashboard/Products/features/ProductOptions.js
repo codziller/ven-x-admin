@@ -126,27 +126,19 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     };
     cleanPayload(payload);
     if (isEdit) {
-      if (currentProductOption?.id) {
-        editProductOption({
-          product_id,
-          data: payload,
-          onSuccess: () => toggler?.(),
-        });
-      } else {
-        const newProductOptions = productOptions?.map((item) => {
-          if (item?.name === currentProductOption?.name) {
-            return { ...currentProductOption, ...payload };
-          } else {
-            return item;
-          }
-        });
+      const newProductOptions = productOptions?.map((item) => {
+        if (item?.name === currentProductOption?.name) {
+          return { ...currentProductOption, ...payload };
+        } else {
+          return item;
+        }
+      });
 
-        handleOnChange({
-          prop: "productOptions",
-          val: newProductOptions,
-        });
-        toggler?.();
-      }
+      handleOnChange({
+        prop: "productOptions",
+        val: newProductOptions,
+      });
+      toggler?.();
       return;
     }
     const prevOption = productOptions?.find(

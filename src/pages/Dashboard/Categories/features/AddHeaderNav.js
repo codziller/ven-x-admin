@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -15,7 +15,6 @@ import cleanPayload from "utils/cleanPayload";
 
 const AddHeaderNav = ({ details, toggler }) => {
   const {
-    getHeaderNavs,
     createHeaderNav,
     createHeaderNavLoading,
     editHeaderNav,
@@ -30,9 +29,6 @@ const AddHeaderNav = ({ details, toggler }) => {
     editLoading: false,
   });
 
-  useEffect(() => {
-    getHeaderNavs();
-  }, []);
   const schema = yup.object({
     name: yup.string().required("Please enter header nav name"),
   });
@@ -55,10 +51,6 @@ const AddHeaderNav = ({ details, toggler }) => {
   const handleChange = async (prop, val) => {
     setValue(prop, val);
     await trigger(prop);
-  };
-
-  const handleChangeTwo = async (prop, val) => {
-    setFormTwo({ ...formTwo, [prop]: val });
   };
 
   const form = {

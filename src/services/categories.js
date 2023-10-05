@@ -36,6 +36,7 @@ const getHeaderNavsQuery = () => gql`
       archive
       categories {
         name
+        id
         subCategories {
           name
           id

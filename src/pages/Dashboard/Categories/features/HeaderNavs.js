@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { ReactSortable } from "react-sortablejs";
 
-import _, { isEmpty } from "lodash";
+import _ from "lodash";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 
 import { ReactComponent as Plus } from "assets/icons/add.svg";
@@ -38,11 +39,16 @@ const HeaderNavs = () => {
   const { headerNavs, getHeaderNavs, loadingHeaderNavs } = CategoriesStore;
 
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
+  const [headerNavsArray, setHeaderNavsArray] = useState(headerNavs);
   const [activeNav, setActiveNav] = useState("");
 
   useEffect(() => {
     getHeaderNavs();
   }, []);
+
+  useEffect(() => {
+    setHeaderNavsArray(headerNavs);
+  }, [headerNavs]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -74,55 +80,64 @@ const HeaderNavs = () => {
           ) : (
             <>
               <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
-                {headerNavs?.length > 0 ? (
-                  <div className="bg-red-light3 relative hidden sm:flex flex-row justify-center items-center mx-auto w-full h-[30px] md:h-[40px] py-2 border-y border-grey-border2 px-5 md:px-14 lg:px-16 2xl:px-20 z-20">
-                    <div
-                      className={`hidden md:flex justify-end items-center px-10  w-fit transition-all duration-150 ease-in-out  rounded-[87px] relative`}
-                      // onMouseLeave={() => setActiveNav("")}
+                {headerNavsArray?.length > 0 ? (
+                  <div
+                    onMouseLeave={() => setActiveNav("")}
+                    className="bg-red-light3 relative hidden sm:flex flex-row justify-center items-center mx-auto w-full h-[30px] md:h-[40px] py-2 border-y border-grey-border2 px-5 md:px-14 lg:px-16 2xl:px-20 z-20"
+                  >
+                    <ReactSortable
+                      list={headerNavsArray}
+                      setList={setHeaderNavsArray}
+                      className={`hidden md:flex justify-end items-center px-10  w-full transition-all duration-150 ease-in-out  rounded-[87px]`}
+                      animation={300}
+                      delayOnTouchStart={true}
+                      delay={1.5}
                     >
-                      {headerNavs?.map(({ name, categories, id }, i, arr) => (
-                        <div
-                          className={classNames(
-                            " w-full h-full cursor-pointer"
-                          )}
-                          onMouseEnter={() => {
-                            setActiveNav(name);
-                          }}
-                          onClick={() =>
-                            setCurrentTxnDetails({
-                              id,
-                              name,
-                              modalType: "editHeaderNav",
-                              isAdd: false,
-                            })
-                          }
-                          key={name}
-                        >
+                      {headerNavsArray?.map(
+                        ({ name, categories, id }, i, arr) => (
                           <div
                             className={classNames(
-                              "flex justify-center items-center text-base hover:text-grey-blue text-blue font-medium space-x-1.5  px-8 icon-text transition-all duration-300 ease-in-out",
-
-                              {
-                                "border-r-1/2 border-grey-border3":
-                                  i !== arr.length - 1,
-                              }
+                              " w-full h-full cursor-pointer relative"
                             )}
+                            onMouseEnter={() => {
+                              setActiveNav(name);
+                            }}
+                            onClick={() =>
+                              setCurrentTxnDetails({
+                                id,
+                                name,
+                                modalType: "editHeaderNav",
+                                isAdd: false,
+                              })
+                            }
+                            key={name}
                           >
-                            <span
+                            <div
                               className={classNames(
-                                "text-current whitespace-nowrap px-2 py-0.5 rounded hover"
+                                "flex justify-center items-center text-base hover:text-grey-blue text-blue font-medium space-x-1.5  px-8 icon-text transition-all duration-300 ease-in-out",
+
+                                {
+                                  "border-r-1/2 border-grey-border3":
+                                    i !== arr.length - 1,
+                                }
                               )}
                             >
-                              {name}
-                            </span>
-                          </div>
+                              <span
+                                className={classNames(
+                                  "text-current whitespace-nowrap px-2 py-0.5 rounded hover"
+                                )}
+                              >
+                                {name}
+                              </span>
+                            </div>
 
-                          {categories && activeNav === name && (
-                            <Dropdown categories={categories} />
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                            {categories && activeNav === name && (
+                              <Dropdown categories={categories} />
+                            )}
+                          </div>
+                        )
+                      )}
+                    </ReactSortable>
                   </div>
                 ) : (
                   <>

@@ -48,6 +48,8 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     description: currentProductVariant?.description || "",
   };
 
+  console.log("currentProductOption: ", currentProductOption);
+
   const {
     handleSubmit,
     formState: { errors },
@@ -104,11 +106,17 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
           });
         } else {
           const newChoices = currentProductOption?.choices?.map((item) =>
-            item?.variantName === payload.variantName ? payload : item
+            cleanPayload(
+              item?.variantName === payload.variantName ? payload : item
+            )
           );
           const newProductOptions = productOptions?.map((item) => {
             if (item?.name === currentProductOption?.name) {
-              return { ...currentProductOption, choices: newChoices };
+              return cleanPayload({
+                ...currentProductOption,
+                choices: newChoices,
+                productOptionId: currentProductOption?.id,
+              });
             } else {
               return item;
             }

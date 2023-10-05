@@ -55,7 +55,8 @@ const {
 const { grams, milliliters } = WEIGHT_TYPES;
 const Form = ({ details, toggler }) => {
   const { product_id } = useParams();
-  const { createProduct, product, editProduct } = ProductsStore;
+  const { createProduct, product, editProduct, editProductOption } =
+    ProductsStore;
   const { getCategories, categories } = CategoriesStore;
   const { brands, getBrands, loading } = BrandsStore;
   const { warehouses, getWarehouses } = WareHousesStore;
@@ -76,6 +77,7 @@ const Form = ({ details, toggler }) => {
     currentProductInventory: {},
     modalDeleteType: null,
     modalDeleteData: null,
+    productOptionId: "",
     productDescription:
       product_id && product?.productDescription
         ? EditorState.createWithContent(
@@ -396,6 +398,20 @@ const Form = ({ details, toggler }) => {
       currentProductOption: {},
       modalType: false,
     });
+  };
+
+  const handleSubmitProductOption = async (option) => {
+    console.log("option: ", option);
+    handleChangeTwo("productOptionId", option?.id);
+    const payload = { ...option, id: "" };
+    cleanPayload(payload);
+    await editProductOption({
+      product_id,
+      data: payload,
+      onSuccess: () => navigate(-1),
+    });
+
+    handleChangeTwo("productOptionId", "");
   };
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
@@ -913,150 +929,107 @@ const Form = ({ details, toggler }) => {
             </div>
 
             <hr className="w-full" />
-            <div className="flex flex-col justify-start items-start gap-1">
-              <span className="text-grey-text text-lg uppercase">
-                Inventory
-              </span>
-              <span className="text-grey-text text-sm">
-                Add inventory details for this product here. The default
-                quantity field is required for the central warehouse. Hit 'Add
-                Inventory' to add inventory for other warehouses.
-              </span>
-            </div>
+            {!product_id && (
+              <>
+                <div className="flex flex-col justify-start items-start gap-1">
+                  <span className="text-grey-text text-lg uppercase">
+                    Inventory
+                  </span>
+                  <span className="text-grey-text text-sm">
+                    Add inventory details for this product here. The default
+                    quantity field is required for the central warehouse. Hit
+                    'Add Inventory' to add inventory for other warehouses.
+                  </span>
+                </div>
 
-            <Input
-              label="Central warehouse Product Quantity"
-              value={form?.warehouseInventory?.[0]?.quantity}
-              onChangeFunc={(val) =>
-                handleChange({
-                  prop: "warehouseInventory",
-                  objectProp: "quantity",
-                  val: val,
-                  isInventory: true,
-                })
-              }
-              placeholder="Enter Quantity"
-              formError={errors?.warehouseInventory?.[0]?.quantity}
-              showFormError={formTwo?.showFormError}
-              type="number"
-              isRequired
-            />
+                <Input
+                  label="Central warehouse Product Quantity"
+                  value={form?.warehouseInventory?.[0]?.quantity}
+                  onChangeFunc={(val) =>
+                    handleChange({
+                      prop: "warehouseInventory",
+                      objectProp: "quantity",
+                      val: val,
+                      isInventory: true,
+                    })
+                  }
+                  placeholder="Enter Quantity"
+                  formError={errors?.warehouseInventory?.[0]?.quantity}
+                  showFormError={formTwo?.showFormError}
+                  type="number"
+                  isRequired
+                />
 
-            <Input
-              label="Central Warehouse Product Low in Stock Value"
-              value={form?.warehouseInventory?.[0]?.lowInQuantityValue}
-              onChangeFunc={(val) =>
-                handleChange({
-                  prop: "warehouseInventory",
-                  objectProp: "lowInQuantityValue",
-                  val: val,
-                  isInventory: true,
-                })
-              }
-              placeholder="10"
-              showFormError={formTwo?.showFormError}
-              formError={errors?.warehouseInventory?.[0]?.lowInQuantityValue}
-              type="number"
-              tooltip="When quantity is at this value, the product will be low in stock."
-            />
+                <Input
+                  label="Central Warehouse Product Low in Stock Value"
+                  value={form?.warehouseInventory?.[0]?.lowInQuantityValue}
+                  onChangeFunc={(val) =>
+                    handleChange({
+                      prop: "warehouseInventory",
+                      objectProp: "lowInQuantityValue",
+                      val: val,
+                      isInventory: true,
+                    })
+                  }
+                  placeholder="10"
+                  showFormError={formTwo?.showFormError}
+                  formError={
+                    errors?.warehouseInventory?.[0]?.lowInQuantityValue
+                  }
+                  type="number"
+                  tooltip="When quantity is at this value, the product will be low in stock."
+                />
 
-            {!isEmpty(selectedInventories) && (
-              <div className="flex flex-wrap justify-start items-start gap-2 ">
-                {selectedInventories?.map((item, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
-                    >
-                      <div className="flex justify-start items-center gap-3 ">
-                        <span className="">{item?.name}</span>{" "}
-                        <span className="text-red-deep">x{item?.quantity}</span>
-                      </div>
-                      {product_id && (
-                        <span
-                          onClick={() =>
-                            handleEditOption(item, "warehouseInventory")
-                          }
-                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                {!isEmpty(selectedInventories) && (
+                  <div className="flex flex-wrap justify-start items-start gap-2 ">
+                    {selectedInventories?.map((item, i) => {
+                      return (
+                        <div
+                          key={i}
+                          className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
                         >
-                          <Edit className="current-svg scale-[0.9]" />
-                        </span>
-                      )}
-                      <span
-                        onClick={() =>
-                          handleRemoveOption(item, "warehouseInventory")
-                        }
-                        className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
-                      >
-                        <Close className="current-svg scale-[0.7]" />
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                          <div className="flex justify-start items-center gap-3 ">
+                            <span className="">{item?.name}</span>{" "}
+                            <span className="text-red-deep">
+                              x{item?.quantity}
+                            </span>
+                          </div>
+                          {product_id && (
+                            <span
+                              onClick={() =>
+                                handleEditOption(item, "warehouseInventory")
+                              }
+                              className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
+                            >
+                              <Edit className="current-svg scale-[0.9]" />
+                            </span>
+                          )}
+                          <span
+                            onClick={() =>
+                              handleRemoveOption(item, "warehouseInventory")
+                            }
+                            className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                          >
+                            <Close className="current-svg scale-[0.7]" />
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <Button
+                  onClick={() => handleChangeTwo("modalType", INVENTORY)}
+                  text="Add Inventory"
+                  icon={<Plus className="text-black current-svg" />}
+                  className=""
+                  whiteBg
+                  fullWidth
+                />
+                <hr className="w-full" />
+              </>
             )}
 
-            <Button
-              onClick={() => handleChangeTwo("modalType", INVENTORY)}
-              text="Add Inventory"
-              icon={<Plus className="text-black current-svg" />}
-              className=""
-              whiteBg
-              fullWidth
-            />
-            <hr className="w-full" />
-
-            {/* <div className="flex flex-col justify-start items-start gap-1">
-              <span className="text-grey-text text-lg uppercase">Variants</span>
-              <span className="text-grey-text text-sm">
-                Add variants of this product and configure their prices and
-                quantity
-              </span>
-            </div>
-
-            {!isEmpty(form.productVariants) && (
-              <div className="flex flex-wrap justify-start items-start gap-2 ">
-                {form.productVariants?.map((item, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className="flex gap-3 w-fit justify-between items-center border-1/2 border-grey-border p-2 text-sm bg-white"
-                    >
-                      <div className="flex justify-start items-center gap-3 ">
-                        <span className="">{item?.variantName}</span>
-                      </div>
-                      {product_id && (
-                        <span
-                          onClick={() =>
-                            handleEditOption(item, "productVariants")
-                          }
-                          className="hover:bg-red-300 text-black hover:text-white transition-colors duration-300 ease-in-out cursor-pointer p-1"
-                        >
-                          <Edit className="current-svg scale-[0.9]" />
-                        </span>
-                      )}
-                      <span
-                        onClick={() =>
-                          handleRemoveOption(item, "productVariants")
-                        }
-                        className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
-                      >
-                        <Close className="current-svg scale-[0.7]" />
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            <Button
-              onClick={() => handleChangeTwo("modalType", PRODUCT_VARIANT)}
-              text="Add Variant"
-              icon={<Plus className="text-black current-svg" />}
-              className=""
-              whiteBg
-              fullWidth
-            /> */}
-            {/* <hr className="w-full" /> */}
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">
                 Product Options
@@ -1126,6 +1099,16 @@ const Form = ({ details, toggler }) => {
                           );
                         })}
                       </div>
+
+                      {item?.id && (
+                        <Button
+                          text={`Save Changes for ${item?.name}`}
+                          onClick={() => handleSubmitProductOption(item)}
+                          isLoading={formTwo.productOptionId === item?.id}
+                          className="mt-2 mb-5 "
+                          fullWidth
+                        />
+                      )}
                     </div>
                   );
                 })}

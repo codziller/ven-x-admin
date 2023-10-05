@@ -288,9 +288,9 @@ const editProductVariantQuery = gql`
 `;
 const editProductOptionQuery = gql`
   mutation updateProductOption(
-    $choiceDisplay: String
-    $choices: [UpdateProductSubOption!]
-    $name: String
+    $choiceDisplay: String!
+    $choices: [UpdateProductVariant!]
+    $name: String!
     $productOptionId: String!
   ) {
     updateProductOption(
