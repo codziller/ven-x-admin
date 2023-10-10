@@ -3,6 +3,7 @@
  */
 
 import { successToast } from "components/General/Toast/Toast";
+import { isEmpty } from "lodash";
 import { makeAutoObservable } from "mobx";
 import moment from "moment";
 import apis from "services/categories";
@@ -25,7 +26,8 @@ class CategoriesStore {
   createHeaderNavLoading = false;
   editHeaderNavLoading = false;
   deleteHeaderNavLoading = false;
-
+  categoryBrands = null;
+  loadingCategoryBrands = false;
   constructor() {
     makeAutoObservable(this);
   }
@@ -50,6 +52,18 @@ class CategoriesStore {
       this.error = error;
     } finally {
       this.loadingHeaderNavs = false;
+    }
+  };
+  getCategoryBrands = async () => {
+    this.loadingCategoryBrands = true;
+    try {
+      let res = await apis.getCategoryBrands();
+      res = res?.category_brands?.filter((item) => !isEmpty(item?.brands));
+      this.categoryBrands = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingCategoryBrands = false;
     }
   };
   getCategories = async () => {

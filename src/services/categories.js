@@ -29,6 +29,22 @@ const getCategoriesQuery = () => gql`
   }
 `;
 
+const getCategoryBrandsQuery = () => gql`
+  {
+    __typename
+    category_brands {
+      brands {
+        brandName
+        id
+      }
+      name
+      parentCategoryId
+      headerNavId
+      position
+    }
+  }
+`;
+
 const getHeaderNavsQuery = () => gql`
   {
     __typename
@@ -133,6 +149,10 @@ const deleteHeaderNavQuery = gql`
 const apis = {
   getCategories: () =>
     graphQlInstance(getCategoriesQuery(), {
+      method: "GET",
+    }),
+  getCategoryBrands: () =>
+    graphQlInstance(getCategoryBrandsQuery(), {
       method: "GET",
     }),
   getHeaderNavs: () =>

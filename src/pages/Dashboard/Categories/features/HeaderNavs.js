@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 
 import { ReactComponent as Plus } from "assets/icons/add.svg";
@@ -36,7 +36,13 @@ export const dateFilters = [
 ];
 
 const HeaderNavs = () => {
-  const { headerNavs, getHeaderNavs, loadingHeaderNavs } = CategoriesStore;
+  const {
+    headerNavs,
+    getHeaderNavs,
+    loadingHeaderNavs,
+    categoryBrands,
+    getCategoryBrands,
+  } = CategoriesStore;
 
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [headerNavsArray, setHeaderNavsArray] = useState(headerNavs);
@@ -44,6 +50,7 @@ const HeaderNavs = () => {
 
   useEffect(() => {
     getHeaderNavs();
+    getCategoryBrands();
   }, []);
 
   useEffect(() => {
@@ -59,6 +66,7 @@ const HeaderNavs = () => {
 
   useEffect(() => scrollToTop(), [headerNavs]);
 
+  console.log("headerNavsArray: ", headerNavsArray);
   return (
     <>
       <div className="h-full md:pr-4">
@@ -85,10 +93,36 @@ const HeaderNavs = () => {
                     onMouseLeave={() => setActiveNav("")}
                     className="bg-red-light3 relative hidden sm:flex flex-row justify-center items-center mx-auto w-full h-[30px] md:h-[40px] py-2 border-y border-grey-border2 px-5 md:px-14 lg:px-16 2xl:px-20 z-20"
                   >
+                    {/* Brands start */}
+                    <div
+                      className={classNames("relative w-fit h-full")}
+                      onMouseEnter={() => {
+                        setActiveNav("brands");
+                      }}
+                    >
+                      <div
+                        className={classNames(
+                          "flex justify-center items-center text-base hover:text-grey-blue text-blue font-medium space-x-1.5  px-8 icon-text transition-all duration-300 ease-in-out border-r-1/2 border-grey-border3"
+                        )}
+                      >
+                        <span
+                          className={classNames(
+                            "text-current whitespace-nowrap px-2 py-0.5 rounded hover"
+                          )}
+                        >
+                          Brands
+                        </span>
+                      </div>
+
+                      {!isEmpty(categoryBrands) && activeNav === "brands" && (
+                        <Dropdown categories={categoryBrands} />
+                      )}
+                    </div>
+                    {/* Brands end */}
                     <ReactSortable
                       list={headerNavsArray}
                       setList={setHeaderNavsArray}
-                      className={`hidden md:flex justify-end items-center px-10  w-full transition-all duration-150 ease-in-out  rounded-[87px]`}
+                      className={`hidden md:flex justify-end items-center px-10  w-fit transition-all duration-150 ease-in-out  rounded-[87px]`}
                       animation={300}
                       delayOnTouchStart={true}
                       delay={1.5}
