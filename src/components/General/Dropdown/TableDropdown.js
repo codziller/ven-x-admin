@@ -91,7 +91,7 @@ export default function TableDropdown({
                 if (isLoading) {
                   return;
                 }
-                setSelected(item);
+                // setSelected(item);
                 handleClick?.(item);
                 setAnchorEl(null);
               }}
