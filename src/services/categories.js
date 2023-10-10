@@ -60,6 +60,7 @@ const getHeaderNavsQuery = () => gql`
       }
       id
       name
+      position
       createdAt
     }
   }

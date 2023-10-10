@@ -276,17 +276,19 @@ const HomePage = () => {
               }
               isLoading={loading}
             />
-            <EarningCard
-              icon={<CustomersIcon className="scale-[0.8]" />}
-              title="All Users"
-              value={numberWithCommas(usersCount)}
-              link={
-                !isAdmin && !userIsAdmin
-                  ? "#"
-                  : `/dashboard/users/${warehouse_id}`
-              }
-              isLoading={usersLoading}
-            />
+            {(isAdmin || userIsAdmin) && (
+              <EarningCard
+                icon={<CustomersIcon className="scale-[0.8]" />}
+                title="All Users"
+                value={numberWithCommas(usersCount)}
+                link={
+                  !isAdmin && !userIsAdmin
+                    ? "#"
+                    : `/dashboard/users/${warehouse_id}`
+                }
+                isLoading={usersLoading}
+              />
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
             <EarningValueCard />

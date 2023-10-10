@@ -87,74 +87,73 @@ const ProductCategories = ({
 
         <div className="w-full flex flex-col justify-start items-start gap-4 mt-4">
           {categories?.map((item) => {
-            return (
+            return !isEmpty(item?.subCategories) ? (
               <div
                 key={item?.id}
                 className="flex flex-col justify-start items-start gap-3 w-full"
               >
-                <CheckBox
-                  label={item?.name}
-                  onChange={() => handleChangeTwo(item?.id)}
-                  checked={isSelected(item?.id)}
-                  labelClass="text-[13px] font-500"
-                  square={!isSingle}
-                />
-                {!isEmpty(item?.subCategories) && (
-                  <div
-                    key={item?.id}
-                    className="flex flex-col justify-start items-start gap-2"
-                  >
-                    <p className="text-[10px] text-grey">SubCategories</p>
-                    {item?.subCategories?.map((subItem) => {
-                      return (
-                        <div
+                <label
+                  className={
+                    "text-[13px] font-500 general-input-label relative text-grey-dark !flex justify-start items-center gap-1"
+                  }
+                >
+                  {item?.name}
+                </label>
+                <div
+                  key={item?.id}
+                  className="flex flex-col justify-start items-start gap-2"
+                >
+                  <p className="text-[10px] text-grey">SubCategories</p>
+                  {item?.subCategories?.map((subItem) => {
+                    return (
+                      <div
+                        key={subItem?.id}
+                        className="flex flex-col justify-start items-start gap-2.5"
+                      >
+                        <CheckBox
                           key={subItem?.id}
-                          className="flex flex-col justify-start items-start gap-2.5"
-                        >
-                          <CheckBox
-                            key={subItem?.id}
-                            label={subItem?.name}
-                            onChange={() => handleChangeTwo(subItem?.id)}
-                            checked={isSelected(subItem?.id)}
-                            labelClass="text-[13px] font-500"
-                            square={!isSingle}
-                          />
+                          label={subItem?.name}
+                          onChange={() => handleChangeTwo(subItem?.id)}
+                          checked={isSelected(subItem?.id)}
+                          labelClass="text-[13px] font-500"
+                          square={!isSingle}
+                        />
 
-                          {!isEmpty(subItem?.subCategories) && (
-                            <>
-                              <p className="text-[10px] text-grey">
-                                {item?.name} {">"} {subItem?.name} {">"}{" "}
-                                SubCategories
-                              </p>
+                        {!isEmpty(subItem?.subCategories) && (
+                          <>
+                            <p className="text-[10px] text-grey">
+                              {item?.name} {">"} {subItem?.name} {">"}{" "}
+                              SubCategories
+                            </p>
 
-                              {subItem?.subCategories?.map((subSubItem) => {
-                                return (
-                                  <div
+                            {subItem?.subCategories?.map((subSubItem) => {
+                              return (
+                                <div
+                                  key={subSubItem?.id}
+                                  className="flex flex-col justify-start items-start gap-2"
+                                >
+                                  <CheckBox
                                     key={subSubItem?.id}
-                                    className="flex flex-col justify-start items-start gap-2"
-                                  >
-                                    <CheckBox
-                                      key={subSubItem?.id}
-                                      label={subSubItem?.name}
-                                      onChange={() =>
-                                        handleChangeTwo(subSubItem?.id)
-                                      }
-                                      checked={isSelected(subSubItem?.id)}
-                                      square={!isSingle}
-                                    />
-                                  </div>
-                                );
-                              })}
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                                    label={subSubItem?.name}
+                                    onChange={() =>
+                                      handleChangeTwo(subSubItem?.id)
+                                    }
+                                    checked={isSelected(subSubItem?.id)}
+                                    square={!isSingle}
+                                  />
+                                </div>
+                              );
+                            })}
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
                 <hr className="w-full" />
               </div>
-            );
+            ) : null;
           })}
           <div className="flex flex-col md:flex-row justify-center items-start w-full gap-6 mt-5">
             <Button

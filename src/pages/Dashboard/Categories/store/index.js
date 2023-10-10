@@ -44,7 +44,7 @@ class CategoriesStore {
 
       this.headerNavs =
         res
-          ?.sort((a, b) => moment(b.createdAt).diff(moment(a.createdAt)))
+          ?.sort((a, b) => Number(b?.position) - Number(a?.position))
           ?.map((item) => {
             return { ...item, label: item?.name, value: item?.id };
           }) || [];
