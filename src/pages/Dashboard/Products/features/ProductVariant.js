@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,13 +16,14 @@ import Textarea from "components/General/Textarea/Textarea";
 import ImagePicker from "components/General/Input/ImagePicker";
 import cleanPayload from "utils/cleanPayload";
 import { errorToast } from "components/General/Toast/Toast";
-import { isEmpty, lowerCase } from "lodash";
+import { flatMap, isEmpty, lowerCase } from "lodash";
 import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
 import ProductsStore from "../store";
 import { observer } from "mobx-react-lite";
+import CheckBox from "components/General/Input/CheckBox";
 
 const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
-  const { productVariants, productOptions } = formObj;
+  const { productVariants, productOptions, salePrice, costPrice } = formObj;
   const { currentProductVariant, currentProductOption } = details;
   const { product_id } = useParams();
   const isEdit = !isEmpty(currentProductVariant);
@@ -46,6 +47,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     videoUrls: currentProductVariant?.videoUrls || [],
     visibility: currentProductVariant.visibility === false ? false : true,
     description: currentProductVariant?.description || "",
+    main: !!currentProductVariant?.main,
   };
 
   console.log("currentProductOption: ", currentProductOption);
@@ -81,7 +83,24 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     videoUrls: watch("videoUrls"),
     visibility: watch("visibility"),
     description: watch("description"),
+    main: watch("main"),
   };
+
+  useEffect(() => {
+    if (form.main) {
+      handleChange("variantCostPrice", costPrice || "");
+      handleChange("variantSalePrice", salePrice || "");
+    } else {
+      handleChange(
+        "variantCostPrice",
+        currentProductVariant?.variantCostPrice || ""
+      );
+      handleChange(
+        "variantSalePrice",
+        currentProductVariant?.variantSalePrice || ""
+      );
+    }
+  }, [form.main]);
   const handleOnSubmit = async (e) => {
     if (isEdit) {
       try {
@@ -149,6 +168,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     );
     handleChange(prop, updatedFiles);
   };
+  const mainChoice = useMemo(() => {
+    const flattenedProductChoices = flatMap(
+      productOptions,
+      (item) => item.choices
+    );
+    return flattenedProductChoices?.find((item) => item?.main);
+  }, [productOptions]);
 
   return (
     <>
@@ -178,6 +204,21 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
           onSubmit={handleSubmit(handleOnSubmit)}
           className="flex flex-col justify-start items-start gap-3 w-full overflow-y-auto"
         >
+          {form?.main ? (
+            <span className="bg-grey-20 text-black px-2 py-0.5 text-xs rounded">
+              main
+            </span>
+          ) : null}
+
+          <CheckBox
+            label="Set this variant as main"
+            square
+            tooltip="Make this variant represent the default product."
+            onChange={() => handleChange("main", !form.main)}
+            checked={form.main}
+            isDisabled={!form?.main && mainChoice}
+          />
+
           <Input
             label="Variant Name"
             value={form?.variantName}
@@ -199,6 +240,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               showFormError={formTwo?.showFormError}
               prefix={"₦‎"}
               type="number"
+              isDisabled={form.main}
             />
 
             <Input
@@ -224,79 +266,84 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               prefix={"₦‎"}
               tooltip="Selling price of this variant"
               type="number"
+              isDisabled={form.main}
             />
           </div>
-          <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
-            <Input
-              label="Variant Quantity"
-              value={form?.variantQuantity}
-              onChangeFunc={(val) => handleChange("variantQuantity", val)}
-              placeholder="Enter Variant Quantity"
-              formError={errors.variantQuantity}
-              showFormError={formTwo?.showFormError}
-              type="number"
-            />
 
-            <div className="w-full">
-              <div
-                className={classNames(
-                  "flex justify-start items-center gap-2 cursor-pointer w-fit",
-                  {
-                    "text-green-light": form.visibility,
-                    "text-grey-fade": !form.visibility,
-                  }
-                )}
-                onClick={() => handleChange("visibility", !form.visibility)}
-              >
-                <label
-                  className={
-                    "general-input-label mb-1 relative text-[13px] font-bold !flex justify-start items-center gap-1.5 cursor-pointer"
-                  }
-                >
-                  Visibility {form.visibility ? "On" : "Off"}
-                </label>
-                <span className="-mt-1">
-                  {form.visibility ? (
-                    <AiOutlineEye size={20} className="current-svg" />
-                  ) : (
-                    <AiOutlineEyeInvisible size={20} className="current-svg" />
-                  )}
-                </span>
+          {!form.main && (
+            <>
+              <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
+                <Input
+                  label="Variant Quantity"
+                  value={form?.variantQuantity}
+                  onChangeFunc={(val) => handleChange("variantQuantity", val)}
+                  placeholder="Enter Variant Quantity"
+                  formError={errors.variantQuantity}
+                  showFormError={formTwo?.showFormError}
+                  type="number"
+                />
+
+                <div className="w-full">
+                  <div
+                    className={classNames(
+                      "flex justify-start items-center gap-2 cursor-pointer w-fit",
+                      {
+                        "text-green-light": form.visibility,
+                        "text-grey-fade": !form.visibility,
+                      }
+                    )}
+                    onClick={() => handleChange("visibility", !form.visibility)}
+                  >
+                    <label
+                      className={
+                        "general-input-label mb-1 relative text-[13px] font-bold !flex justify-start items-center gap-1.5 cursor-pointer"
+                      }
+                    >
+                      Visibility {form.visibility ? "On" : "Off"}
+                    </label>
+                    <span className="-mt-1">
+                      {form.visibility ? (
+                        <AiOutlineEye size={20} className="current-svg" />
+                      ) : (
+                        <AiOutlineEyeInvisible
+                          size={20}
+                          className="current-svg"
+                        />
+                      )}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <Textarea
-            label="Variant Description"
-            value={form?.description}
-            onChangeFunc={(val) => handleChange("description", val)}
-            placeholder="Enter a short description for this variant"
-            formError={errors.description}
-            showFormError={formTwo?.showFormError}
-          />
+              <ImagePicker
+                label=" Add Variant Image"
+                showFormError={formTwo?.showFormError && errors.imageUrls}
+                handleDrop={(val) =>
+                  handleChange("imageUrls", val, form.imageUrls)
+                }
+                images={form.imageUrls}
+                removeImage={(file) =>
+                  removeFile(file, "imageUrls", form.imageUrls)
+                }
+                multiple
+              />
+              {/* <ImagePicker
+                label=" Add Variant Videos"
+                showFormError={formTwo?.showFormError && errors.videoUrls}
+                handleDrop={(val) =>
+                  handleChange("videoUrls", val, form.videoUrls)
+                }
+                images={form.videoUrls}
+                removeImage={(file) =>
+                  removeFile(file, "videoUrls", form.videoUrls)
+                }
+                placeholder="Drag 'n' drop some videos here, or click to select videos"
+                type="video"
+                multiple
+              /> */}
+            </>
+          )}
 
-          <ImagePicker
-            label=" Add Variant Image"
-            showFormError={formTwo?.showFormError && errors.imageUrls}
-            handleDrop={(val) => handleChange("imageUrls", val, form.imageUrls)}
-            images={form.imageUrls}
-            removeImage={(file) =>
-              removeFile(file, "imageUrls", form.imageUrls)
-            }
-            multiple
-          />
-          <ImagePicker
-            label=" Add Variant Videos"
-            showFormError={formTwo?.showFormError && errors.videoUrls}
-            handleDrop={(val) => handleChange("videoUrls", val, form.videoUrls)}
-            images={form.videoUrls}
-            removeImage={(file) =>
-              removeFile(file, "videoUrls", form.videoUrls)
-            }
-            placeholder="Drag 'n' drop some videos here, or click to select videos"
-            type="video"
-            multiple
-          />
           <div className="flex flex-col md:flex-row justify-center items-start w-full gap-6 mt-5">
             <Button
               onClick={() => toggler?.()}

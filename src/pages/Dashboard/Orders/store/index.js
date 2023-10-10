@@ -6,7 +6,10 @@ import { successToast } from "components/General/Toast/Toast";
 import { makeAutoObservable } from "mobx";
 import moment from "moment";
 import apis from "services/orders";
+import { ORDER_STATUSES } from "utils/appConstant";
 
+const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
+  ORDER_STATUSES;
 class OrdersStore {
   // ====================================================
   // State
@@ -14,6 +17,18 @@ class OrdersStore {
   orders = [];
   order = null;
   ordersCount = null;
+
+  in_progressOrders = [];
+  in_progressOrdersCount = null;
+  pendingOrders = [];
+  pendingOrdersCount = null;
+  dispatchedOrders = [];
+  dispatchedOrdersCount = null;
+  completedOrders = [];
+  completedOrdersCount = null;
+  cancelledOrders = [];
+  cancelledOrdersCount = null;
+
   error = null;
   loading = false;
   createOrderLoading = false;
@@ -45,15 +60,44 @@ class OrdersStore {
   };
 
   getOrders = async ({ data }) => {
+    const status = data?.status;
     this.loading = true;
     try {
       let res = await apis.getOrders(data);
       res = res?.orders;
-      this.orders =
+      const resResults =
         res?.results?.sort((a, b) =>
           moment(b.createdAt).diff(moment(a.createdAt))
         ) || [];
-      this.ordersCount = res?.total;
+
+      switch (status) {
+        case INPROGRESS:
+          console.log("reshs7s88 statts: ", res);
+          this.in_progressOrders = resResults;
+          this.in_progressOrdersCount = res?.total;
+
+          break;
+        case PENDING:
+          this.pendingOrders = resResults;
+          this.pendingOrdersCount = res?.total;
+          break;
+        case DISPATCHED:
+          this.dispatchedOrders = resResults;
+          this.dispatchedOrdersCount = res?.total;
+          break;
+        case COMPLETED:
+          this.completedOrders = resResults;
+          this.completedOrdersCount = res?.total;
+          break;
+        case CANCELLED:
+          this.cancelledOrders = resResults;
+          this.cancelledOrdersCount = res?.total;
+          break;
+        default:
+          this.orders = resResults;
+          this.ordersCount = res?.total;
+          break;
+      }
     } catch (error) {
       this.error = error;
     } finally {

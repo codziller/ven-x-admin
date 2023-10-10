@@ -37,8 +37,8 @@ import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsMod
 import { observer } from "mobx-react-lite";
 import ProductsStore from "../store";
 import cleanPayload from "utils/cleanPayload";
-import { errorToast } from "components/General/Toast/Toast";
-import { isEmpty } from "lodash";
+import { errorToast, warningToast } from "components/General/Toast/Toast";
+import { flatMap, isEmpty } from "lodash";
 import { flattenCategories } from "utils/functions";
 import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
@@ -414,6 +414,20 @@ const Form = ({ details, toggler }) => {
     handleChangeTwo("productOptionId", "");
   };
   const handleOnSubmit = async () => {
+    const flattenedProductChoices = flatMap(
+      form.productOptions,
+      (item) => item.choices
+    );
+
+    const mainChoice = flattenedProductChoices?.find((item) => item?.main);
+    if (!isEmpty(form.productOptions) && !mainChoice) {
+      errorToast(
+        "Erorr",
+        "One of the product options choices must be checked as main"
+      );
+
+      return;
+    }
     handleChangeTwo("createLoading", true);
     const productVariantsImages = product_id
       ? []
@@ -1095,6 +1109,12 @@ const Form = ({ details, toggler }) => {
                               >
                                 <Edit className="current-svg scale-[0.9]" />
                               </span>
+
+                              {choice?.main ? (
+                                <span className="bg-grey-20 text-black px-2 py-0.5 text-xs rounded">
+                                  main
+                                </span>
+                              ) : null}
                             </div>
                           );
                         })}

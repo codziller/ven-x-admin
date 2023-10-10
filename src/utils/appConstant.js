@@ -713,3 +713,11 @@ export const GENDERS = [
 ];
 
 export const WEIGHT_TYPES = { grams: "grams", milliliters: "milliliters" };
+
+export const ORDER_STATUSES = {
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+  INPROGRESS: "IN_PROGRESS",
+  PENDING: "PENDING",
+  DISPATCHED: "DISPATCHED",
+};

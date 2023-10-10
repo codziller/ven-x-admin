@@ -90,7 +90,12 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     const choiceObj = choice
       ?.map?.((itm) => {
         if (itm)
-          return { variantName: itm, choice: "#000000", visibility: true };
+          return {
+            variantName: itm,
+            choice: "#000000",
+            visibility: true,
+            main: false,
+          };
       })
       .filter((item) => item?.variantName);
 

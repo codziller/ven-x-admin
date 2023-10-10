@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import moment from "moment";
-import _, { isEmpty } from "lodash";
+import _, { isEmpty, lowerCase } from "lodash";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { pageCount } from "utils/appConstant";
+import { ORDER_STATUSES, pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
@@ -19,6 +19,7 @@ import SearchBar from "components/General/Searchbar/SearchBar";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import classNames from "classnames";
+import Tabs from "components/General/Tabs";
 export const dateFilters = [
   {
     value: "today",
@@ -46,6 +47,9 @@ export const dateFilters = [
     end_date: dateConstants?.endOfWeek,
   },
 ];
+
+const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
+  ORDER_STATUSES;
 const OrdersPage = ({ isRecent }) => {
   const { warehouse_id } = useParams();
   const {
@@ -57,13 +61,46 @@ const OrdersPage = ({ isRecent }) => {
     searchLoading,
     searchResult,
     searchResultCount,
+
+    in_progressOrders,
+    in_progressOrdersCount,
+    pendingOrders,
+    pendingOrdersCount,
+    dispatchedOrders,
+    dispatchedOrdersCount,
+    completedOrders,
+    completedOrdersCount,
+    cancelledOrders,
+    cancelledOrdersCount,
   } = OrdersStore;
+
+  const TABS = [
+    {
+      name: INPROGRESS,
+      label: `Inprogress orders (${in_progressOrdersCount || "0"})`,
+    },
+    { name: PENDING, label: `Pending orders (${pendingOrdersCount || "0"})` },
+    {
+      name: DISPATCHED,
+      label: `Dispatched orders (${dispatchedOrdersCount || "0"})`,
+    },
+    {
+      name: COMPLETED,
+      label: `Completed orders (${completedOrdersCount || "0"})`,
+    },
+    {
+      name: CANCELLED,
+      label: `Cancelled orders (${cancelledOrdersCount || "0"})`,
+    },
+  ];
+
   const { width } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [searchInput, setSearchInput] = useState("");
+  const [activeTab, setActiveTab] = useState(TABS[0]?.name);
 
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
@@ -76,13 +113,22 @@ const OrdersPage = ({ isRecent }) => {
     // await searchItems({ data: payload });
   };
 
+  const handleGetAllData = () => {
+    getOrders({ data: { page: 1, status: PENDING } });
+    getOrders({ data: { page: 1, status: DISPATCHED } });
+    getOrders({ data: { page: 1, status: COMPLETED } });
+    getOrders({ data: { page: 1, status: CANCELLED } });
+  };
   const handleGetData = () => {
-    getOrders({ data: { page: currentPage } });
+    getOrders({ data: { page: currentPage, status: activeTab } });
   };
 
   useEffect(() => {
+    handleGetAllData();
+  }, []);
+  useEffect(() => {
     isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch]);
+  }, [currentPage, currentPageSearch, activeTab]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -168,15 +214,66 @@ const OrdersPage = ({ isRecent }) => {
     });
   };
   const displayedItems = useMemo(() => {
-    return isSearchMode ? searchResult : orders;
-  }, [searchResult, orders, isSearchMode]);
+    let items = [];
+    switch (activeTab) {
+      case INPROGRESS:
+        items = in_progressOrders;
+        break;
+      case PENDING:
+        items = pendingOrders;
+        break;
+      case DISPATCHED:
+        items = dispatchedOrders;
+        break;
+      case COMPLETED:
+        items = completedOrders;
+        break;
+      case CANCELLED:
+        items = cancelledOrders;
+        break;
+      default:
+        items = orders;
+        break;
+    }
+    return isSearchMode ? searchResult : items;
+  }, [
+    searchResult,
+    activeTab,
+    isSearchMode,
+    in_progressOrders,
+    pendingOrders,
+    dispatchedOrders,
+    completedOrders,
+    cancelledOrders,
+  ]);
 
   const displayedItemsCount = useMemo(() => {
-    return isSearchMode ? searchResultCount : ordersCount;
-  }, [searchResult, orders, isSearchMode]);
+    let itemsCount;
+    switch (activeTab) {
+      case INPROGRESS:
+        itemsCount = in_progressOrdersCount;
+        break;
+      case PENDING:
+        itemsCount = pendingOrdersCount;
+        break;
+      case DISPATCHED:
+        itemsCount = dispatchedOrdersCount;
+        break;
+      case COMPLETED:
+        itemsCount = completedOrdersCount;
+        break;
+      case CANCELLED:
+        itemsCount = cancelledOrdersCount;
+        break;
+      default:
+        itemsCount = ordersCount;
+        break;
+    }
+    return isSearchMode ? searchResultCount : itemsCount;
+  }, [searchResult, activeTab, isSearchMode, displayedItems]);
 
   const isLoading = useMemo(() => {
-    return isSearchMode ? searchLoading : isEmpty(orders) && loading;
+    return isSearchMode ? searchLoading : loading;
   }, [searchLoading, loading]);
 
   useEffect(() => scrollToTop(), [displayedItems]);
@@ -225,6 +322,7 @@ const OrdersPage = ({ isRecent }) => {
               />
             </div>
           </div>
+          <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
           {isLoading ? (
             <CircleLoader blue />
           ) : (
@@ -259,7 +357,9 @@ const OrdersPage = ({ isRecent }) => {
                         <span>
                           {isSearchMode && isEmpty(searchResult)
                             ? `There are no results for your search '${searchQuery}'`
-                            : "There are currently no orders"}
+                            : `There are currently no ${lowerCase(
+                                activeTab?.replaceAll("_", " ")
+                              )} orders`}
                         </span>
                       }
                     </div>

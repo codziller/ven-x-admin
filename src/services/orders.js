@@ -1,10 +1,10 @@
 import { gql } from "graphql-request";
 import { graphQlInstance } from "services";
 
-const getOrdersQuery = ({ page }) => gql`
+const getOrdersQuery = ({ page, status }) => gql`
   {
     __typename
-    orders(pageNumber: "${page}") {
+    orders(pageNumber: "${page}", status: "${status}") {
       total
       results {
         calculatedOrder {
@@ -136,8 +136,8 @@ const deleteOrderQuery = gql`
 `;
 
 const apis = {
-  getOrders: ({ page }) =>
-    graphQlInstance(getOrdersQuery({ page }), {
+  getOrders: ({ page, status }) =>
+    graphQlInstance(getOrdersQuery({ page, status }), {
       method: "GET",
     }),
   getOrdersCount: ({ page }) =>

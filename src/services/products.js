@@ -41,6 +41,8 @@ productOptions {
     videoUrls
     visibility
     weight
+    color
+    main
   }
   name
   id

@@ -11,6 +11,7 @@ const CheckBox = ({
   label,
   tooltip,
   labelClass = "text-[13px] font-bold",
+  isDisabled,
 }) => {
   const outer = {
     width: "20px",
@@ -39,8 +40,16 @@ const CheckBox = ({
   };
   return (
     <div
-      onClick={onChange}
-      className="flex justify-start cursor-pointer gap-5 items-center w-fit"
+      onClick={() => {
+        if (isDisabled) {
+          return;
+        }
+        onChange();
+      }}
+      className={classNames(
+        "flex justify-start cursor-pointer gap-5 items-center w-fit",
+        { "opacity-[0.7]": isDisabled }
+      )}
     >
       {label && (
         <div className="flex flex-row justify-between items-center w-full cursor-pointer">
@@ -76,6 +85,7 @@ CheckBox.propTypes = {
   label: PropTypes.string,
   tooltip: PropTypes.string,
   labelClass: PropTypes.string,
+  isDisabled: PropTypes.bool,
 };
 
 export default CheckBox;
