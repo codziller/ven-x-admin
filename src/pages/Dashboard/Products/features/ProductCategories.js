@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { observer } from "mobx-react-lite";
 import CheckBox from "components/General/Input/CheckBox";
-import { isEmpty } from "lodash";
+import { isEmpty, lowerCase } from "lodash";
 import { useCallback } from "react";
 import SearchBar from "components/General/Searchbar/SearchBar";
 
@@ -104,51 +104,55 @@ const ProductCategories = ({
                   className="flex flex-col justify-start items-start gap-2"
                 >
                   <p className="text-[10px] text-grey">SubCategories</p>
-                  {item?.subCategories?.map((subItem) => {
-                    return (
-                      <div
-                        key={subItem?.id}
-                        className="flex flex-col justify-start items-start gap-2.5"
-                      >
-                        <CheckBox
+                  {item?.subCategories
+                    ?.filter((item) =>
+                      lowerCase(item?.name)?.includes(lowerCase(searchInput))
+                    )
+                    ?.map((subItem) => {
+                      return (
+                        <div
                           key={subItem?.id}
-                          label={subItem?.name}
-                          onChange={() => handleChangeTwo(subItem?.id)}
-                          checked={isSelected(subItem?.id)}
-                          labelClass="text-[13px] font-500"
-                          square={!isSingle}
-                        />
+                          className="flex flex-col justify-start items-start gap-2.5"
+                        >
+                          <CheckBox
+                            key={subItem?.id}
+                            label={subItem?.name}
+                            onChange={() => handleChangeTwo(subItem?.id)}
+                            checked={isSelected(subItem?.id)}
+                            labelClass="text-[13px] font-500"
+                            square={!isSingle}
+                          />
 
-                        {!isEmpty(subItem?.subCategories) && (
-                          <>
-                            <p className="text-[10px] text-grey">
-                              {item?.name} {">"} {subItem?.name} {">"}{" "}
-                              SubCategories
-                            </p>
+                          {!isEmpty(subItem?.subCategories) && (
+                            <>
+                              <p className="text-[10px] text-grey">
+                                {item?.name} {">"} {subItem?.name} {">"}{" "}
+                                SubCategories
+                              </p>
 
-                            {subItem?.subCategories?.map((subSubItem) => {
-                              return (
-                                <div
-                                  key={subSubItem?.id}
-                                  className="flex flex-col justify-start items-start gap-2"
-                                >
-                                  <CheckBox
+                              {subItem?.subCategories?.map((subSubItem) => {
+                                return (
+                                  <div
                                     key={subSubItem?.id}
-                                    label={subSubItem?.name}
-                                    onChange={() =>
-                                      handleChangeTwo(subSubItem?.id)
-                                    }
-                                    checked={isSelected(subSubItem?.id)}
-                                    square={!isSingle}
-                                  />
-                                </div>
-                              );
-                            })}
-                          </>
-                        )}
-                      </div>
-                    );
-                  })}
+                                    className="flex flex-col justify-start items-start gap-2"
+                                  >
+                                    <CheckBox
+                                      key={subSubItem?.id}
+                                      label={subSubItem?.name}
+                                      onChange={() =>
+                                        handleChangeTwo(subSubItem?.id)
+                                      }
+                                      checked={isSelected(subSubItem?.id)}
+                                      square={!isSingle}
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
 
                 <hr className="w-full" />

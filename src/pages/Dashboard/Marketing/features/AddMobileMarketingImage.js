@@ -179,15 +179,7 @@ const Form = observer(() => {
                       whiteBg
                       fullWidth
                     />
-                    <span
-                      onClick={() =>
-                        handleChangeTwo("modalType", PRODUCT_CATEGORY)
-                      }
-                      className="text-sm text-blue flex justify-start items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="text-blue current-svg w-[16px]" /> Create
-                      Category
-                    </span>
+
                     <div className="h-[13px]">
                       {errors?.categoryId && (
                         <FormErrorMessage type={errors?.categoryId} />

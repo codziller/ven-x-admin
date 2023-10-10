@@ -15,6 +15,7 @@ const getBrandsQuery = ({ page }) => gql`
         id
         updatedAt
         imageUrls
+        categoryId
         category {
           name
           id

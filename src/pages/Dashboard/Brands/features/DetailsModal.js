@@ -5,14 +5,11 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
-import ProductOptions from "./ProductOptions";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
-import ProductVariant from "./ProductVariant";
-import ProductSubscription from "./ProductSubscription";
+import ProductCategories from "pages/Dashboard/Products/features/ProductCategories";
 
-const { PRODUCT_OPTION, PRODUCT_SUBSCRIPTION, PRODUCT_VARIANT } =
-  PRODUCT_MODAL_TYPES;
-const DetailsModal = ({ active, toggler, details }) => {
+const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
   const renderModalBody = () => {
     switch (details?.modalType) {
       case "delete":
@@ -21,12 +18,17 @@ const DetailsModal = ({ active, toggler, details }) => {
         return <Form details={details} toggler={toggler} />;
       case "add":
         return <Form details={details} toggler={toggler} />;
-      case PRODUCT_OPTION:
-        return <ProductOptions details={details} toggler={toggler} />;
-      case PRODUCT_VARIANT:
-        return <ProductVariant details={details} toggler={toggler} />;
-      case PRODUCT_SUBSCRIPTION:
-        return <ProductSubscription details={details} toggler={toggler} />;
+      case PRODUCT_CATEGORY_OPTIONS:
+        return (
+          <ProductCategories
+            details={details}
+            toggler={toggler}
+            handleChange={handleChange}
+            form={form}
+            type={details?.modalTitle}
+            isSingle={details?.isSingleCategory}
+          />
+        );
       default:
         return null;
     }
@@ -34,6 +36,7 @@ const DetailsModal = ({ active, toggler, details }) => {
   return (
     <Modal
       size={details?.modalSize || "md"}
+      isSideModal={details?.isSideModal}
       active={active}
       toggler={toggler}
       modalClassName="overflow-y-auto overflow-x-hidden"
@@ -50,5 +53,7 @@ DetailsModal.propTypes = {
   active: PropTypes.bool,
   toggler: PropTypes.func,
   details: PropTypes.object,
+  handleChange: PropTypes.func,
+  form: PropTypes.object,
 };
 export default DetailsModal;

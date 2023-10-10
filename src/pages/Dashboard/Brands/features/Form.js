@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -31,8 +31,12 @@ import {
   uploadImagesToCloud,
 } from "utils/uploadImagesToCloud";
 import { errorToast } from "components/General/Toast/Toast";
-import { isArray } from "lodash";
+import { isArray, isEmpty } from "lodash";
+import { flattenCategories } from "utils/functions";
+import DetailsModal from "./DetailsModal";
+import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
 
+const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
@@ -181,6 +185,19 @@ const Form = ({ details, toggler }) => {
     handleChange(prop, updatedFiles);
   };
 
+  const flattenedCategories = useMemo(
+    () => !isEmpty(categories) && flattenCategories(categories),
+    [categories]
+  );
+  const selectedCategory = useMemo(
+    () =>
+      !isEmpty(flattenedCategories)
+        ? flattenedCategories?.find((item) => item?.id === form?.categoryId)
+            ?.name
+        : "",
+    [flattenedCategories, form?.categoryId]
+  );
+
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
@@ -215,7 +232,25 @@ const Form = ({ details, toggler }) => {
             showFormError={formTwo?.showFormError}
             required
           />
+          <div className="flex flex-col justify-start items-end gap-1 w-full">
+            {form?.categoryId && <p>{selectedCategory}</p>}
+            <Button
+              onClick={() =>
+                handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
+              }
+              text="Select Category"
+              icon={<Plus className="text-black current-svg" />}
+              className=""
+              whiteBg
+              fullWidth
+            />
 
+            <div className="h-[13px]">
+              {errors?.categoryId && (
+                <FormErrorMessage type={errors?.categoryId} />
+              )}
+            </div>
+          </div>
           <Wysiwyg
             label="Brand Description"
             editorState={formTwo?.brandDescription}
@@ -237,17 +272,6 @@ const Form = ({ details, toggler }) => {
             required
           />
 
-          <Select
-            label="Brand Category"
-            placeholder="Select Brand Category"
-            options={categories}
-            onChange={(val) => handleChange("categoryId", val?.value)}
-            value={categories?.find((item) => item?.value === form?.categoryId)}
-            formError={errors.categoryId}
-            showFormError={formTwo?.showFormError}
-            isLoading={loading}
-            fullWidth
-          />
           <ImagePicker
             label=" Add Brand Logo"
             handleDrop={(val) => handleChange("brandLogoUrl", val)}
@@ -291,6 +315,19 @@ const Form = ({ details, toggler }) => {
           />
         </form>
       </div>
+
+      <DetailsModal
+        active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
+        details={{
+          isSingleCategory: true,
+          modalType: PRODUCT_CATEGORY_OPTIONS,
+          isSideModal: true,
+        }}
+        toggler={() => handleChangeTwo("modalType", false)}
+        handleChange={handleChange}
+        form={form}
+        type="Post"
+      />
     </>
   );
 };
