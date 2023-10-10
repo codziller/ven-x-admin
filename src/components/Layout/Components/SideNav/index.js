@@ -34,8 +34,9 @@ import ProductsStore from "pages/Dashboard/Products/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage, isAdmin } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
+import AuthStore from "pages/OnBoarding/SignIn/store";
 
-const getLinks = (warehouse_id, user) => [
+const getLinks = (warehouse_id, user, userIsAdmin) => [
   {
     title: "Overview",
     heading: `Welcome, ${user?.firstName}`,
@@ -47,7 +48,7 @@ const getLinks = (warehouse_id, user) => [
     ),
   },
 
-  ...(isAdmin
+  ...(isAdmin || userIsAdmin
     ? [
         {
           title: "Orders",
@@ -276,10 +277,12 @@ const SideNav = ({
 }) => {
   const { warehouse_id } = useParams();
   const { user } = getUserInfoFromStorage();
+  const { userIsAdmin } = AuthStore;
   const links = useMemo(
-    () => getLinks(warehouse_id, user),
-    [warehouse_id, user]
+    () => getLinks(warehouse_id, user, userIsAdmin),
+    [warehouse_id, user, userIsAdmin]
   );
+
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
   const { resetProductStore } = ProductsStore;
   useEffect(() => {

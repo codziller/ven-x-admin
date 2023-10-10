@@ -14,6 +14,7 @@ class AuthStore {
   otp_value = "";
   error = null;
   loading = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -22,8 +23,8 @@ class AuthStore {
   // Computed views
   // ====================================================
   // While MobX promotes OOP, we can still benefit from using FP where it's appropriate
-  get token() {
-    return this.user.token;
+  get userIsAdmin() {
+    return this?.user?.role?.includes("ADMIN");
   }
 
   // ====================================================
@@ -37,7 +38,7 @@ class AuthStore {
       let res = await apis.login(data);
       res = res?.adminLoginUser;
       console.log("res: ", res);
-      this.setCurrentUser(res);
+      this.setCurrentUser(res?.user);
       logUserIn(res);
       const message = "You have successfully logged into zusco admin dashboard";
       successToast(`Successfully logged in`, message);

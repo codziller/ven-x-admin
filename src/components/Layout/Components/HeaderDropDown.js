@@ -37,6 +37,7 @@ const HeaderDropDown = () => {
   }, [innerHeight, y]);
   const { user } = getUserInfoFromStorage();
   const userName = user?.firstName && `${user?.firstName} ${user?.lastName}`;
+
   return (
     <div className="flex flex-row justify-between items-center" ref={domNode}>
       <button

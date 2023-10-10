@@ -87,6 +87,7 @@ export const getUserInfoFromStorage = () => {
 };
 export const getCurrentRole = () => {
   const currentUser = getUserInfoFromStorage();
+  console.log("currentUser: ", currentUser);
   const currentUserRole = currentUser?.user?.role;
   return currentUserRole;
 };

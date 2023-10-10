@@ -33,6 +33,7 @@ import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
 import { isAdmin } from "utils/storage";
+import AuthStore from "pages/OnBoarding/SignIn/store";
 
 export const dateFilters = [
   {
@@ -76,6 +77,7 @@ const HomePage = () => {
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [searchInput, setSearchInput] = useState("");
 
+  const { userIsAdmin } = AuthStore;
   const { getProductsCount, productsCount, loading } = ProductsStore;
   const { ordersCount, loading: orderLoading } = OrdersStore;
   const { getUsers, usersCount, loading: usersLoading } = UsersStore;
@@ -83,7 +85,6 @@ const HomePage = () => {
     getProductsCount({ data: { page: 1 } });
     getUsers({ data: { page: 1 } });
   }, []);
-  const searching = false;
 
   const params = qs.parse(location.hash?.substring(1));
 
@@ -247,27 +248,43 @@ const HomePage = () => {
               icon={<OrdersIcon className="scale-[0.8]" />}
               title="Total Orders"
               value={numberWithCommas(ordersCount)}
-              link={!isAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              link={
+                !isAdmin && !userIsAdmin
+                  ? "#"
+                  : `/dashboard/orders/${warehouse_id}`
+              }
               isLoading={orderLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
               value="₦‎ 2,000,000"
-              link={!isAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              link={
+                !isAdmin && !userIsAdmin
+                  ? "#"
+                  : `/dashboard/orders/${warehouse_id}`
+              }
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Products"
               value={numberWithCommas(productsCount)}
-              link={!isAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
+              link={
+                !isAdmin && !userIsAdmin
+                  ? "#"
+                  : `/dashboard/products/${warehouse_id}`
+              }
               isLoading={loading}
             />
             <EarningCard
               icon={<CustomersIcon className="scale-[0.8]" />}
               title="All Users"
               value={numberWithCommas(usersCount)}
-              link={!isAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
+              link={
+                !isAdmin && !userIsAdmin
+                  ? "#"
+                  : `/dashboard/users/${warehouse_id}`
+              }
               isLoading={usersLoading}
             />
           </div>

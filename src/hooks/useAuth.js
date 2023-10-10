@@ -24,6 +24,7 @@ function useAuth() {
       clearUserDetails();
       logoutUser();
       navigate("/");
+      window.location.reload();
     } catch (error) {
       return error;
     }
