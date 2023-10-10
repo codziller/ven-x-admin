@@ -5,7 +5,11 @@ import _, { isEmpty, lowerCase } from "lodash";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { ORDER_STATUSES, pageCount } from "utils/appConstant";
+import {
+  ORDER_STATUSES,
+  ORDER_STATUS_OPTIONS,
+  pageCount,
+} from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
@@ -20,6 +24,7 @@ import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import classNames from "classnames";
 import Tabs from "components/General/Tabs";
+import TableDropdown from "components/General/Dropdown/TableDropdown";
 export const dateFilters = [
   {
     value: "today",
@@ -72,6 +77,9 @@ const OrdersPage = ({ isRecent }) => {
     completedOrdersCount,
     cancelledOrders,
     cancelledOrdersCount,
+
+    updateOrderStatus,
+    updateOrderStatusLoading,
   } = OrdersStore;
 
   const TABS = [
@@ -137,7 +145,7 @@ const OrdersPage = ({ isRecent }) => {
   }, [searchInput]);
 
   const handleView = (row) => {
-    setCurrentTxnDetails(row);
+    setCurrentTxnDetails({ ...row, modalType: "details", isSideModal: true });
   };
   const columns = [
     {
@@ -157,8 +165,9 @@ const OrdersPage = ({ isRecent }) => {
     },
     {
       name: "Order Status",
+
       selector: (row) => (
-        <span
+        <TableDropdown
           className={classNames({
             "text-yellow":
               row?.orderStatus === "IN_PROGRESS" ||
@@ -167,10 +176,16 @@ const OrdersPage = ({ isRecent }) => {
             "text-green": row?.orderStatus === "COMPLETED",
             "text-red-deep": row?.orderStatus === "CANCELLED",
           })}
-          onClick={() => handleView(row)}
-        >
-          {row?.orderStatus}
-        </span>
+          options={ORDER_STATUS_OPTIONS}
+          content={row.orderStatus}
+          handleClick={(e) =>
+            setCurrentTxnDetails({ ...row, modalType: "prompt", ...e })
+          }
+          isLoading={
+            currentTxnDetails?.orderCode === row?.orderCode &&
+            updateOrderStatusLoading
+          }
+        />
       ),
       sortable: false,
     },

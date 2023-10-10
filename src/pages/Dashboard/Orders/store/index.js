@@ -32,7 +32,7 @@ class OrdersStore {
   error = null;
   loading = false;
   createOrderLoading = false;
-  editOrderLoading = false;
+  updateOrderStatusLoading = false;
   getOrderLoading = false;
   deleteOrderLoading = false;
   searchResultCount = 0;
@@ -144,17 +144,20 @@ class OrdersStore {
       this.createOrderLoading = false;
     }
   };
-  editOrder = async ({ data, onSuccess, page }) => {
-    this.editOrderLoading = true;
+  updateOrderStatus = async ({ data, onSuccess, page }) => {
+    this.updateOrderStatusLoading = true;
     try {
-      await apis.editOrder(data);
-      successToast("Operation Successful!", "Order updated Successfully.");
+      await apis.updateOrderStatus(data);
+      successToast(
+        "Operation Successful!",
+        "Order status updated Successfully."
+      );
       onSuccess?.();
       await this.getOrders({ data: { page: page || 1 } });
     } catch (error) {
       this.error = error;
     } finally {
-      this.editOrderLoading = false;
+      this.updateOrderStatusLoading = false;
     }
   };
 

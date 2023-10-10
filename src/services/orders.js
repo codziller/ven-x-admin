@@ -99,30 +99,10 @@ const createOrderQuery = gql`
   }
 `;
 
-const editOrderQuery = gql`
-  mutation updateOrder(
-    $id: String!
-    $OrderDescription: String
-    $OrderLogoUrl: String
-    $OrderName: String
-    $OrderShortText: String
-    $categoryId: String
-    $imageUrls: [String!]
-    $videoUrls: [String!]
-  ) {
-    updateOrder(
-      updateOrderInput: {
-        id: $id
-        OrderDescription: $OrderDescription
-        OrderLogoUrl: $OrderLogoUrl
-        OrderName: $OrderName
-        OrderShortText: $OrderShortText
-        categoryId: $categoryId
-        imageUrls: $imageUrls
-        videoUrls: $videoUrls
-      }
-    ) {
-      id
+const updateOrderStatusQuery = gql`
+  mutation updateOrderStatus($id: String!, $status: String!) {
+    updateOrderStatus(id: $id, status: $status) {
+      status
     }
   }
 `;
@@ -154,8 +134,8 @@ const apis = {
       variables,
     }),
 
-  editOrder: (variables) =>
-    graphQlInstance(editOrderQuery, {
+  updateOrderStatus: (variables) =>
+    graphQlInstance(updateOrderStatusQuery, {
       variables,
     }),
 

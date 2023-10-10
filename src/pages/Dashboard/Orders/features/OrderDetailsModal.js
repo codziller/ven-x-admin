@@ -4,27 +4,33 @@ import PropTypes from "prop-types";
 import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import TransactionDetails from "./OrderDetails";
+import DeleteDialog from "./DeleteDialog";
 
 const OrderDetailsModal = ({ active, toggler, details }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toggler();
+  const renderModalBody = () => {
+    switch (details?.modalType) {
+      case "prompt":
+        return <DeleteDialog details={details} toggler={toggler} />;
+      case "details":
+        return <TransactionDetails details={details} toggler={toggler} />;
+
+      default:
+        return null;
+    }
   };
   return (
     <Modal
-      isSideModal
+      isSideModal={details?.isSideModal}
       maxHeight="100vh"
       size="md"
       active={active}
       toggler={toggler}
     >
-      <form onSubmit={handleSubmit} className="w-full h-full mb-10">
+      <div className="w-full h-full mb-10">
         <ModalBody>
-          <div className="w-full">
-            {active && <TransactionDetails details={details} />}
-          </div>
+          <div className="w-full">{active && renderModalBody()}</div>
         </ModalBody>
-      </form>
+      </div>
     </Modal>
   );
 };

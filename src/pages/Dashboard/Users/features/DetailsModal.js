@@ -10,10 +10,6 @@ import { MEDIA_MODAL_TYPES } from "utils/appConstant";
 
 const { BRAND } = MEDIA_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toggler();
-  };
   const renderModalBody = () => {
     switch (details?.modalType) {
       case "delete":
@@ -42,11 +38,11 @@ const DetailsModal = ({ active, toggler, details, handleChange, form }) => {
       toggler={toggler}
       modalClassName="overflow-y-auto overflow-x-hidden"
     >
-      <form onSubmit={handleSubmit} className="w-full h-full">
+      <div className="w-full h-full">
         <ModalBody>
           <div className="w-full">{active && renderModalBody()}</div>
         </ModalBody>
-      </form>
+      </div>
     </Modal>
   );
 };

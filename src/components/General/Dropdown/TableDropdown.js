@@ -2,10 +2,18 @@ import React, { useState } from "react";
 import clsx from "classnames";
 import PropTypes from "prop-types";
 import Popover from "@material-ui/core/Popover";
+import { ThreeDots } from "react-loader-spinner";
 import { ReactComponent as Check } from "assets/icons/CheckIcon/small-check.svg";
 import { ReactComponent as ArrowDownIcon } from "assets/icons/caret-down.svg";
+import classNames from "classnames";
 
-export default function TableDropdown({ content, handleClick, options }) {
+export default function TableDropdown({
+  content,
+  handleClick,
+  options,
+  isLoading,
+  className,
+}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selected, setSelected] = useState("");
   const open = Boolean(anchorEl);
@@ -22,15 +30,31 @@ export default function TableDropdown({ content, handleClick, options }) {
         }}
       >
         <div className="w-full flex flex-row justify-between items-center">
-          <div
-            className={`overflow-ellipsis overflow-hidden whitespace-nowrap max-w-12 flex flex-row justify-start items-center
+          {isLoading ? (
+            <ThreeDots
+              height="20"
+              width="20"
+              color="#000000"
+              ariaLabel="tail-spin-loading"
+              radius="1"
+              visible={true}
+            />
+          ) : (
+            <div
+              className={`overflow-ellipsis overflow-hidden whitespace-nowrap max-w-12 flex flex-row justify-start items-center
             
             `}
-          >
-            <div className="text-black text-sm font-normal mr-4 capitalize">
-              {selected?.label || content}
+            >
+              <div
+                className={classNames(
+                  "text-sm font-normal mr-4 capitalize",
+                  className
+                )}
+              >
+                {selected?.label || content}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <span
@@ -45,7 +69,7 @@ export default function TableDropdown({ content, handleClick, options }) {
         id={open ? "simple-popover" : undefined}
         open={open}
         anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
+        onClose={() => (isLoading ? null : setAnchorEl(null))}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "center",
@@ -64,6 +88,9 @@ export default function TableDropdown({ content, handleClick, options }) {
             <button
               key={i}
               onClick={() => {
+                if (isLoading) {
+                  return;
+                }
                 setSelected(item);
                 handleClick?.(item);
                 setAnchorEl(null);
@@ -86,4 +113,6 @@ TableDropdown.propTypes = {
   content: PropTypes.any,
   handleClick: PropTypes.func,
   options: PropTypes.array,
+  isLoading: PropTypes.bool,
+  className: PropTypes.string,
 };

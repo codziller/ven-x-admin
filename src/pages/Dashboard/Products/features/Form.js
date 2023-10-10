@@ -134,6 +134,10 @@ const Form = ({ details, toggler }) => {
       .array()
       .min(1, "Select at least one category for this product")
       .required("Select at least one category for this product"),
+    imageUrls: yup
+      .array()
+      .min(1, "Please select images for this product")
+      .required("Please select images for this product"),
   });
 
   const defaultValues = {
@@ -765,6 +769,7 @@ const Form = ({ details, toggler }) => {
             <ImagePicker
               isRequired
               label=" Add Product Image "
+              formError={errors.imageUrls}
               showFormError={formTwo?.showFormError && errors.imageUrls}
               handleDrop={(val) =>
                 handleChange({ prop: "imageUrls", val, rest: form.imageUrls })
