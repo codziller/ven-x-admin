@@ -398,7 +398,7 @@ class MarketingStore {
       await apis.createMobilePagePost(data);
       successToast(
         "Operation Successful!",
-        "Mobile Page Post created Successfully."
+        "Mobile Page Slider created Successfully."
       );
       onSuccess?.();
       await this.getHomeSliderMobilePagePosts({ data: { page: page || 1 } });
@@ -414,7 +414,7 @@ class MarketingStore {
       await apis.editMobilePagePost(data);
       successToast(
         "Operation Successful!",
-        "Mobile Page Post updated Successfully."
+        "Mobile Page Slider updated Successfully."
       );
       onSuccess?.();
       await this.getHomeSliderMobilePagePosts({ data: { page: page || 1 } });

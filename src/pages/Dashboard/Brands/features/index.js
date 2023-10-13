@@ -16,14 +16,12 @@ import { ReactComponent as Plus } from "assets/icons/add.svg";
 import useWindowDimensions from "hooks/useWindowDimensions";
 
 import { paramsObjectToQueryString } from "utils/request";
-import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import { Button } from "components/General/Button";
 import BrandsStore from "../store";
 import { observer } from "mobx-react-lite";
-import CopyToClipboard from "react-copy-to-clipboard";
 import CheckBox from "components/General/Input/CheckBox";
 
 export const dateFilters = [
@@ -140,7 +138,6 @@ const BrandsPage = ({
       handleBrandSelect?.(row);
       return;
     }
-
     setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" });
   };
 

@@ -70,10 +70,7 @@ const Form = observer(() => {
     resolver: yupResolver(schema),
   });
 
-  const handleChange = async (prop, val) => {
-    // if (prop === "pageToLinkTo") {
-    //   handleChange("dataId", "");
-    // }
+  const handleChange = async ({ prop, val }) => {
     setValue(prop, val);
     await trigger(prop);
   };
@@ -89,8 +86,6 @@ const Form = observer(() => {
     pageToLinkTo: watch("pageToLinkTo"),
     titleText: watch("titleText"),
   };
-
-  console.log("Form: ", form);
 
   useEffect(() => {
     if (!form.dataId) {
@@ -202,7 +197,9 @@ const Form = observer(() => {
                     <CheckBox
                       key={item.value}
                       label={item.name}
-                      onChange={() => handleChange("pageToLinkTo", item.value)}
+                      onChange={() =>
+                        handleChange({ prop: "pageToLinkTo", val: item.value })
+                      }
                       checked={form?.pageToLinkTo === item.value}
                     />
                   ))}
@@ -266,7 +263,9 @@ const Form = observer(() => {
                   <Input
                     label="Post Title"
                     value={form?.titleText}
-                    onChangeFunc={(val) => handleChange("titleText", val)}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "titleText", val })
+                    }
                     placeholder="Enter Title"
                     formError={errors.titleText}
                     showFormError={formTwo?.showFormError}
@@ -275,7 +274,9 @@ const Form = observer(() => {
                   <Textarea
                     label="Post Description"
                     value={form?.descriptionText}
-                    onChangeFunc={(val) => handleChange("descriptionText", val)}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "descriptionText", val })
+                    }
                     placeholder="Enter Description"
                     formError={errors.descriptionText}
                     showFormError={formTwo?.showFormError}
@@ -286,7 +287,9 @@ const Form = observer(() => {
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
                   <ImagePicker
                     label="Select Image "
-                    handleDrop={(val) => handleChange("sourceImageUrl", val)}
+                    handleDrop={(val) =>
+                      handleChange({ prop: "sourceImageUrl", val })
+                    }
                     images={form.sourceImageUrl}
                     formError={errors.sourceImageUrl}
                     showFormError={formTwo?.showFormError}
@@ -309,17 +312,16 @@ const Form = observer(() => {
           </div>
         </div>
       </div>
-
       <DetailsModal
         active={formTwo?.modalType === BRAND}
-        details={{ modalType: BRAND }}
+        details={{ prop: "dataId", modalType: BRAND }}
         toggler={() => handleChangeTwo("modalType", false)}
         handleChange={handleChange}
         form={form}
       />
       <DetailsModal
         active={formTwo?.modalType === PRODUCT}
-        details={{ modalType: PRODUCT }}
+        details={{ prop: "dataId", modalType: PRODUCT }}
         toggler={() => handleChangeTwo("modalType", false)}
         handleChange={handleChange}
         form={form}

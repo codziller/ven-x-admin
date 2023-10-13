@@ -5,6 +5,8 @@ import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import { ReactComponent as NewPlus } from "assets/icons/Plus/new_plus.svg";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import MarketingStore from "../store";
+import { groupBy } from "lodash";
+import { convertToJs } from "utils/functions";
 
 const MobileMarketingImage = () => {
   const { warehouse_id } = useParams();
@@ -27,8 +29,18 @@ const MobileMarketingImage = () => {
     (_) => !_?.isForYou
   );
 
+  const groupedMobileMarketingImages = groupBy(
+    categoryMobileMarketingImage,
+    "headerNavId"
+  );
+
   const postCount = 4;
   const postArray = Array.from({ length: postCount }, () => "");
+
+  console.log(
+    "groupedMobileMarketingImages; ",
+    convertToJs(groupedMobileMarketingImages)
+  );
   return (
     <div className="h-full w-full">
       <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
@@ -81,14 +93,16 @@ const MobileMarketingImage = () => {
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-5">
                       {postArray?.map((item, i) => {
-                        const slide = categoryMobileMarketingImage?.[i];
+                        const slides =
+                          groupedMobileMarketingImages?.[category?.id];
+                        const slide = slides?.[i];
                         return (
                           <Link
                             key={i + "card"}
                             to={
                               slide
-                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${slide?.headerNavId}/${slide?.id}`
-                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${slide?.headerNavId}`
+                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${category?.id}/${slide?.id}`
+                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${category?.id}`
                             }
                             className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                           >

@@ -47,7 +47,7 @@ const MobilePagePost = () => {
       <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
         <div className="flex justify-between items-center w-full mb-3 gap-1">
           <span className="text-black text-lg sm:text-xl font-700 my-5">
-            Manage Mobile Page Post
+            Manage Mobile Page Slider
           </span>
         </div>
 

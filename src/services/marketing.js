@@ -23,11 +23,13 @@ const getMobileMarketingImageQuery = ({ id }) => gql`
     __typename
     mobileMarketingImage(id: "${id}") {
         archive
-        categoryId
+        headerNavId
         updatedAt
         id
         imageUrl
         isForYou
+        pageToLinkTo
+        dataId
     }
   }
 `;
@@ -197,12 +199,16 @@ const createMobileMarketingImageQuery = gql`
     $headerNavId: String
     $imageUrl: String!
     $isForYou: Boolean!
+    $dataId: String
+    $pageToLinkTo: PageToLinkToEnum
   ) {
     createMobileMarketingImage(
       createMobileMarketingImageInput: {
         headerNavId: $headerNavId
         imageUrl: $imageUrl
         isForYou: $isForYou
+        dataId: $dataId
+        pageToLinkTo: $pageToLinkTo
       }
     ) {
       id
@@ -215,6 +221,8 @@ const editMobileMarketingImageQuery = gql`
     $headerNavId: String
     $imageUrl: String
     $isForYou: Boolean
+    $dataId: String
+    $pageToLinkTo: PageToLinkToEnum
     $id: String!
   ) {
     updateMobileMarketingImage(
@@ -222,6 +230,8 @@ const editMobileMarketingImageQuery = gql`
         headerNavId: $headerNavId
         imageUrl: $imageUrl
         isForYou: $isForYou
+        dataId: $dataId
+        pageToLinkTo: $pageToLinkTo
         id: $id
       }
     ) {

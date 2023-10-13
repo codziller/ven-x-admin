@@ -62,7 +62,9 @@ const Brands = ({ details, toggler, handleChange, form }) => {
 
         <BrandsPage
           isModal
-          handleBrandSelect={(e) => handleSubmit(e?.id)}
+          handleBrandSelect={(e) => {
+            handleSubmit(e?.id);
+          }}
           isSelected={isSelected}
           modalDetails={details}
         />

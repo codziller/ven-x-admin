@@ -168,11 +168,11 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Homepage Slide ({position})
+                  Edit Mobile Page Slider ({position})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Homepage Slide ({position})
+                  Add Mobile Page Slider ({position})
                 </h2>
               )}
 
@@ -191,7 +191,7 @@ const Form = observer(() => {
                   </label>
 
                   <span className="text-grey-text text-sm mb-3 -mt-2">
-                    Select the page type to be linked with this slide
+                    Select the page type to be linked with this post
                   </span>
                   {SLIDE_LINK_TYPES.map((item) => (
                     <CheckBox
@@ -212,7 +212,7 @@ const Form = observer(() => {
                         }
                       >
                         Select the {lowerCase(form?.pageToLinkTo)} to be linked
-                        with this slide
+                        with this post
                       </label>
 
                       <div className="flex flex-col justify-start items-end gap-1 w-full">

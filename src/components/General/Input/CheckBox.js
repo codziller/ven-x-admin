@@ -44,7 +44,7 @@ const CheckBox = ({
         if (isDisabled) {
           return;
         }
-        onChange();
+        onChange?.();
       }}
       className={classNames(
         "flex justify-start cursor-pointer gap-5 items-center w-fit",

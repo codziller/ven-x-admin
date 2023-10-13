@@ -7,7 +7,11 @@ import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black
 import Button from "components/General/Button/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
+import {
+  MEDIA_MODAL_TYPES,
+  PRODUCT_MODAL_TYPES,
+  SLIDE_LINK_TYPES,
+} from "utils/appConstant";
 import { ReactComponent as Plus } from "assets/icons/add.svg";
 import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";
@@ -15,11 +19,14 @@ import { observer } from "mobx-react-lite";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
-import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
-import { isArray, isEmpty } from "lodash";
+import BrandsStore from "pages/Dashboard/Brands/store";
+import ProductsStore from "pages/Dashboard/Products/store";
+import { isArray, isEmpty, lowerCase } from "lodash";
 import { errorToast } from "components/General/Toast/Toast";
+import CheckBox from "components/General/Input/CheckBox";
+import { TailSpin } from "react-loader-spinner";
 
-const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
 const Form = observer(() => {
   const { warehouse_id, media_id, position } = useParams();
@@ -38,18 +45,22 @@ const Form = observer(() => {
 
   const schema = yup.object({});
 
+  const { getBrand, brand, getBrandLoading } = BrandsStore;
+  const { getProductName, product, getProductLoading } = ProductsStore;
   const {
     createMobileMarketingImage,
     editMobileMarketingImage,
     mobileMarketingImage,
     loadingMobileMarketingImage,
-    createMobileMarketingImageLoading,
-    editMobileMarketingImageLoading,
   } = MarketingStore;
 
   const defaultValues = {
     headerNavId: position !== "forYou" ? position : "",
     imageUrl: media_id ? mobileMarketingImage?.imageUrl : [],
+    dataId: media_id ? mobileMarketingImage?.dataId : "",
+    pageToLinkTo: media_id
+      ? mobileMarketingImage?.pageToLinkTo
+      : SLIDE_LINK_TYPES[0]?.value,
   };
 
   const {
@@ -64,7 +75,7 @@ const Form = observer(() => {
     resolver: yupResolver(schema),
   });
 
-  const handleChange = async (prop, val) => {
+  const handleChange = async ({ prop, val }) => {
     setValue(prop, val);
     await trigger(prop);
   };
@@ -76,9 +87,22 @@ const Form = observer(() => {
   const form = {
     headerNavId: watch("headerNavId"),
     imageUrl: watch("imageUrl"),
+    pageToLinkTo: watch("pageToLinkTo"),
+    dataId: watch("dataId"),
   };
 
-  const selectedCategory = useMemo(
+  useEffect(() => {
+    if (!form.dataId) {
+      return;
+    }
+    if (form.pageToLinkTo === BRAND) {
+      getBrand({ data: { id: form?.dataId } });
+    } else if (form.pageToLinkTo === PRODUCT) {
+      getProductName({ data: { id: form?.dataId } });
+    }
+  }, [form.dataId, form.pageToLinkTo]);
+
+  const selectedHeaderNav = useMemo(
     () =>
       !isEmpty(headerNavs)
         ? headerNavs?.find((item) => item?.id === form?.headerNavId)?.name
@@ -143,13 +167,13 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Banner (
-                  {position === "forYou" ? "For You" : selectedCategory})
+                  Edit Marketing Image (
+                  {position === "forYou" ? "For You" : selectedHeaderNav})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Banner (
-                  {position === "forYou" ? "For You" : selectedCategory})
+                  Add Marketing Image (
+                  {position === "forYou" ? "For You" : selectedHeaderNav})
                 </h2>
               )}
 
@@ -160,7 +184,7 @@ const Form = observer(() => {
                 {/* First section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
                   {/* <div className="flex flex-col justify-start items-end gap-1 w-full">
-                    {form?.headerNavId && <p>{selectedCategory}</p>}
+                    {form?.headerNavId && <p>{selectedHeaderNav}</p>}
                     <Button
                       onClick={() =>
                         handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
@@ -181,11 +205,82 @@ const Form = observer(() => {
 
                   <ImagePicker
                     label="Select Image "
-                    handleDrop={(val) => handleChange("imageUrl", val)}
+                    handleDrop={(val) =>
+                      handleChange({ prop: "imageUrl", val })
+                    }
                     images={form.imageUrl}
                     multiple={false}
                     isMarketingImg
                   />
+                </div>
+
+                {/* Second section */}
+                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
+                  <label
+                    className={
+                      "general-input-label relative text-[13px] font-bold text-grey-dark !flex justify-start items-center gap-1 cursor-pointer"
+                    }
+                  >
+                    Page type
+                  </label>
+                  <span className="text-grey-text text-sm mb-3 -mt-2">
+                    Select the page type to be linked with this marketing image
+                  </span>
+
+                  {SLIDE_LINK_TYPES.map((item) => (
+                    <CheckBox
+                      key={item.value}
+                      label={item.name}
+                      onChange={() =>
+                        handleChange({ prop: "pageToLinkTo", val: item.value })
+                      }
+                      checked={form?.pageToLinkTo === item.value}
+                    />
+                  ))}
+
+                  {form.pageToLinkTo && (
+                    <div className="flex flex-col justify-start items-start gap-1 w-full">
+                      <label
+                        className={
+                          "general-input-label relative text-[13px] font-bold text-grey-dark !flex justify-start items-center gap-1 cursor-pointer"
+                        }
+                      >
+                        Select the {lowerCase(form?.pageToLinkTo)} to be linked
+                        with this marketing image
+                      </label>
+
+                      <div className="flex flex-col justify-start items-end gap-1 w-full">
+                        {!isEmpty(form?.dataId) && (
+                          <p>
+                            {getBrandLoading || getProductLoading ? (
+                              <TailSpin
+                                height="25"
+                                width="25"
+                                color="#000000"
+                                ariaLabel="tail-spin-loading"
+                                radius="3"
+                                visible={true}
+                              />
+                            ) : form.pageToLinkTo === BRAND ? (
+                              brand?.brandName
+                            ) : (
+                              product?.name
+                            )}
+                          </p>
+                        )}
+
+                        <Button
+                          onClick={() =>
+                            handleChangeTwo("modalType", form?.pageToLinkTo)
+                          }
+                          text={`Select ${lowerCase(form?.pageToLinkTo)}`}
+                          className=""
+                          whiteBg
+                          fullWidth
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <Button
                     onClick={() =>
@@ -198,9 +293,6 @@ const Form = observer(() => {
                     fullWidth
                   />
                 </div>
-
-                {/* Second section */}
-                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
                 {/* Third section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
               </form>
@@ -208,22 +300,19 @@ const Form = observer(() => {
           </div>
         </div>
       </div>
-
       <DetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
-        details={{
-          isSingleCategory: true,
-          modalType: PRODUCT_CATEGORY_OPTIONS,
-        }}
+        active={formTwo?.modalType === BRAND}
+        details={{ prop: "dataId", modalType: BRAND }}
         toggler={() => handleChangeTwo("modalType", false)}
         handleChange={handleChange}
         form={form}
-        type="Post"
       />
-      <CategoryDetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY}
-        details={{ modalType: "add", isAdd: true }}
+      <DetailsModal
+        active={formTwo?.modalType === PRODUCT}
+        details={{ prop: "dataId", modalType: PRODUCT }}
         toggler={() => handleChangeTwo("modalType", false)}
+        handleChange={handleChange}
+        form={form}
       />
     </>
   );

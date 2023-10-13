@@ -5,6 +5,7 @@ import { NAIRA_ABBR } from "./appConstant";
 import { BRANCH_COLORS } from "./colors";
 import { getLinks } from "components/Layout/Components/SideNav";
 import { getUserInfoFromStorage } from "./storage";
+import { toJS } from "mobx";
 
 export const formatAmount = (amount, decimalPlaces = 2) => {
   if (amount === 0) return 0;
@@ -256,3 +257,4 @@ export const flattenArrayToString = (arr) =>
     ?.map((item) => item?.name)
     ?.join(", ")
     .trim() || "N/A";
+export const convertToJs = (obj) => toJS(JSON.parse(JSON.stringify(obj)));

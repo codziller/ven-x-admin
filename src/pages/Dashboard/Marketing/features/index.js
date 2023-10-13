@@ -26,11 +26,11 @@ const MarketingPage = () => {
     { name: "homePagePosts", label: "Home Page Posts" },
     {
       name: "mobilePagePosts",
-      label: "Mobile Page Posts",
+      label: "Mobile Page Sliders",
     },
     {
       name: "mobileMarketingImages",
-      label: "Mobile Marketing Images",
+      label: "Marketing Images",
     },
     {
       name: "promoBanners",
