@@ -15,8 +15,6 @@ import { observer } from "mobx-react-lite";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
-import { flattenCategories } from "utils/functions";
 import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
 import { isArray, isEmpty } from "lodash";
 import { errorToast } from "components/General/Toast/Toast";
@@ -25,7 +23,7 @@ const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 
 const Form = observer(() => {
   const { warehouse_id, media_id, position } = useParams();
-  const { getCategories, categories } = CategoriesStore;
+  const { headerNavs, getHeaderNavs } = CategoriesStore;
 
   const navigate = useNavigate();
   const [formTwo, setFormTwo] = useState({
@@ -35,13 +33,8 @@ const Form = observer(() => {
   });
 
   useEffect(() => {
-    getCategories();
+    getHeaderNavs();
   }, []);
-
-  const flattenedCategories = useMemo(
-    () => !isEmpty(categories) && flattenCategories(categories),
-    [categories]
-  );
 
   const schema = yup.object({});
 
@@ -55,7 +48,7 @@ const Form = observer(() => {
   } = MarketingStore;
 
   const defaultValues = {
-    categoryId: position !== "forYou" ? position : "",
+    headerNavId: position !== "forYou" ? position : "",
     imageUrl: media_id ? mobileMarketingImage?.imageUrl : [],
   };
 
@@ -81,17 +74,16 @@ const Form = observer(() => {
   };
 
   const form = {
-    categoryId: watch("categoryId"),
+    headerNavId: watch("headerNavId"),
     imageUrl: watch("imageUrl"),
   };
 
   const selectedCategory = useMemo(
     () =>
-      !isEmpty(flattenedCategories)
-        ? flattenedCategories?.find((item) => item?.id === form?.categoryId)
-            ?.name
+      !isEmpty(headerNavs)
+        ? headerNavs?.find((item) => item?.id === form?.headerNavId)?.name
         : "",
-    [flattenedCategories, form?.categoryId]
+    [headerNavs, form?.headerNavId]
   );
 
   const handleOnSubmit = async () => {
@@ -167,8 +159,8 @@ const Form = observer(() => {
               >
                 {/* First section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
-                  <div className="flex flex-col justify-start items-end gap-1 w-full">
-                    {form?.categoryId && <p>{selectedCategory}</p>}
+                  {/* <div className="flex flex-col justify-start items-end gap-1 w-full">
+                    {form?.headerNavId && <p>{selectedCategory}</p>}
                     <Button
                       onClick={() =>
                         handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
@@ -181,11 +173,11 @@ const Form = observer(() => {
                     />
 
                     <div className="h-[13px]">
-                      {errors?.categoryId && (
-                        <FormErrorMessage type={errors?.categoryId} />
+                      {errors?.headerNavId && (
+                        <FormErrorMessage type={errors?.headerNavId} />
                       )}
                     </div>
-                  </div>
+                  </div> */}
 
                   <ImagePicker
                     label="Select Image "

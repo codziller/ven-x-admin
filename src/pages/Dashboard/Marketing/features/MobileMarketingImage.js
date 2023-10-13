@@ -14,10 +14,10 @@ const MobileMarketingImage = () => {
     getMobileMarketingImages,
     mobileMarketingImages,
   } = MarketingStore;
-  const { categories, loading, getCategories } = CategoriesStore;
+  const { headerNavs, loading, getHeaderNavs } = CategoriesStore;
   useEffect(() => {
     getMobileMarketingImages({ data: { page: 1 } });
-    getCategories();
+    getHeaderNavs();
   }, []);
 
   const forYouMobileMarketingImage = mobileMarketingImages?.filter(
@@ -70,7 +70,7 @@ const MobileMarketingImage = () => {
 
               <hr className="w-full" />
 
-              {categories?.map((category) => {
+              {headerNavs?.map((category) => {
                 return (
                   <div
                     className="w-full flex flex-col justify-start items-start gap-1"
@@ -87,8 +87,8 @@ const MobileMarketingImage = () => {
                             key={i + "card"}
                             to={
                               slide
-                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${slide?.categoryId}/${slide?.id}`
-                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${slide?.categoryId}`
+                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${slide?.headerNavId}/${slide?.id}`
+                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${slide?.headerNavId}`
                             }
                             className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                           >

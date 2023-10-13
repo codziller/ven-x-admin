@@ -717,7 +717,7 @@ const Form = ({ details, toggler }) => {
               }
               checked={form.isDiscountAllowed}
             />
-            {form.isDiscountAllowed && (
+            {/* {form.isDiscountAllowed && (
               <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
                 <Input
                   label="Discount"
@@ -761,7 +761,7 @@ const Form = ({ details, toggler }) => {
                   />
                 </div>
               </div>
-            )}
+            )} */}
             <hr className="w-full" />
             <span className="text-grey-text text-lg uppercase">
               Images & Videos

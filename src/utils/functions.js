@@ -242,12 +242,6 @@ export const flattenCategories = (categories) => {
         flatten(subcategory); // Recursively flatten subCategories
       });
     }
-
-    // if (category.subCategories && category.subCategories.length > 0) {
-    //   category.subCategories.forEach((subSubcategory) => {
-    //     flatten(subSubcategory); // Recursively flatten sub-subCategories
-    //   });
-    // }
   }
 
   categories.forEach((category) => {

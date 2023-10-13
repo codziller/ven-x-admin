@@ -7,12 +7,9 @@ import qs from "query-string";
 import useTableFilter from "hooks/tableFilter";
 import ActiveFilter from "components/General/ActiveFilter";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
-import CircleLoader from "components/General/CircleLoader/CircleLoader";
-import Table from "components/General/Table";
 
-import { pageCount, transactions } from "utils/appConstant";
+import { transactions } from "utils/appConstant";
 import { hasValue } from "utils/validations";
-import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
 import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
@@ -34,7 +31,8 @@ import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
 import { isAdmin } from "utils/storage";
 import AuthStore from "pages/OnBoarding/SignIn/store";
-
+import HomeStore from "../store";
+import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
 export const dateFilters = [
   {
     value: "today",
@@ -53,6 +51,13 @@ export const dateFilters = [
     label: "All Time",
     start_date: dateConstants?.firstDay,
     end_date: dateConstants?.today,
+  },
+
+  {
+    value: "custom",
+    label: "Custom Date",
+    start_date: dateConstants?.startOfWeek,
+    end_date: dateConstants?.endOfWeek,
   },
 ];
 const HomePage = () => {
@@ -81,6 +86,13 @@ const HomePage = () => {
   const { getProductsCount, productsCount, loading } = ProductsStore;
   const { ordersCount, loading: orderLoading } = OrdersStore;
   const { getUsers, usersCount, loading: usersLoading } = UsersStore;
+  const {
+    getBrandHomePageStats,
+    getAdminHomePageStats,
+    adminHomePageStats,
+    brandHomePageStats,
+    loading: statLoading,
+  } = HomeStore;
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
     getUsers({ data: { page: 1 } });
@@ -90,7 +102,7 @@ const HomePage = () => {
 
   const searchQuery = searchInput?.trim();
 
-  const { filterData, onRemoveFilter } = useTableFilter({
+  const { filterData } = useTableFilter({
     defaultFilters,
     currentPage,
     setCurrentPage,
@@ -147,69 +159,6 @@ const HomePage = () => {
     }
   }, [searchInput]);
 
-  const columns = [
-    {
-      name: "Order ID",
-      selector: "id",
-      sortable: false,
-    },
-
-    {
-      name: "Payment Method",
-      selector: "payment_method",
-      sortable: false,
-    },
-
-    {
-      name: "Order Date",
-      selector: (row) => moment(row.order_date).format("MMM Do, YYYY"),
-      sortable: true,
-    },
-
-    {
-      name: "Delivery Date",
-      selector: (row) => moment(row.delivery_date).format("MMM Do, YYYY"),
-      sortable: true,
-    },
-
-    {
-      name: "Total",
-      selector: (row) => (
-        <span onClick={() => setCurrentTxnDetails(row)} className="uppercase">
-          {transactionAmount(row)}
-        </span>
-      ),
-      sortable: true,
-    },
-  ];
-
-  const containsActiveFilter = () =>
-    Object.keys(filterData).filter(
-      (item) => filterData[item] && filterData[item] !== ""
-    );
-
-  const renderFilters = () => {
-    if (filterData) {
-      return containsActiveFilter().map((item) => {
-        const hasChanged = defaultFilters[item] !== filterData[item];
-        if (hasChanged) {
-          return (
-            <ActiveFilter
-              key={item}
-              type={_.lowerCase(item).replace(/ /g, " ")}
-              value={
-                moment(filterData[item]?.value || filterData[item]).isValid()
-                  ? filterData[item]?.value || filterData[item]
-                  : _.lowerCase(filterData[item]?.value).replace(/ /g, " ")
-              }
-              onRemove={() => onRemoveFilter(item)}
-            />
-          );
-        }
-        return null;
-      });
-    }
-  };
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -224,7 +173,7 @@ const HomePage = () => {
       <div className="h-full md:pr-4">
         <div className="flex flex-col justify-start items-start h-full w-full gap-y-5">
           <div className="flex justify-between items-center w-fit mb-3 gap-1">
-            <div className="w-full sm:w-[120px]">
+            <div className="w-full sm:w-[200px]">
               <DashboardFilterDropdown
                 placeholder="Filter by: "
                 options={dateFilters}
@@ -306,6 +255,22 @@ const HomePage = () => {
         active={!!currentTxnDetails}
         transaction={currentTxnDetails}
         toggler={() => setCurrentTxnDetails(null)}
+      />
+
+      <DateRangeModal
+        active={dateFilter.value === "custom"}
+        toggler={() =>
+          setDateFilter({
+            value: `${moment(dateConstants?.startOfWeek).format(
+              "DD MMM"
+            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
+            label: `${moment(dateConstants?.startOfWeek).format(
+              "DD MMM"
+            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
+            start_date: dateConstants?.startOfWeek,
+            end_date: dateConstants?.endOfWeek,
+          })
+        }
       />
     </>
   );

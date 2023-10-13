@@ -8,7 +8,7 @@ const getMobileMarketingImagesQuery = ({ page }) => gql`
       total
       results {
         archive
-        categoryId
+        headerNavId
         updatedAt
         id
         imageUrl
@@ -194,13 +194,13 @@ const getMobilePagePostQuery = ({ id }) => gql`
 
 const createMobileMarketingImageQuery = gql`
   mutation createMobileMarketingImage(
-    $categoryId: String
+    $headerNavId: String
     $imageUrl: String!
     $isForYou: Boolean!
   ) {
     createMobileMarketingImage(
       createMobileMarketingImageInput: {
-        categoryId: $categoryId
+        headerNavId: $headerNavId
         imageUrl: $imageUrl
         isForYou: $isForYou
       }
@@ -212,14 +212,14 @@ const createMobileMarketingImageQuery = gql`
 
 const editMobileMarketingImageQuery = gql`
   mutation updateMobileMarketingImage(
-    $categoryId: String
+    $headerNavId: String
     $imageUrl: String
     $isForYou: Boolean
     $id: String!
   ) {
     updateMobileMarketingImage(
       updateMobileMarketingImageInput: {
-        categoryId: $categoryId
+        headerNavId: $headerNavId
         imageUrl: $imageUrl
         isForYou: $isForYou
         id: $id
