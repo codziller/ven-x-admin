@@ -286,8 +286,8 @@ const SideNav = ({
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
   const { resetProductStore } = ProductsStore;
   useEffect(() => {
-    warehouse_id && getWarehouse({ data: { id: warehouse_id } });
-  }, [warehouse_id, location.pathname]);
+    warehouse_id && userIsAdmin && getWarehouse({ data: { id: warehouse_id } });
+  }, [warehouse_id, location.pathname, userIsAdmin]);
 
   const handleLinks = (url) => {
     return {

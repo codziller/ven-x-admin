@@ -72,7 +72,6 @@ class OrdersStore {
 
       switch (status) {
         case INPROGRESS:
-          console.log("reshs7s88 statts: ", res);
           this.in_progressOrders = resResults;
           this.in_progressOrdersCount = res?.total;
 

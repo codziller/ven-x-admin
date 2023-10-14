@@ -93,6 +93,7 @@ export const getCurrentRole = () => {
 };
 const currentUserRole = getCurrentRole();
 export const isAdmin = currentUserRole?.includes("ADMIN");
+export const isBrandStaff = currentUserRole === "BRAND_STAFF";
 
 export const clearStorage = () => {
   try {

@@ -26,6 +26,9 @@ class AuthStore {
   get userIsAdmin() {
     return this?.user?.role?.includes("ADMIN");
   }
+  get userIsBrandStaff() {
+    return this?.user?.role === "BRAND_STAFF";
+  }
 
   // ====================================================
   // Actions

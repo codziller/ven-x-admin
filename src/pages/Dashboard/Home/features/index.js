@@ -29,10 +29,12 @@ import TransactionValueCard from "./TransactionValueCard";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
-import { isAdmin } from "utils/storage";
+import { isAdmin, isBrandStaff } from "utils/storage";
 import AuthStore from "pages/OnBoarding/SignIn/store";
+
 import HomeStore from "../store";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
+import { convertToJs } from "utils/functions";
 export const dateFilters = [
   {
     value: "today",
@@ -80,9 +82,11 @@ const HomePage = () => {
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
+
+  const [showDateModal, setShowDateModal] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
-  const { userIsAdmin } = AuthStore;
+  const { userIsAdmin, userIsBrandStaff, user } = AuthStore;
   const { getProductsCount, productsCount, loading } = ProductsStore;
   const { ordersCount, loading: orderLoading } = OrdersStore;
   const { getUsers, usersCount, loading: usersLoading } = UsersStore;
@@ -95,8 +99,20 @@ const HomePage = () => {
   } = HomeStore;
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
-    getUsers({ data: { page: 1 } });
+    userIsAdmin && getUsers({ data: { page: 1 } });
   }, []);
+
+  useEffect(() => {
+    if (isBrandStaff) {
+      getBrandHomePageStats({
+        data: {
+          endDate: dateFilter.end_date,
+          id: warehouse_id,
+          startDate: dateFilter.start_date,
+        },
+      });
+    }
+  }, [userIsBrandStaff, dateFilter, warehouse_id]);
 
   const params = qs.parse(location.hash?.substring(1));
 
@@ -168,6 +184,10 @@ const HomePage = () => {
 
   useEffect(() => scrollToTop(), [transactions]);
 
+  console.log("brandHomePageStats: ", convertToJs(brandHomePageStats));
+  console.log("isBrandStaff: ", isBrandStaff);
+  console.log("user: ", user);
+
   return (
     <>
       <div className="h-full md:pr-4">
@@ -178,7 +198,13 @@ const HomePage = () => {
                 placeholder="Filter by: "
                 options={dateFilters}
                 name="payout_filter"
-                onClick={(e) => setDateFilter(e)}
+                onClick={(e) => {
+                  if (e.value === "custom") {
+                    setShowDateModal(true);
+                    return;
+                  }
+                  setDateFilter(e);
+                }}
                 value={dateFilter?.label}
               />
             </div>
@@ -202,7 +228,7 @@ const HomePage = () => {
                   ? "#"
                   : `/dashboard/orders/${warehouse_id}`
               }
-              isLoading={orderLoading}
+              isLoading={statLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
@@ -213,6 +239,7 @@ const HomePage = () => {
                   ? "#"
                   : `/dashboard/orders/${warehouse_id}`
               }
+              isLoading={statLoading}
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
@@ -258,19 +285,25 @@ const HomePage = () => {
       />
 
       <DateRangeModal
-        active={dateFilter.value === "custom"}
-        toggler={() =>
+        active={showDateModal}
+        defaultDate={{
+          startDate: new Date(dateFilter.start_date),
+          endDate: new Date(dateFilter.end_date),
+          key: "selection",
+        }}
+        onApply={(date) =>
           setDateFilter({
-            value: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            label: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            start_date: dateConstants?.startOfWeek,
-            end_date: dateConstants?.endOfWeek,
+            value: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            label: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            start_date: date?.startDate,
+            end_date: date?.endDate,
           })
         }
+        toggler={() => setShowDateModal(false)}
       />
     </>
   );

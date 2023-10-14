@@ -23,6 +23,7 @@ const loginQuery = gql`
         email
         role
         gender
+        brandId
         warehouseStaff {
           warehouseId
         }

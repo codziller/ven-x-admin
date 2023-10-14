@@ -9,22 +9,27 @@ import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import ModalFooter from "components/General/Modal/ModalFooter/ModalFooter";
 import { Button } from "components/General/Button";
 
-const DateRangeModal = ({ active, toggler }) => {
-  const [selectionRange, setSelectionRange] = useState({
+const DateRangeModal = ({
+  active,
+  toggler,
+  defaultDate = {
     startDate: new Date(),
     endDate: new Date(),
     key: "selection",
-  });
+  },
+  onApply,
+}) => {
+  const [selectionRange, setSelectionRange] = useState(defaultDate);
 
   useEffect(() => {
-    // setSelectionRange(inflowSelectionRange);
-  }, []);
+    setSelectionRange(defaultDate);
+  }, [toggler]);
   const handleSelect = (ranges) => {
     setSelectionRange(ranges.selection);
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    onApply?.(selectionRange);
     toggler();
   };
   return (
@@ -44,9 +49,8 @@ const DateRangeModal = ({ active, toggler }) => {
         </ModalBody>
         <ModalFooter>
           <div className="flex justify-between items-center w-full ">
-            <div className="">
-              <Button type="submit" text="Ok" onClick={handleSubmit} />
-            </div>
+            <Button text="Cancel" onClick={toggler} />
+            <Button type="submit" text="Apply" onClick={handleSubmit} />
           </div>
         </ModalFooter>
       </form>
@@ -56,5 +60,7 @@ const DateRangeModal = ({ active, toggler }) => {
 DateRangeModal.propTypes = {
   active: PropTypes.bool,
   toggler: PropTypes.func,
+  onApply: PropTypes.func,
+  defaultDate: PropTypes.object,
 };
 export default DateRangeModal;

@@ -43,6 +43,7 @@ class HomeStore {
       res = res?.brandHomePageStats;
       this.brandHomePageStats = res;
     } catch (error) {
+      console.log("Error: ", error);
       this.brandHomePageStats = {};
       this.error = error;
     } finally {
