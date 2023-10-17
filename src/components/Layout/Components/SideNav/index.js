@@ -32,7 +32,7 @@ import { FcBusinesswoman } from "react-icons/fc";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import ProductsStore from "pages/Dashboard/Products/store";
 import { observer } from "mobx-react-lite";
-import { getUserInfoFromStorage, isAdmin } from "utils/storage";
+import { getUserInfoFromStorage } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
 import AuthStore from "pages/OnBoarding/SignIn/store";
 
@@ -48,7 +48,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
     ),
   },
 
-  ...(isAdmin || userIsAdmin
+  ...(userIsAdmin
     ? [
         {
           title: "Orders",
@@ -346,7 +346,7 @@ const SideNav = ({
         </span>
         <div className="w-full md:h-full space-y-[21px] md:space-y-6 pb-[15px] pr-4">
           <div className=" flex flex-col justify-start items-start pl-3 md:pl-6 w-full cursor-pointer transition-all duration-1000 ease-in-out pb-28">
-            {isAdmin && (
+            {userIsAdmin && (
               <div onClick={resetProductStore}>
                 <ProviderCard
                   provider={warehouse}

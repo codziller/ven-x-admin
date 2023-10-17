@@ -5,8 +5,9 @@ import {
   getUserInfoFromStorage,
 } from "../utils/storage";
 import AuthStore from "pages/OnBoarding/SignIn/store";
+import { observer } from "mobx-react-lite";
 function useAuth() {
-  const { logoutUser } = AuthStore;
+  const { logoutUser, setCurrentUser } = AuthStore;
   const currentUser = {};
   const userData = getUserInfoFromStorage();
   const token = getToken();
@@ -31,7 +32,7 @@ function useAuth() {
   }
 
   function setAuthenticatedUser(result) {
-    // dispatch(authActions.setCurrentUser(result));
+    setCurrentUser(result);
   }
 
   function initUserSession() {
@@ -53,4 +54,4 @@ function useAuth() {
   };
 }
 
-export { useAuth };
+export default useAuth;

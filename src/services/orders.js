@@ -26,6 +26,31 @@ const getOrdersQuery = ({ page, status }) => gql`
   }
 `;
 
+const getBrandOrdersQuery = ({ page, id, startDate, endDate }) => gql`
+  {
+    __typename
+    orders_by_brand_id(pageNumber: "${page}", id: "${id}",startDate: "${startDate}", endDate: "${endDate}") {
+      total
+      results {
+        calculatedOrder {
+          totalAmount
+          user {
+            firstName
+            lastName
+          }
+        }
+        id
+        deliveryMethod
+        orderCode
+        orderStatus
+        paid
+        paymentMethod
+        updatedAt
+      }
+    }
+  }
+`;
+
 const getOrdersCountQuery = ({ page }) => gql`
   {
     __typename
@@ -118,6 +143,10 @@ const deleteOrderQuery = gql`
 const apis = {
   getOrders: ({ page, status }) =>
     graphQlInstance(getOrdersQuery({ page, status }), {
+      method: "GET",
+    }),
+  getBrandOrders: ({ page, id, startDate, endDate }) =>
+    graphQlInstance(getBrandOrdersQuery({ page, id, startDate, endDate }), {
       method: "GET",
     }),
   getOrdersCount: ({ page }) =>

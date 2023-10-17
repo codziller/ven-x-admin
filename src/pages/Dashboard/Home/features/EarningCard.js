@@ -3,13 +3,14 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import { NAIRA } from "utils/appConstant";
+import { numberWithCommas } from "utils/formatter";
 
 const EarningCard = ({
   icon,
   title,
   value,
   link,
-  isDecimal,
+  decimalValue,
   isLoading,
   isAmount,
 }) => (
@@ -34,8 +35,10 @@ const EarningCard = ({
       ) : (
         <span className="text-2xl font-600 truncate max-w-full">
           {isAmount && NAIRA}
-          {value}
-          {isDecimal && <span className="font-500 text-[10px]">{".00"}</span>}
+          {numberWithCommas(value)}
+          {decimalValue ? (
+            <span className="font-500 text-[10px]">{"." + decimalValue}</span>
+          ) : null}
         </span>
       )}
     </div>
@@ -46,7 +49,7 @@ EarningCard.propTypes = {
   icon: PropTypes.element,
   title: PropTypes.string,
   value: PropTypes.string,
-  isDecimal: PropTypes.bool,
+  decimalValue: PropTypes.bool,
   isLoading: PropTypes.bool,
   isAmount: PropTypes.bool,
 };

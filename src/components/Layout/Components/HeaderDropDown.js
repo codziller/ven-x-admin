@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { getBusinessInitials } from "utils/functions";
 import { ReactComponent as UserCaret } from "assets/icons/user-caret.svg";
 import { getUserInfoFromStorage } from "utils/storage";
-import { useAuth } from "hooks/useAuth";
+import useAuth from "hooks/useAuth";
 const HeaderDropDown = () => {
   const domNode = useRef();
   const [active, setActive] = useState(false);

@@ -19,6 +19,6 @@ const dateConstants = {
   thisMonth: moment().format("MMMM"),
   lastMonth: moment().format("MMMM"),
   monthsOfYear: moment.months(),
-  firstDay: "2022-01-01",
+  firstDay: "2023-01-01",
 };
 export default dateConstants;

@@ -29,6 +29,10 @@ class OrdersStore {
   cancelledOrders = [];
   cancelledOrdersCount = null;
 
+  brandOrders = [];
+  brandOrdersCount = null;
+  brandOrdersLoading = null;
+
   error = null;
   loading = false;
   createOrderLoading = false;
@@ -56,6 +60,21 @@ class OrdersStore {
       this.error = error;
     } finally {
       this.searchLoading = false;
+    }
+  };
+
+  getBrandOrders = async ({ data }) => {
+    this.brandOrdersLoading = true;
+    try {
+      let res = await apis.getBrandOrders(data);
+      res = res?.orders_by_brand_id;
+      this.brandOrders = res?.results || [];
+      this.brandOrdersCount = res?.total;
+    } catch (error) {
+      console.log("bbsgt error: ", error);
+      this.error = error;
+    } finally {
+      this.brandOrdersLoading = false;
     }
   };
 

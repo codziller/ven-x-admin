@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite";
 import EmptyList from "./EmptyList";
 import { getUserInfoFromStorage } from "utils/storage";
 import { groupBy } from "lodash";
-import { useAuth } from "hooks/useAuth";
+import useAuth from "hooks/useAuth";
 import Tabs from "components/General/Tabs";
 
 const TABS = ["Warehouses", "Archived warehouses"];

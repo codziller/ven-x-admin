@@ -29,12 +29,12 @@ import TransactionValueCard from "./TransactionValueCard";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
-import { isAdmin, isBrandStaff } from "utils/storage";
 import AuthStore from "pages/OnBoarding/SignIn/store";
 
 import HomeStore from "../store";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
 import { convertToJs } from "utils/functions";
+import Amount from "components/General/Numbers/Amount";
 export const dateFilters = [
   {
     value: "today",
@@ -86,7 +86,7 @@ const HomePage = () => {
   const [showDateModal, setShowDateModal] = useState(false);
   const [searchInput, setSearchInput] = useState("");
 
-  const { userIsAdmin, userIsBrandStaff, user } = AuthStore;
+  const { userIsAdmin, userIsBrandStaff } = AuthStore;
   const { getProductsCount, productsCount, loading } = ProductsStore;
   const { ordersCount, loading: orderLoading } = OrdersStore;
   const { getUsers, usersCount, loading: usersLoading } = UsersStore;
@@ -103,7 +103,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    if (isBrandStaff) {
+    if (userIsBrandStaff) {
       getBrandHomePageStats({
         data: {
           endDate: dateFilter.end_date,
@@ -175,19 +175,8 @@ const HomePage = () => {
     }
   }, [searchInput]);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  useEffect(() => scrollToTop(), [transactions]);
-
   console.log("brandHomePageStats: ", convertToJs(brandHomePageStats));
-  console.log("isBrandStaff: ", isBrandStaff);
-  console.log("user: ", user);
-
+  const homepageStats = brandHomePageStats;
   return (
     <>
       <div className="h-full md:pr-4">
@@ -221,47 +210,37 @@ const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
             <EarningCard
               icon={<OrdersIcon className="scale-[0.8]" />}
-              title="Total Orders"
-              value={numberWithCommas(ordersCount)}
-              link={
-                !isAdmin && !userIsAdmin
-                  ? "#"
-                  : `/dashboard/orders/${warehouse_id}`
-              }
+              title="Orders"
+              value={homepageStats?.totalOrders}
+              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={statLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
-              value="₦‎ 2,000,000"
-              link={
-                !isAdmin && !userIsAdmin
-                  ? "#"
-                  : `/dashboard/orders/${warehouse_id}`
-              }
+              value={homepageStats?.totalRevenue}
+              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={statLoading}
+              decimalValue={"00"}
+              isAmount
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Products"
-              value={numberWithCommas(productsCount)}
-              link={
-                !isAdmin && !userIsAdmin
-                  ? "#"
-                  : `/dashboard/products/${warehouse_id}`
+              value={
+                userIsBrandStaff
+                  ? homepageStats?.totalProducts
+                  : numberWithCommas(productsCount)
               }
-              isLoading={loading}
+              link={!userIsAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
+              isLoading={loading || statLoading}
             />
-            {(isAdmin || userIsAdmin) && (
+            {userIsAdmin && (
               <EarningCard
                 icon={<CustomersIcon className="scale-[0.8]" />}
                 title="All Users"
                 value={numberWithCommas(usersCount)}
-                link={
-                  !isAdmin && !userIsAdmin
-                    ? "#"
-                    : `/dashboard/users/${warehouse_id}`
-                }
+                link={!userIsAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
                 isLoading={usersLoading}
               />
             )}

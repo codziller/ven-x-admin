@@ -1,6 +1,6 @@
 import { string, bool, node } from "prop-types";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "hooks/useAuth";
+import useAuth from "hooks/useAuth";
 import DashboardLayout from "components/Layout/DashboardLayout";
 import TestModeIndicator from "components/General/TestMode/TestModeIndicator";
 

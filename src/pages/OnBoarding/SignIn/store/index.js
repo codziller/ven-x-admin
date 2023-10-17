@@ -24,10 +24,13 @@ class AuthStore {
   // ====================================================
   // While MobX promotes OOP, we can still benefit from using FP where it's appropriate
   get userIsAdmin() {
-    return this?.user?.role?.includes("ADMIN");
+    return !!(
+      this?.user?.user?.role?.includes("ADMIN") ||
+      this?.user?.role?.includes("ADMIN")
+    );
   }
   get userIsBrandStaff() {
-    return this?.user?.role === "BRAND_STAFF";
+    return !!((this?.user?.user?.role || this?.user?.role) === "BRAND_STAFF");
   }
 
   // ====================================================

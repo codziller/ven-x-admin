@@ -3,7 +3,7 @@ import { ThemeProvider } from "styled-components";
 import Toast from "components/General/Toast/Toast";
 import theme from "themes";
 import Routes from "./routes";
-import { useAuth } from "./hooks/useAuth";
+import useAuth from "./hooks/useAuth";
 import "./App.css";
 
 function App() {

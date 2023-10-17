@@ -4,7 +4,7 @@ import {
   saveUserInfoToStorage,
   clearAccountCreation,
 } from "utils/storage";
-import { useAuth } from "./useAuth";
+import useAuth from "./useAuth";
 
 function useLogin() {
   const navigate = useNavigate();
