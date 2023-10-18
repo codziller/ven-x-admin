@@ -215,7 +215,7 @@ const BrandOrders = ({ isModal, isRecent }) => {
                         ? columns
                         : columns.slice(0, 2)
                     }
-                    onRowClicked={(e) => handleEdit(e)}
+                    onRowClicked={(e) => handleView(e)}
                     pointerOnHover
                     isLoading={brandOrdersLoading}
                     pageCount={brandOrdersCount / pageCount}

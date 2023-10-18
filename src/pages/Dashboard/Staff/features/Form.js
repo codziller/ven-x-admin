@@ -148,14 +148,17 @@ const Form = ({ details, toggler }) => {
       ...form,
       amount: "",
       transactionType: "",
-      staffId: staff_id,
-      phoneNumber: form.phoneNumber?.replace("+234", "0"),
+      userId: staff_id,
+      phoneNumber: staff_id ? "" : form.phoneNumber?.replace("+234", "0"),
       dob: staff_id ? "" : form.dob,
       email: staff_id ? "" : form.email,
-      phoneNumber: staff_id ? "" : form.phoneNumber,
       password: staff_id ? "" : form.password,
-      warehouseId: form?.warehouseId || warehouse_id,
+      warehouseId: form?.role?.includes("BRAND")
+        ? ""
+        : form?.warehouseId || warehouse_id,
     };
+
+    console.log("payload: ", payload);
 
     cleanPayload(payload);
     if (staff_id) {
@@ -441,7 +444,7 @@ const Form = ({ details, toggler }) => {
                   fullWidth
                 />
 
-                {staff_id && form?.role?.includes("BRAND") && (
+                {form?.role?.includes("BRAND") && (
                   <div className="flex flex-col justify-start items-end gap-1 w-full">
                     {!isEmpty(form?.brandId) && (
                       <p>

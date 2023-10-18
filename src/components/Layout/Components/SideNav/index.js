@@ -35,6 +35,7 @@ import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
 import AuthStore from "pages/OnBoarding/SignIn/store";
+import BrandsStore from "pages/Dashboard/Brands/store";
 
 const getLinks = (warehouse_id, user, userIsAdmin) => [
   {
@@ -277,7 +278,8 @@ const SideNav = ({
 }) => {
   const { warehouse_id } = useParams();
   const { user } = getUserInfoFromStorage();
-  const { userIsAdmin } = AuthStore;
+  const { userIsAdmin, userIsBrandStaff } = AuthStore;
+  const { getBrand, getBrandLoading, brand } = BrandsStore;
   const links = useMemo(
     () => getLinks(warehouse_id, user, userIsAdmin),
     [warehouse_id, user, userIsAdmin]
@@ -288,6 +290,11 @@ const SideNav = ({
   useEffect(() => {
     warehouse_id && userIsAdmin && getWarehouse({ data: { id: warehouse_id } });
   }, [warehouse_id, location.pathname, userIsAdmin]);
+  useEffect(() => {
+    warehouse_id &&
+      userIsBrandStaff &&
+      getBrand({ data: { id: warehouse_id } });
+  }, [warehouse_id, location.pathname, userIsBrandStaff]);
 
   const handleLinks = (url) => {
     return {
@@ -295,6 +302,7 @@ const SideNav = ({
     };
   };
 
+  const brandName = brand?.brandName;
   return (
     <>
       {withBackDrop && (
@@ -322,9 +330,17 @@ const SideNav = ({
               </span>
             </div>
 
-            <span className="text-grey-23 text-base">
-              {sidenavCollapsed ? "AD" : "Admin Dashboard"}
-            </span>
+            {userIsBrandStaff ? (
+              <span className="text-white text-base">
+                {sidenavCollapsed
+                  ? brandName?.substring(0, 2)
+                  : brandName + " Dashboard"}
+              </span>
+            ) : (
+              <span className="text-grey-23 text-base">
+                {sidenavCollapsed ? "AD" : "Admin Dashboard"}
+              </span>
+            )}
           </div>
         </div>
 

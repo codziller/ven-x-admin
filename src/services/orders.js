@@ -69,6 +69,7 @@ const getOrderQuery = ({ id }) => gql`
         }
         calculatedOrderProducts {
           product {
+            id
             name
             imageUrls
           }

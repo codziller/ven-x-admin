@@ -149,12 +149,13 @@ const Form = ({ details, toggler }) => {
       amount: "",
       transactionType: "",
       userId: user_id,
-      phoneNumber: form.phoneNumber?.replace("+234", "0"),
+      phoneNumber: user_id ? "" : form.phoneNumber?.replace("+234", "0"),
       dob: user_id ? "" : form.dob,
       email: user_id ? "" : form.email,
-      phoneNumber: user_id ? "" : form.phoneNumber,
       password: user_id ? "" : form.password,
-      warehouseId: form?.warehouseId || warehouse_id,
+      warehouseId: form?.role?.includes("BRAND")
+        ? ""
+        : form?.warehouseId || warehouse_id,
     };
 
     cleanPayload(payload);

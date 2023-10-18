@@ -211,7 +211,7 @@ const HomePage = () => {
             <EarningCard
               icon={<OrdersIcon className="scale-[0.8]" />}
               title="Orders"
-              value={homepageStats?.totalOrders}
+              value={userIsAdmin ? ordersCount : homepageStats?.totalOrders}
               link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={statLoading}
             />

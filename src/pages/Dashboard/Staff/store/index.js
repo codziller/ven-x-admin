@@ -5,6 +5,7 @@
 import { successToast } from "components/General/Toast/Toast";
 import { makeAutoObservable } from "mobx";
 import apis from "services/staffs";
+import userApis from "services/users";
 
 class StaffsStore {
   // ====================================================
@@ -92,7 +93,7 @@ class StaffsStore {
   createStaff = async ({ data, onSuccess, page }) => {
     this.createStaffLoading = true;
     try {
-      await apis.createStaff(data);
+      await userApis.createUser(data);
       successToast("Operation Successful!", "Staff created Successfully.");
       onSuccess?.();
       await this.getStaffs({ data: { page: page || 1 } });
@@ -105,7 +106,7 @@ class StaffsStore {
   editStaff = async ({ data, onSuccess, page }) => {
     this.editStaffLoading = true;
     try {
-      await apis.editStaff(data);
+      await userApis.editUser(data);
       successToast("Operation Successful!", "Staff updated Successfully.");
       onSuccess?.();
       await this.getStaffs({ data: { page: page || 1 } });

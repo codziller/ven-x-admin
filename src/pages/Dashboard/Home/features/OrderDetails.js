@@ -7,7 +7,7 @@ const DetailBlock = ({ title, value }) => (
     <p className="text-grey-label text-sm">{value}</p>
   </div>
 );
-const OrderDetails = ({ transaction }) => {
+const OrderDetails = () => {
   return (
     <div className="gap-y-4 py-4 w-full h-full pb-4">
       <h3 className="text-lg mb-5">Order Details</h3>

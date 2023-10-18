@@ -113,6 +113,10 @@ const Router = () => {
             path="edit/:warehouse_id/:product_id"
             element={<AddProduct />}
           />
+          <Route
+            path="view/:warehouse_id/:product_id"
+            element={<AddProduct />}
+          />
         </Route>
         {/* end products */}
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { useLocation } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 import {
@@ -55,6 +56,8 @@ const {
 const { grams, milliliters } = WEIGHT_TYPES;
 const Form = ({ details, toggler }) => {
   const { product_id } = useParams();
+  const location = useLocation();
+  const isViewMode = location.pathname.includes("/dashboard/products/view/");
   const { createProduct, product, editProduct, editProductOption } =
     ProductsStore;
   const { getCategories, categories } = CategoriesStore;
@@ -344,7 +347,7 @@ const Form = ({ details, toggler }) => {
         return;
       }
     }
-    console.log("val, prop: ", val, prop);
+
     const newOptions = form?.[prop]?.filter(
       (item) =>
         (item?.id ||
@@ -521,7 +524,9 @@ const Form = ({ details, toggler }) => {
         {!product_id ? (
           <h2 className="section-heading my-8 text-xl">Add New Product</h2>
         ) : (
-          <h2 className="section-heading my-8 text-xl  ">Edit Product</h2>
+          <h2 className="section-heading my-8 text-xl  ">
+            {isViewMode ? "View Product Details" : "Edit Product"}
+          </h2>
         )}
 
         <form
@@ -541,6 +546,7 @@ const Form = ({ details, toggler }) => {
               formError={errors.name}
               showFormError={formTwo?.showFormError}
               isRequired
+              isDisabled={isViewMode}
             />
             <Select
               label="Product Brand"
@@ -555,6 +561,7 @@ const Form = ({ details, toggler }) => {
               isLoading={loading}
               fullWidth
               isRequired
+              isDisabled={isViewMode}
             />
 
             <Select
@@ -569,6 +576,7 @@ const Form = ({ details, toggler }) => {
               showFormError={formTwo?.showFormError}
               tooltip="Ribbon to be attached with this product"
               fullWidth
+              isDisabled={isViewMode}
             />
 
             <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
@@ -583,7 +591,7 @@ const Form = ({ details, toggler }) => {
                 isRequired
                 tooltip="Weight in millimeters or grams"
                 type="number"
-                isDisabled={!form?.weightType}
+                isDisabled={!form?.weightType || isViewMode}
               />
               <div className="flex justify-center items-center w-full gap-6">
                 <CheckBox
@@ -595,6 +603,7 @@ const Form = ({ details, toggler }) => {
                     })
                   }
                   checked={form.weightType === milliliters}
+                  isDisabled={isViewMode}
                 />
 
                 <CheckBox
@@ -606,6 +615,7 @@ const Form = ({ details, toggler }) => {
                     })
                   }
                   checked={form.weightType === grams}
+                  isDisabled={isViewMode}
                 />
               </div>
             </div>
@@ -623,6 +633,7 @@ const Form = ({ details, toggler }) => {
               placeholder="Enter Product Description"
               formError={errors.productDescription}
               showFormError={formTwo?.showFormError}
+              isDisabled={isViewMode}
             />
             <Wysiwyg
               label="How To Use"
@@ -638,6 +649,7 @@ const Form = ({ details, toggler }) => {
               placeholder="Enter How To Use"
               formError={errors.howToUse}
               showFormError={formTwo?.showFormError}
+              isDisabled={isViewMode}
             />
             <Wysiwyg
               label="Product Ingredients"
@@ -653,6 +665,7 @@ const Form = ({ details, toggler }) => {
               placeholder="List Product Ingredients"
               formError={errors.productIngredients}
               showFormError={formTwo?.showFormError}
+              isDisabled={isViewMode}
             />
           </div>
           {/* Second section */}
@@ -668,7 +681,7 @@ const Form = ({ details, toggler }) => {
               prefix={"₦‎"}
               type="number"
               isRequired
-              isDisabled={!!product_id}
+              isDisabled={!!product_id || isViewMode}
             />
 
             <Input
@@ -695,6 +708,7 @@ const Form = ({ details, toggler }) => {
               tooltip="Selling price of this product"
               type="number"
               isRequired
+              isDisabled={isViewMode}
             />
 
             <div className="flex flex-col justify-start items-start gap-1">
@@ -716,6 +730,7 @@ const Form = ({ details, toggler }) => {
                 })
               }
               checked={form.isDiscountAllowed}
+              isDisabled={isViewMode}
             />
             {/* {form.isDiscountAllowed && (
               <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
@@ -781,6 +796,7 @@ const Form = ({ details, toggler }) => {
               removeImage={(file) =>
                 removeFile(file, "imageUrls", form.imageUrls)
               }
+              isDisabled={isViewMode}
               multiple
             />
             <ImagePicker
@@ -795,6 +811,7 @@ const Form = ({ details, toggler }) => {
               }
               placeholder="Drag 'n' drop some videos here, or click to select videos"
               type="video"
+              isDisabled={isViewMode}
               multiple
             />
           </div>
@@ -821,6 +838,7 @@ const Form = ({ details, toggler }) => {
                 })
               }
               checked={form.enablePreOrder}
+              isDisabled={isViewMode}
             />
 
             {form.enablePreOrder && (
@@ -835,6 +853,7 @@ const Form = ({ details, toggler }) => {
                   formError={errors.preOrderMessage}
                   showFormError={formTwo?.showFormError}
                   tooltip="Tell customers when this product will be shipped or delivered"
+                  isDisabled={isViewMode}
                 />
 
                 <div className="flex flex-col justify-start items-start">
@@ -857,6 +876,7 @@ const Form = ({ details, toggler }) => {
                       handleChangeTwo("no_limit", !formTwo.no_limit)
                     }
                     checked={formTwo.no_limit}
+                    isDisabled={isViewMode}
                   />
                   <div className="flex justify-start items-center gap-8 mt-3">
                     <CheckBox
@@ -865,6 +885,7 @@ const Form = ({ details, toggler }) => {
                         handleChangeTwo("no_limit", !formTwo.no_limit)
                       }
                       checked={!formTwo.no_limit}
+                      isDisabled={isViewMode}
                     />
 
                     {!formTwo.no_limit && (
@@ -878,6 +899,7 @@ const Form = ({ details, toggler }) => {
                           formError={errors.preOrderLimit}
                           showFormError={formTwo?.showFormError}
                           type="number"
+                          isDisabled={isViewMode}
                         />
                       </div>
                     )}
@@ -885,7 +907,7 @@ const Form = ({ details, toggler }) => {
                 </div>
               </>
             )}
-            {product_id && (
+            {product_id && !isViewMode && (
               <Button
                 onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
                 type="submit"
@@ -923,23 +945,20 @@ const Form = ({ details, toggler }) => {
                   })}
                 </div>
               )}
-              <Button
-                onClick={() =>
-                  handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
-                }
-                text="Select Categories"
-                icon={<Plus className="text-black current-svg" />}
-                className=""
-                whiteBg
-                fullWidth
-              />
-              <span
-                onClick={() => handleChangeTwo("modalType", PRODUCT_CATEGORY)}
-                className="text-sm text-blue flex justify-start items-center gap-1 cursor-pointer"
-              >
-                <Plus className="text-blue current-svg w-[16px]" /> Create
-                Category
-              </span>
+              {!isViewMode && (
+                <Button
+                  onClick={() =>
+                    handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
+                  }
+                  text="Select Categories"
+                  icon={<Plus className="text-black current-svg" />}
+                  className=""
+                  whiteBg
+                  fullWidth
+                  isDisabled={isViewMode}
+                />
+              )}
+
               <div className="h-[13px]">
                 {errors?.categoryIds && (
                   <FormErrorMessage type={errors?.categoryIds} />
@@ -977,6 +996,7 @@ const Form = ({ details, toggler }) => {
                   showFormError={formTwo?.showFormError}
                   type="number"
                   isRequired
+                  isDisabled={isViewMode}
                 />
 
                 <Input
@@ -997,6 +1017,7 @@ const Form = ({ details, toggler }) => {
                   }
                   type="number"
                   tooltip="When quantity is at this value, the product will be low in stock."
+                  isDisabled={isViewMode}
                 />
 
                 {!isEmpty(selectedInventories) && (
@@ -1015,6 +1036,7 @@ const Form = ({ details, toggler }) => {
                           </div>
                           {product_id && (
                             <span
+                              isDisabled={isViewMode}
                               onClick={() =>
                                 handleEditOption(item, "warehouseInventory")
                               }
@@ -1044,6 +1066,7 @@ const Form = ({ details, toggler }) => {
                   className=""
                   whiteBg
                   fullWidth
+                  isDisabled={isViewMode}
                 />
                 <hr className="w-full" />
               </>
@@ -1125,13 +1148,14 @@ const Form = ({ details, toggler }) => {
                         })}
                       </div>
 
-                      {item?.id && (
+                      {item?.id && !isViewMode && (
                         <Button
                           text={`Save Changes for ${item?.name}`}
                           onClick={() => handleSubmitProductOption(item)}
                           isLoading={formTwo.productOptionId === item?.id}
                           className="mt-2 mb-5 "
                           fullWidth
+                          isDisabled={isViewMode}
                         />
                       )}
                     </div>
@@ -1139,14 +1163,16 @@ const Form = ({ details, toggler }) => {
                 })}
               </div>
             )}
-            <Button
-              onClick={() => handleChangeTwo("modalType", PRODUCT_OPTION)}
-              text="Add Product Option"
-              icon={<Plus className="text-black current-svg" />}
-              className=""
-              whiteBg
-              fullWidth
-            />
+            {!isViewMode && (
+              <Button
+                onClick={() => handleChangeTwo("modalType", PRODUCT_OPTION)}
+                text="Add Product Option"
+                icon={<Plus className="text-black current-svg" />}
+                className=""
+                whiteBg
+                fullWidth
+              />
+            )}
             <hr className="w-full" />
             <div className="flex flex-col justify-start items-start gap-1">
               <span className="text-grey-text text-lg uppercase">
@@ -1198,15 +1224,19 @@ const Form = ({ details, toggler }) => {
                 })}
               </div>
             )}
-            <Button
-              onClick={() => handleChangeTwo("modalType", PRODUCT_SUBSCRIPTION)}
-              text="Add Subscription"
-              icon={<Plus className="text-black current-svg" />}
-              className=""
-              whiteBg
-              fullWidth
-            />
-            {!product_id && (
+            {!isViewMode && (
+              <Button
+                onClick={() =>
+                  handleChangeTwo("modalType", PRODUCT_SUBSCRIPTION)
+                }
+                text="Add Subscription"
+                icon={<Plus className="text-black current-svg" />}
+                className=""
+                whiteBg
+                fullWidth
+              />
+            )}
+            {!product_id && !isViewMode && (
               <Button
                 onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
                 type="submit"
@@ -1214,6 +1244,7 @@ const Form = ({ details, toggler }) => {
                 isLoading={formTwo.createLoading}
                 className="mt-10 mb-5 "
                 fullWidth
+                isDisabled={isViewMode}
               />
             )}
           </div>

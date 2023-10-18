@@ -6,29 +6,38 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { transactionAmount } from "utils/transactions";
 import classNames from "classnames";
-export const DetailBlock = ({ title, value, values, valueClassName }) => (
-  <div className={`flex flex-col justify-center items-start w-full gap-2 px-4`}>
-    <h6 className="text-base">{title}</h6>
-    {value && (
-      <p className={classNames("text-grey-label text-sm", valueClassName)}>
-        {value}
-      </p>
-    )}
-    {values?.map((item, i) => (
-      <div className="flex justify-start items-center gap-2 w-full">
-        <img
-          src={item?.product?.imageUrls?.[0]}
-          className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
-          alt={item?.product?.name}
-        />
-        <p key={i} className="text-grey-label text-sm truncate max-w-[60%]">
-          {item?.product?.name}{" "}
-          <span className="text-red">x{item?.quantity}</span>
+import { Link, useParams } from "react-router-dom";
+export const DetailBlock = ({ title, value, values, valueClassName }) => {
+  const { warehouse_id } = useParams();
+  return (
+    <div
+      className={`flex flex-col justify-center items-start w-full gap-2 px-4`}
+    >
+      <h6 className="text-base">{title}</h6>
+      {value && (
+        <p className={classNames("text-grey-label text-sm", valueClassName)}>
+          {value}
         </p>
-      </div>
-    ))}
-  </div>
-);
+      )}
+      {values?.map((item, i) => (
+        <Link
+          to={`/dashboard/products/view/${warehouse_id}/${item?.product?.id}`}
+          className="flex justify-start items-center gap-2 w-full underline"
+        >
+          <img
+            src={item?.product?.imageUrls?.[0]}
+            className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
+            alt={item?.product?.name}
+          />
+          <p key={i} className="text-grey-label text-sm truncate max-w-[60%]">
+            {item?.product?.name}{" "}
+            <span className="text-red">x{item?.quantity}</span>
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+};
 const OrderDetails = ({ details }) => {
   const { getOrder, getOrderLoading, order } = OrdersStore;
 
