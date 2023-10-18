@@ -25,6 +25,7 @@ class CategoriesStore {
   deleteCategoryLoading = false;
   createHeaderNavLoading = false;
   editHeaderNavLoading = false;
+  editHeaderNavPositionLoading = false;
   deleteHeaderNavLoading = false;
   categoryBrands = null;
   loadingCategoryBrands = false;
@@ -175,6 +176,24 @@ class CategoriesStore {
       this.error = error;
     } finally {
       this.editHeaderNavLoading = false;
+    }
+  };
+
+  editHeaderNavPosition = async ({ data, onSuccess, noAlert }) => {
+    this.editHeaderNavPositionLoading = true;
+    try {
+      await apis.editHeaderNavPosition(data);
+      !noAlert &&
+        successToast(
+          "Operation Successful!",
+          "HeaderNav positions updated Successfully."
+        );
+      onSuccess?.();
+      await this.getHeaderNavs();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editHeaderNavPositionLoading = false;
     }
   };
 

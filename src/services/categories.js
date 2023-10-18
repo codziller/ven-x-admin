@@ -115,6 +115,17 @@ const editHeaderNavQuery = gql`
     }
   }
 `;
+
+const editHeaderNavPositionQuery = gql`
+  mutation updateMultipleHeaderNavPositions($headerNavIds: [String!]!) {
+    updateMultipleHeaderNavPositions(
+      updateHeaderNavPositionQuery: { headerNavIds: $headerNavIds }
+    ) {
+      id
+    }
+  }
+`;
+
 const editCategoryQuery = gql`
   mutation updateCategory(
     $id: String!
@@ -195,7 +206,10 @@ const apis = {
     graphQlInstance(editHeaderNavQuery, {
       variables,
     }),
-
+  editHeaderNavPosition: (variables) =>
+    graphQlInstance(editHeaderNavPositionQuery, {
+      variables,
+    }),
   deleteHeaderNav: (variables) =>
     graphQlInstance(deleteHeaderNavQuery, {
       variables,

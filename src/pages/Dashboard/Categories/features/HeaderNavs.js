@@ -42,6 +42,8 @@ const HeaderNavs = () => {
     loadingHeaderNavs,
     categoryBrands,
     getCategoryBrands,
+    editHeaderNavPosition,
+    editHeaderNavPositionLoading,
   } = CategoriesStore;
 
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
@@ -66,13 +68,24 @@ const HeaderNavs = () => {
 
   useEffect(() => scrollToTop(), [headerNavs]);
 
+  const saveHeaderNavsArray = () => {
+    editHeaderNavPosition({
+      data: {
+        headerNavIds: headerNavsArray?.map((item) => item?.id),
+      },
+    });
+  };
   console.log("headerNavsArray: ", headerNavsArray);
   return (
     <>
       <div className="h-full md:pr-4">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
           <div className="flex justify-between items-center w-full mb-3 gap-1">
-            <div className="" />
+            <Button
+              text="Save Header Nav Positions"
+              onClick={saveHeaderNavsArray}
+              isLoading={editHeaderNavPositionLoading}
+            />
             <Button
               text="Add Header Nav"
               icon={<Plus className="stroke-current" />}
@@ -87,7 +100,7 @@ const HeaderNavs = () => {
             <CircleLoader blue />
           ) : (
             <>
-              <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
+              <div className="flex flex-col flex-grow justify-start items-center w-full">
                 {headerNavsArray?.length > 0 ? (
                   <div
                     onMouseLeave={() => setActiveNav("")}
