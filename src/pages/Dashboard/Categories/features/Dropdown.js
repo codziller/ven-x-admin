@@ -7,7 +7,7 @@ const Dropdown = ({ categories }) => {
   return (
     <div
       className={classNames(
-        "grid grid-cols-4 gap-x-10 gap-y-8 justify-start items-start w-fit text-base transition-all duration-150 ease-in-out bg-white h-fit px-6 py-8  z-30 font-medium absolute animate-slide -left-[50px] top-[55px]",
+        "grid grid-cols-4 gap-x-10 gap-y-8 justify-start items-start w-fit text-base transition-all duration-150 ease-in-out bg-white h-fit px-6 py-8  z-30 font-medium absolute animate-slide -left-[100px] top-[30px]",
         {
           "min-w-[160px] max-w-[160px]": linksLength === 1,
           "min-w-[320px] max-w-[320px]": linksLength === 2,
