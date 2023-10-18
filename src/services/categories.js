@@ -10,6 +10,7 @@ const getCategoriesQuery = () => gql`
       name
       parentCategoryId
       position
+      headerNavId
       subCategories {
         id
         createdAt

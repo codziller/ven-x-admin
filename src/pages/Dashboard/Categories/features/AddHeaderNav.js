@@ -20,9 +20,9 @@ import { isArray } from "lodash";
 const AddHeaderNav = ({ details, toggler }) => {
   const {
     createHeaderNav,
-    createHeaderNavLoading,
     editHeaderNav,
-    editHeaderNavLoading,
+    deleteHeaderNav,
+    deleteHeaderNavLoading,
   } = CategoriesStore;
 
   const [formTwo, setFormTwo] = useState({
@@ -96,6 +96,9 @@ const AddHeaderNav = ({ details, toggler }) => {
     }
   };
 
+  const handleOnDelete = () => {
+    deleteHeaderNav({ data: { id: details?.id }, onSuccess: () => toggler() });
+  };
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
@@ -145,9 +148,19 @@ const AddHeaderNav = ({ details, toggler }) => {
             isLoading={formTwo.createLoading}
             type="submit"
             text={details?.isAdd ? "Add Header Nav" : "Save Changes"}
-            className="mb-5 "
+            className="mb-2 "
             fullWidth
           />
+          {!details?.isAdd ? (
+            <Button
+              onClick={handleOnDelete}
+              isLoading={deleteHeaderNavLoading}
+              text={"Delete Header Nav"}
+              className="mb-5 "
+              redBg
+              fullWidth
+            />
+          ) : null}
         </form>
       </div>
     </>

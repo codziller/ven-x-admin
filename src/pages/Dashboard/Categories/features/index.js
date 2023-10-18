@@ -69,6 +69,9 @@ const CategoriesPage = () => {
     setSearchResults(filteredResults);
   };
 
+  const handleEdit = (row) => {
+    setCurrentTxnDetails({ ...row, modalType: "edit" });
+  };
   const columns = [
     {
       name: "Category Name",
@@ -78,7 +81,11 @@ const CategoriesPage = () => {
     {
       name: "Subcategories",
       minWidth: isMobile ? "35%" : "40%",
-      selector: (row) => <div>{flattenArrayToString(row.subCategories)}</div>,
+      selector: (row) => (
+        <div onClick={() => handleEdit(row)}>
+          {flattenArrayToString(row.subCategories)}
+        </div>
+      ),
       sortable: false,
     },
     {
@@ -93,7 +100,7 @@ const CategoriesPage = () => {
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
           <span
-            onClick={() => setCurrentTxnDetails({ ...row, modalType: "edit" })}
+            onClick={() => handleEdit(row)}
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
           >
             Edit
@@ -160,9 +167,7 @@ const CategoriesPage = () => {
                     <Table
                       data={searchResults}
                       columns={width >= 640 ? columns : columns.slice(0, 2)}
-                      onRowClicked={(e) => {
-                        setCurrentTxnDetails({ ...e, modalType: "edit" });
-                      }}
+                      onRowClicked={(row) => handleEdit(row)}
                       pointerOnHover
                       isLoading={loading}
                       pageCount={categories?.length / pageCount}
