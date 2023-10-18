@@ -12,6 +12,10 @@ import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import CategoriesStore from "../store";
 import cleanPayload from "utils/cleanPayload";
+import ImagePicker from "components/General/Input/ImagePicker";
+import { errorToast } from "components/General/Toast/Toast";
+import { uploadImageToCloud } from "utils/uploadImagesToCloud";
+import { isArray } from "lodash";
 
 const AddHeaderNav = ({ details, toggler }) => {
   const {
@@ -26,7 +30,7 @@ const AddHeaderNav = ({ details, toggler }) => {
     subcategories: details?.subCategories,
     subcategory: "",
     deletingSubcategories: [],
-    editLoading: false,
+    createLoading: false,
   });
 
   const schema = yup.object({
@@ -35,6 +39,7 @@ const AddHeaderNav = ({ details, toggler }) => {
 
   const defaultValues = {
     name: details?.name,
+    imageUrl: details?.id ? details?.imageUrl : [],
   };
 
   const {
@@ -52,20 +57,45 @@ const AddHeaderNav = ({ details, toggler }) => {
     setValue(prop, val);
     await trigger(prop);
   };
+  const handleChangeTwo = async (prop, val) => {
+    setFormTwo({ ...formTwo, [prop]: val });
+  };
 
   const form = {
     name: watch("name"),
+    imageUrl: watch("imageUrl"),
   };
 
   const handleOnSubmit = async (e) => {
-    const payload = { name: form.name, id: details?.id };
-    cleanPayload(payload);
-    if (details.isAdd) {
-      createHeaderNav({ data: payload, onSuccess: () => toggler() });
-    } else {
-      editHeaderNav({ data: payload, onSuccess: () => toggler() });
+    handleChangeTwo("createLoading", true);
+
+    try {
+      const imagesUrls = await uploadImageToCloud(
+        isArray(form?.imageUrl) ? form?.imageUrl?.[0] : form?.imageUrl
+      );
+      const payload = {
+        name: form.name,
+        id: details?.id,
+        imageUrl: imagesUrls,
+      };
+
+      cleanPayload(payload);
+      if (details.isAdd) {
+        createHeaderNav({ data: payload, onSuccess: () => toggler() });
+      } else {
+        editHeaderNav({ data: payload, onSuccess: () => toggler() });
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+      errorToast(
+        "Error!",
+        "Error encountered uploading images. Kindly Check the image format."
+      );
+    } finally {
+      handleChangeTwo("createLoading", false);
     }
   };
+
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
@@ -101,9 +131,18 @@ const AddHeaderNav = ({ details, toggler }) => {
             required
           />
 
+          <ImagePicker
+            label="Header Nav Image"
+            handleDrop={(val) => handleChange("imageUrl", val)}
+            images={form.imageUrl}
+            formError={errors.imageUrl}
+            showFormError={formTwo?.showFormError}
+            multiple={false}
+          />
+
           <Button
             onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-            isLoading={createHeaderNavLoading || editHeaderNavLoading}
+            isLoading={formTwo.createLoading}
             type="submit"
             text={details?.isAdd ? "Add Header Nav" : "Save Changes"}
             className="mb-5 "

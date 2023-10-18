@@ -60,6 +60,7 @@ const getHeaderNavsQuery = () => gql`
       }
       id
       name
+      imageUrl
       position
       createdAt
     }
@@ -95,16 +96,20 @@ const createCategoryQuery = gql`
 `;
 
 const createHeaderNavQuery = gql`
-  mutation createHeaderNav($name: String!) {
-    createHeaderNav(createHeaderNavInput: { name: $name }) {
+  mutation createHeaderNav($name: String!, $imageUrl: String!) {
+    createHeaderNav(
+      createHeaderNavInput: { name: $name, imageUrl: $imageUrl }
+    ) {
       name
     }
   }
 `;
 
 const editHeaderNavQuery = gql`
-  mutation updateHeaderNav($name: String!, $id: String!) {
-    updateHeaderNav(updateHeaderNavInput: { name: $name, id: $id }) {
+  mutation updateHeaderNav($name: String!, $id: String!, $imageUrl: String!) {
+    updateHeaderNav(
+      updateHeaderNavInput: { name: $name, id: $id, imageUrl: $imageUrl }
+    ) {
       id
     }
   }

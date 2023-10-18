@@ -128,7 +128,7 @@ const HeaderNavs = () => {
                       delay={1.5}
                     >
                       {headerNavsArray?.map(
-                        ({ name, categories, id }, i, arr) => (
+                        ({ imageUrl, name, categories, id }, i, arr) => (
                           <div
                             className={classNames(
                               " w-full h-full cursor-pointer relative"
@@ -140,6 +140,7 @@ const HeaderNavs = () => {
                               setCurrentTxnDetails({
                                 id,
                                 name,
+                                imageUrl,
                                 modalType: "editHeaderNav",
                                 isAdd: false,
                               })

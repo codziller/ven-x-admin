@@ -145,7 +145,6 @@ const Form = observer(() => {
     }
   }, [form.discountType, form.discountValue]);
 
-  console.log("position: ", position);
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
 
@@ -174,7 +173,6 @@ const Form = observer(() => {
         return;
       }
     } catch (error) {
-      console.log("error: ", error);
       errorToast(
         "Error!",
         "Error encountered uploading images. Kindly Check the image format."
