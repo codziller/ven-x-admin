@@ -174,7 +174,7 @@ const BrandsPage = ({
 
     {
       name: "Category",
-      selector: (row) => row.category.name,
+      selector: (row) => row?.category?.name,
       sortable: true,
     },
     {

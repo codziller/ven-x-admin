@@ -53,8 +53,6 @@ const Form = ({ details, toggler }) => {
 
   const schema = yup.object({
     brandName: yup.string().required("Please enter brand name"),
-    brandDescription: yup.string().required("Please enter brand description"),
-    brandShortText: yup.string().required("Please enter brand short text"),
     brandLogoUrl: yup
       .array()
       .min(1, "Please select brand logo")
@@ -158,8 +156,6 @@ const Form = ({ details, toggler }) => {
           imageUrls: imagesUrls?.[1],
           videoUrls: imagesUrls?.[2],
         };
-
-        cleanPayload(payload);
 
         await editBrand({ data: payload, onSuccess: () => toggler?.() });
         return;
