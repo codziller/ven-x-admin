@@ -408,17 +408,31 @@ const Form = ({ details, toggler }) => {
   };
 
   const handleSubmitProductOption = async (option) => {
-    console.log("option: ", option);
-    handleChangeTwo("productOptionId", option?.id);
-    const payload = { ...option, id: "" };
-    cleanPayload(payload);
-    await editProductOption({
-      product_id,
-      data: payload,
-      onSuccess: () => navigate(-1),
-    });
-
-    handleChangeTwo("productOptionId", "");
+    try {
+      console.log("option: ", option);
+      handleChangeTwo("productOptionId", option?.id || option?.name);
+      if (option?.id) {
+        const payload = { ...option, id: "" };
+        await editProductOption({
+          product_id,
+          data: payload,
+          onSuccess: () => navigate(-1),
+        });
+      } else {
+        const payload = { ...option, id: "" };
+        cleanPayload(payload);
+        await editProductOption({
+          product_id,
+          data: payload,
+          onSuccess: () => navigate(-1),
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      errorToast("Error", "Error encountered. Please conatact admin");
+    } finally {
+      handleChangeTwo("productOptionId", "");
+    }
   };
   const handleOnSubmit = async () => {
     const flattenedProductChoices = flatMap(
@@ -1114,7 +1128,7 @@ const Form = ({ details, toggler }) => {
                         Choices ({item?.choices?.length})
                       </span>
 
-                      <div className="flex justify-start items-center gap-3">
+                      <div className="flex justify-start items-center gap-3 flex-wrap">
                         {item?.choices?.map((choice) => {
                           return (
                             <div
@@ -1155,7 +1169,19 @@ const Form = ({ details, toggler }) => {
                           isLoading={formTwo.productOptionId === item?.id}
                           className="mt-2 mb-5 "
                           fullWidth
-                          isDisabled={isViewMode}
+                          isDisabled={isViewMode || formTwo.productOptionId}
+                        />
+                      )}
+                      {product_id && !item?.id && !isViewMode && (
+                        <Button
+                          text={`Save ${item?.name}`}
+                          onClick={() => handleSubmitProductOption(item)}
+                          isLoading={
+                            formTwo.productOptionId === (item?.id || item?.name)
+                          }
+                          className="mt-2 mb-5 "
+                          fullWidth
+                          isDisabled={isViewMode || formTwo.productOptionId}
                         />
                       )}
                     </div>

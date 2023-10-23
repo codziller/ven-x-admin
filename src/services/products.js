@@ -288,6 +288,41 @@ const editProductVariantQuery = gql`
     }
   }
 `;
+const createProductOptionQuery = gql`
+  mutation createProductOption(
+    $createProductOptionInput: CreateProductOptionInput!
+    $productId: String!
+  ) {
+    createProductOption(
+      createProductOptionInput: $createProductOptionInput
+      productId: $productId
+    ) {
+      id
+    }
+  }
+`;
+const createProductCategoryQuery = gql`
+  mutation createProductCategory($categoryId: String!, $productId: String!) {
+    createProductCategory(categoryId: $categoryId, productId: $productId) {
+      id
+    }
+  }
+`;
+
+const createProductSubscriptionQuery = gql`
+  mutation createProductSubscription(
+    $createProductSubscriptionInput: CreateProductOptionInput!
+    $productId: String!
+  ) {
+    createProductSubscription(
+      createProductSubscriptionInput: $createProductSubscriptionInput
+      productId: $productId
+    ) {
+      id
+    }
+  }
+`;
+
 const editProductOptionQuery = gql`
   mutation updateProductOption(
     $choiceDisplay: String!
@@ -548,6 +583,31 @@ const updateProductTransferRequestStatusQuery = gql`
     }
   }
 `;
+
+const deleteProductCategoryQuery = gql`
+  mutation removeProductCategory($id: String!) {
+    removeProductCategory(id: $id) {
+      status
+    }
+  }
+`;
+
+const deleteProductOptionQuery = gql`
+  mutation removeProductOption($id: String!) {
+    removeProductOption(id: $id) {
+      status
+    }
+  }
+`;
+
+const deleteProductSubscriptionQuery = gql`
+  mutation removeProductSubscription($id: String!) {
+    removeProductSubscription(id: $id) {
+      status
+    }
+  }
+`;
+
 const apis = {
   getProducts: ({ page }) =>
     graphQlInstance(getProductsQuery({ page }), {
@@ -601,6 +661,21 @@ const apis = {
       variables,
     }),
 
+  createProductOption: (variables) =>
+    graphQlInstance(createProductOptionQuery, {
+      variables,
+    }),
+
+  createProductCategory: (variables) =>
+    graphQlInstance(createProductCategoryQuery, {
+      variables,
+    }),
+
+  createProductSubscription: (variables) =>
+    graphQlInstance(createProductSubscriptionQuery, {
+      variables,
+    }),
+
   requestProducts: (variables) =>
     graphQlInstance(requestProductsQuery, {
       variables,
@@ -632,6 +707,19 @@ const apis = {
     }),
   updateProductTransferRequestStatus: (variables) =>
     graphQlInstance(updateProductTransferRequestStatusQuery, {
+      variables,
+    }),
+
+  deleteProductCategory: (variables) =>
+    graphQlInstance(deleteProductCategoryQuery, {
+      variables,
+    }),
+  deleteProductOption: (variables) =>
+    graphQlInstance(deleteProductOptionQuery, {
+      variables,
+    }),
+  deleteProductSubscription: (variables) =>
+    graphQlInstance(deleteProductSubscriptionQuery, {
       variables,
     }),
 };

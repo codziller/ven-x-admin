@@ -25,6 +25,7 @@ import { isArray, isEmpty, lowerCase } from "lodash";
 import { errorToast } from "components/General/Toast/Toast";
 import CheckBox from "components/General/Input/CheckBox";
 import { TailSpin } from "react-loader-spinner";
+import cleanPayload from "utils/cleanPayload";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
@@ -122,7 +123,7 @@ const Form = observer(() => {
         isForYou: !!(position === "forYou"),
         imageUrl: imagesUrls,
       };
-
+      cleanPayload(payload);
       if (!media_id) {
         await createMobileMarketingImage({
           data: payload,
