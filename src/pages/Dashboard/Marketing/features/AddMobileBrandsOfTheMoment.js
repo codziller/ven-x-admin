@@ -259,7 +259,7 @@ const Form = observer(() => {
                         }
                       >
                         Select the {lowerCase(form?.pageToLinkTo)} to be linked
-                        with this marketing image
+                        with this marketing image.
                       </label>
 
                       <div className="flex flex-col justify-start items-end gap-1 w-full">
