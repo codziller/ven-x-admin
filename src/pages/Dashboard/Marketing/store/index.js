@@ -18,6 +18,14 @@ class MarketingStore {
   createImageLoading = false;
   editImageLoading = false;
 
+  mobileBrandsOfTheMoments = [];
+  mobileBrandsOfTheMoment = null;
+  mobileBrandsOfTheMomentsCount = null;
+  loadingMobileBrandsOfTheMoments = false;
+  loadingMobileBrandsOfTheMoment = false;
+  createMobileBrandsOfTheMomentLoading = false;
+  editMobileBrandsOfTheMomentLoading = false;
+
   mobileMarketingImages = [];
   mobileMarketingImage = null;
   mobileMarketingImagesCount = null;
@@ -92,6 +100,33 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.loadingImage = false;
+    }
+  };
+
+  getMobileBrandsOfTheMoments = async ({ data }) => {
+    this.loadingMobileBrandsOfTheMoments = true;
+    try {
+      let res = await apis.getMobileBrandsOfTheMoments(data);
+      res = res?.mobileBrandsOfTheMoments;
+      this.mobileBrandsOfTheMoments = res?.results || [];
+      this.mobileBrandsOfTheMomentsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingMobileBrandsOfTheMoments = false;
+    }
+  };
+
+  getMobileBrandsOfTheMoment = async ({ data }) => {
+    this.loadingMobileBrandsOfTheMoment = true;
+    try {
+      let res = await apis.getMobileBrandsOfTheMoment(data);
+      res = res?.mobileBrandsOfTheMoment;
+      this.mobileBrandsOfTheMoment = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingMobileBrandsOfTheMoment = false;
     }
   };
 
@@ -294,6 +329,40 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.editPromoBannerLoading = false;
+    }
+  };
+
+  createMobileBrandsOfTheMoment = async ({ data, onSuccess, page }) => {
+    this.createMobileBrandsOfTheMomentLoading = true;
+    try {
+      await apis.createMobileBrandsOfTheMoment(data);
+      successToast(
+        "Operation Successful!",
+        "Mobile Brand Of the Moment Created Successfully."
+      );
+      onSuccess?.();
+      await this.getMobileBrandsOfTheMoments({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createMobileBrandsOfTheMomentLoading = false;
+    }
+  };
+
+  editMobileBrandsOfTheMoment = async ({ data, onSuccess, page }) => {
+    this.editMobileBrandsOfTheMomentLoading = true;
+    try {
+      await apis.editMobileBrandsOfTheMoment(data);
+      successToast(
+        "Operation Successful!",
+        "Mobile Brand Of the Moment Updated Successfully."
+      );
+      onSuccess?.();
+      await this.getMobileBrandsOfTheMoments({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editMobileBrandsOfTheMomentLoading = false;
     }
   };
 

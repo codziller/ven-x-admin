@@ -1,6 +1,43 @@
 import { gql } from "graphql-request";
 import { graphQlInstance } from "services";
 
+const getMobileBrandsOfTheMomentsQuery = ({ page }) => gql`
+  {
+    __typename
+    mobileBrandsOfTheMoments(pageNumber: "${page}") {
+      total
+      results {
+        dataId
+        headerNavId
+        id
+        imageUrl
+        isForYou
+        pageToLinkTo
+        subText
+        titleText
+        updatedAt
+      }
+    }
+  }
+`;
+
+const getMobileBrandsOfTheMomentQuery = ({ id }) => gql`
+  {
+    __typename
+    mobileBrandsOfTheMoment(id: "${id}") {
+      dataId
+      headerNavId
+      id
+      imageUrl
+      isForYou
+      pageToLinkTo
+      subText
+      titleText
+      updatedAt
+    }
+  }
+`;
+
 const getMobileMarketingImagesQuery = ({ page }) => gql`
   {
     __typename
@@ -190,6 +227,60 @@ const getMobilePagePostQuery = ({ id }) => gql`
         pageToLinkTo
         imageUrl
         position
+    }
+  }
+`;
+
+const createMobileBrandsOfTheMomentQuery = gql`
+  mutation createMobileBrandsOfTheMoment(
+    $dataId: String
+    $headerNavId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+    $pageToLinkTo: PageToLinkToEnum
+    $subText: String!
+    $titleText: String!
+  ) {
+    createMobileBrandsOfTheMoment(
+      createMobileBrandsOfTheMomentInput: {
+        dataId: $dataId
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        pageToLinkTo: $pageToLinkTo
+        subText: $subText
+        titleText: $titleText
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editMobileBrandsOfTheMomentQuery = gql`
+  mutation updateMobileBrandsOfTheMoment(
+    $dataId: String
+    $headerNavId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+    $pageToLinkTo: PageToLinkToEnum
+    $subText: String!
+    $titleText: String!
+    $id: String!
+  ) {
+    updateMobileBrandsOfTheMoment(
+      updateMobileBrandsOfTheMomentInput: {
+        dataId: $dataId
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        pageToLinkTo: $pageToLinkTo
+        subText: $subText
+        titleText: $titleText
+        id: $id
+      }
+    ) {
+      id
     }
   }
 `;
@@ -495,6 +586,16 @@ const deleteBrandQuery = gql`
 `;
 
 const apis = {
+  getMobileBrandsOfTheMoments: ({ page }) =>
+    graphQlInstance(getMobileBrandsOfTheMomentsQuery({ page }), {
+      method: "GET",
+    }),
+
+  getMobileBrandsOfTheMoment: ({ id }) =>
+    graphQlInstance(getMobileBrandsOfTheMomentQuery({ id }), {
+      method: "GET",
+    }),
+
   getMobileMarketingImages: ({ page }) =>
     graphQlInstance(getMobileMarketingImagesQuery({ page }), {
       method: "GET",
@@ -546,6 +647,16 @@ const apis = {
   getMobilePagePost: ({ id }) =>
     graphQlInstance(getMobilePagePostQuery({ id }), {
       method: "GET",
+    }),
+
+  createMobileBrandsOfTheMoment: (variables) =>
+    graphQlInstance(createMobileBrandsOfTheMomentQuery, {
+      variables,
+    }),
+
+  editMobileBrandsOfTheMoment: (variables) =>
+    graphQlInstance(editMobileBrandsOfTheMomentQuery, {
+      variables,
     }),
 
   createMobileMarketingImage: (variables) =>

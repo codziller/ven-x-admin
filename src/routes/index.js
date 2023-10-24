@@ -62,6 +62,7 @@ import AddPromoBanner from "pages/Dashboard/Marketing/features/AddPromoBanner";
 import AddMobileMarketingImage from "pages/Dashboard/Marketing/features/AddMobileMarketingImage";
 import AddDiscount from "pages/Dashboard/Marketing/features/AddDiscount";
 import AddStaff from "pages/Dashboard/Staff/features/AddStaff";
+import AddMobileBrandsOfTheMoment from "pages/Dashboard/Marketing/features/AddMobileBrandsOfTheMoment";
 
 const Router = () => {
   return (
@@ -395,6 +396,15 @@ const Router = () => {
           <Route
             path="edit-mobile-marketing-image/:warehouse_id/:position/:media_id"
             element={<AddMobileMarketingImage />}
+          />
+
+          <Route
+            path="add-mobile-brand-of-the-moment/:warehouse_id/:position"
+            element={<AddMobileBrandsOfTheMoment />}
+          />
+          <Route
+            path="edit-mobile-brand-of-the-moment/:warehouse_id/:position/:media_id"
+            element={<AddMobileBrandsOfTheMoment />}
           />
           <Route
             path="add-discount/:warehouse_id/:position"

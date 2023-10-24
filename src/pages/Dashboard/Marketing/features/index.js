@@ -9,6 +9,7 @@ import MobilePagePost from "./MobilePagePost";
 import PromoBanner from "./PromoBanner";
 import MobileMarketingImage from "./MobileMarketingImage";
 import Discount from "./Discount";
+import MobileBrandsOfTheMoment from "./MobileBrandsOfTheMoment";
 
 const options = [
   {
@@ -30,7 +31,11 @@ const MarketingPage = () => {
     },
     {
       name: "mobileMarketingImages",
-      label: "Marketing Images",
+      label: "Mobile Marketing Images",
+    },
+    {
+      name: "mobileBrandsOfTheMoment",
+      label: "Mobile Brands Of The Moment",
     },
     {
       name: "promoBanners",
@@ -64,8 +69,9 @@ const MarketingPage = () => {
           {activeTab === TABS[1].name ? <HomePagePost /> : null}
           {activeTab === TABS[2].name ? <MobilePagePost /> : null}
           {activeTab === TABS[3].name ? <MobileMarketingImage /> : null}
-          {activeTab === TABS[4].name ? <PromoBanner /> : null}
-          {activeTab === TABS[5].name ? <Discount /> : null}
+          {activeTab === TABS[4].name ? <MobileBrandsOfTheMoment /> : null}
+          {activeTab === TABS[5].name ? <PromoBanner /> : null}
+          {activeTab === TABS[6].name ? <Discount /> : null}
         </div>
       </div>
 
