@@ -65,10 +65,19 @@ const ProductsPage = ({
     searchResult,
     searchResultCount,
     searchProductLoading,
+    productsPrivate,
+    productsPrivateCount,
+    getPrivateProducts,
+    loadingPrivateProducts,
   } = ProductsStore;
 
   const TABS = [
     { name: "products", label: `Products (${productsCount || "-"})` },
+
+    {
+      name: "private",
+      label: `Private products (${productsPrivateCount || "-"})`,
+    },
     {
       name: "archived",
       label: `Archived products (${productsArchivedCount || "-"})`,
@@ -78,12 +87,14 @@ const ProductsPage = ({
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageArchived, setCurrentPageArchived] = useState(1);
+  const [currentPagePrivate, setCurrentPagePrivate] = useState(1);
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [activeTab, setActiveTab] = useState(TABS[0]?.name);
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
-  const isArchive = activeTab === TABS[1]?.name;
+  const isPrivate = activeTab === TABS[1]?.name;
+  const isArchive = activeTab === TABS[2]?.name;
 
   const handleSearch = async () => {
     if (!searchQuery) {
@@ -99,12 +110,24 @@ const ProductsPage = ({
           data: { page: currentPageArchived },
           warehouse_id,
         })
+      : isPrivate
+      ? getPrivateProducts({
+          data: { page: currentPagePrivate, isPrivate: true },
+          warehouse_id,
+        })
       : getProducts({ data: { page: currentPage }, warehouse_id });
   };
 
   useEffect(() => {
     isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch, currentPageArchived, isArchive]);
+  }, [
+    currentPage,
+    currentPageSearch,
+    currentPageArchived,
+    isArchive,
+    currentPagePrivate,
+    isPrivate,
+  ]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -222,24 +245,46 @@ const ProductsPage = ({
       ? searchResult
       : isArchive
       ? productsArchived
+      : isPrivate
+      ? productsPrivate
       : products;
-  }, [searchResult, products, productsArchived, isSearchMode, isArchive]);
+  }, [
+    searchResult,
+    products,
+    productsArchived,
+    isSearchMode,
+    isArchive,
+    isPrivate,
+    productsPrivate,
+  ]);
 
   const displayedProductsCount = useMemo(() => {
     return isSearchMode
       ? searchResultCount
       : isArchive
       ? productsArchivedCount
+      : isPrivate
+      ? productsPrivateCount
       : productsCount;
-  }, [searchResult, products, isSearchMode, productsArchivedCount]);
+  }, [
+    searchResult,
+    products,
+    isSearchMode,
+    productsArchivedCount,
+    productsPrivateCount,
+    isArchive,
+    isPrivate,
+  ]);
 
   const isLoading = useMemo(() => {
     return isSearchMode
       ? searchProductLoading
       : isArchive
       ? isEmpty(productsArchived) && loadingArchived
+      : isPrivate
+      ? isEmpty(productsPrivate) && loadingPrivateProducts
       : isEmpty(products) && loading;
-  }, [searchProductLoading, loadingArchived, loading]);
+  }, [searchProductLoading, loadingArchived, loadingPrivateProducts, loading]);
 
   useEffect(() => scrollToTop(), [displayedProducts]);
 
@@ -299,6 +344,8 @@ const ProductsPage = ({
                         ? setCurrentPageSearch(page)
                         : isArchive
                         ? setCurrentPageArchived(page)
+                        : isPrivate
+                        ? setCurrentPagePrivate(page)
                         : setCurrentPage(page)
                     }
                     currentPage={
@@ -306,6 +353,8 @@ const ProductsPage = ({
                         ? currentPageSearch
                         : isArchive
                         ? currentPageArchived
+                        : isPrivate
+                        ? currentPagePrivate
                         : currentPage
                     }
                     tableClassName="txn-section-table"
@@ -321,6 +370,8 @@ const ProductsPage = ({
                             ? `There are no results for your search '${searchQuery}'`
                             : isArchive
                             ? "There are currently no archived products"
+                            : isPrivate
+                            ? "There are currently no private products"
                             : "There are currently no products"}
                         </span>
                       }

@@ -161,6 +161,7 @@ const Form = ({ details, toggler }) => {
     howToUse: product_id ? product?.howToUse : "",
     productIngredients: product_id ? product?.productIngredients : "",
     enablePreOrder: product_id ? product?.enablePreOrder : false,
+    isPrivate: product_id ? product?.isPrivate : false,
     isDiscountAllowed: product_id ? product?.isDiscountAllowed : false,
     preOrderMessage: product_id ? product?.preOrderMessage : "",
     preOrderLimit: product_id ? product?.preOrderLimit : "",
@@ -208,6 +209,7 @@ const Form = ({ details, toggler }) => {
     imageUrls: watch("imageUrls"),
     videoUrls: watch("videoUrls"),
     enablePreOrder: watch("enablePreOrder"),
+    isPrivate: watch("isPrivate"),
     isDiscountAllowed: watch("isDiscountAllowed"),
     preOrderMessage: watch("preOrderMessage"),
     preOrderLimit: watch("preOrderLimit"),
@@ -921,6 +923,30 @@ const Form = ({ details, toggler }) => {
                 </div>
               </>
             )}
+            <hr className="w-full" />
+            <div className="flex flex-col justify-start items-start gap-1">
+              <span className="text-grey-text text-lg uppercase">
+                Product Visibility
+              </span>
+              <span className="text-grey-text text-sm">
+                Make this product private. If made private, the product will not
+                be visible on the app and website.
+              </span>
+            </div>
+
+            <CheckBox
+              label="Make this product private"
+              square
+              tooltip="Make this product private"
+              onChange={() =>
+                handleChange({
+                  prop: "isPrivate",
+                  val: !form.isPrivate,
+                })
+              }
+              checked={form.isPrivate}
+              isDisabled={isViewMode}
+            />
             {product_id && !isViewMode && (
               <Button
                 onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
@@ -931,8 +957,8 @@ const Form = ({ details, toggler }) => {
                 fullWidth
               />
             )}
-            <hr className="w-full" />
 
+            <hr className="w-full" />
             <div className="flex flex-col justify-start items-end gap-1 w-full">
               {!isEmpty(selectedCategories) && (
                 <div className="flex flex-wrap justify-start items-start gap-2 ">

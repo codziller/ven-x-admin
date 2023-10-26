@@ -16,6 +16,9 @@ class ProductsStore {
   productTransferRequest = null;
   productsCount = 0;
   productsArchived = [];
+  productsArchivedCount = 0;
+  productsPrivate = [];
+  productsPrivateCount = 0;
   searchResult = [];
   productTransferRequests = [];
   productRequests = [];
@@ -32,6 +35,7 @@ class ProductsStore {
   editProductSubscriptionLoading = false;
   editProductInventoryLoading = false;
   loadingArchived = false;
+  loadingPrivateProducts = false;
   searchProductLoading = false;
   deleteProductLoading = false;
   requestProductsLoading = false;
@@ -101,6 +105,20 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.loadingArchived = false;
+    }
+  };
+
+  getPrivateProducts = async ({ data }) => {
+    this.loadingPrivateProducts = true;
+    try {
+      let res = await apis.getPrivateProducts(data);
+      res = res?.products_by_private_status;
+      this.productsPrivate = res?.results || [];
+      this.productsPrivateCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingPrivateProducts = false;
     }
   };
 
@@ -374,6 +392,7 @@ class ProductsStore {
     this.editProductSubscriptionLoading = false;
     this.editProductInventoryLoading = false;
     this.loadingArchived = false;
+    this.loadingPrivateProducts = false;
     this.searchProductLoading = false;
     this.deleteProductLoading = false;
     this.requestProductsLoading = false;

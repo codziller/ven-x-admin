@@ -22,6 +22,7 @@ discountType
 discountValue
 isDiscountAllowed
 enablePreOrder
+isPrivate
 howToUse
 id
 name
@@ -144,6 +145,36 @@ const getProductsQuery = ({ page }) => gql`
   }
 `;
 
+const getPrivateProductsQuery = ({ page, isPrivate }) => gql`
+  {
+    __typename
+    products_by_private_status(pageNumber: "${page}",isPrivate:${isPrivate}) {
+      total
+      results {
+      brand {
+        brandName
+      }
+      categories {
+        name
+        }
+      id
+      name
+    
+      salePrice
+      imageUrls
+      archive
+      isPrivate
+      productCostPrice {
+        costPrice
+        updatedAt
+        id
+        quantityLeft
+      }
+      }
+    }
+  }
+`;
+
 const getProductsCountQuery = ({ page }) => gql`
   {
     __typename
@@ -162,6 +193,7 @@ const createProductQuery = gql`
     $discountValue: String
     $isDiscountAllowed: Boolean!
     $enablePreOrder: Boolean!
+    $isPrivate: Boolean!
     $howToUse: String
     $imageUrls: [String!]
     $name: String!
@@ -187,6 +219,7 @@ const createProductQuery = gql`
         discountValue: $discountValue
         isDiscountAllowed: $isDiscountAllowed
         enablePreOrder: $enablePreOrder
+        isPrivate: $isPrivate
         howToUse: $howToUse
         imageUrls: $imageUrls
         name: $name
@@ -217,6 +250,7 @@ const editProductQuery = gql`
     $discountValue: String
     $isDiscountAllowed: Boolean!
     $enablePreOrder: Boolean!
+    $isPrivate: Boolean!
     $howToUse: String
     $imageUrls: [String!]
     $name: String!
@@ -237,6 +271,7 @@ const editProductQuery = gql`
         discountValue: $discountValue
         isDiscountAllowed: $isDiscountAllowed
         enablePreOrder: $enablePreOrder
+        isPrivate: $isPrivate
         howToUse: $howToUse
         imageUrls: $imageUrls
         name: $name
@@ -613,6 +648,11 @@ const apis = {
     graphQlInstance(getProductsQuery({ page }), {
       method: "GET",
     }),
+  getPrivateProducts: ({ page, isPrivate }) =>
+    graphQlInstance(getPrivateProductsQuery({ page, isPrivate }), {
+      method: "GET",
+    }),
+
   getProductsCount: ({ page }) =>
     graphQlInstance(getProductsCountQuery({ page }), {
       method: "GET",
