@@ -121,7 +121,7 @@ const editHeaderNavPositionQuery = gql`
     updateMultipleHeaderNavPositions(
       updateHeaderNavPositionQuery: { headerNavIds: $headerNavIds }
     ) {
-      id
+      status
     }
   }
 `;
