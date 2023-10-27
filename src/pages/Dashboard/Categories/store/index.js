@@ -44,11 +44,9 @@ class CategoriesStore {
       res = res?.headerNavs;
 
       this.headerNavs =
-        res
-          ?.sort((a, b) => Number(b?.position) - Number(a?.position))
-          ?.map((item) => {
-            return { ...item, label: item?.name, value: item?.id };
-          }) || [];
+        res?.map((item) => {
+          return { ...item, label: item?.name, value: item?.id };
+        }) || [];
     } catch (error) {
       this.error = error;
     } finally {
