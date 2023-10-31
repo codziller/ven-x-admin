@@ -63,6 +63,7 @@ import AddMobileMarketingImage from "pages/Dashboard/Marketing/features/AddMobil
 import AddDiscount from "pages/Dashboard/Marketing/features/AddDiscount";
 import AddStaff from "pages/Dashboard/Staff/features/AddStaff";
 import AddMobileBrandsOfTheMoment from "pages/Dashboard/Marketing/features/AddMobileBrandsOfTheMoment";
+import EditInventory from "pages/Dashboard/Inventory/features/EditInventory";
 
 const Router = () => {
   return (
@@ -175,6 +176,10 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<InventoryPage />} />
+          <Route
+            path="edit/:warehouse_id/:product_id"
+            element={<EditInventory />}
+          />
         </Route>
         {/* end inventory */}
 

@@ -25,6 +25,7 @@ import CheckBox from "components/General/Input/CheckBox";
 const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
   const { productVariants, productOptions, salePrice, costPrice } = formObj;
   const { currentProductVariant, currentProductOption } = details;
+  const isInventory = details?.isInventory;
   const { product_id } = useParams();
   const isEdit = !isEmpty(currentProductVariant);
   console.log("currentProductVariant: ", currentProductVariant);
@@ -34,8 +35,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     editLoading: false,
   });
 
+  const inventorySchema = {
+    quantity: yup.string().required("Please enter variant name"),
+    lowInQuantityValue: yup.string().required("Please enter variant name"),
+  };
   const schema = yup.object({
     variantName: yup.string().required("Please enter variant name"),
+    ...(isInventory ? inventorySchema : {}),
   });
 
   const defaultValues = {
@@ -78,12 +84,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     variantName: watch("variantName"),
     variantCostPrice: watch("variantCostPrice"),
     variantSalePrice: watch("variantSalePrice"),
-    variantQuantity: watch("variantQuantity"),
     imageUrls: watch("imageUrls"),
     videoUrls: watch("videoUrls"),
     visibility: watch("visibility"),
     description: watch("description"),
     main: watch("main"),
+    quantity: watch("quantity"),
+    lowInQuantityValue: watch("lowInQuantityValue"),
   };
 
   useEffect(() => {
@@ -101,6 +108,8 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
       );
     }
   }, [form.main]);
+
+  console.log("currentProductVariant: ", currentProductVariant);
   const handleOnSubmit = async (e) => {
     if (isEdit) {
       try {
@@ -192,7 +201,9 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
         )}
 
         <p className="font-600 text-xl">
-          {isEdit ? "Edit Product Variant" : "Add Product Variant"}
+          {isEdit
+            ? `Edit Product Variant (${currentProductVariant?.variantName})`
+            : "Add Product Variant"}
         </p>
 
         <p className="mb-3 text-sm text-grey text-left">
@@ -210,68 +221,73 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
             </span>
           ) : null}
 
-          <CheckBox
-            label="Set this variant as main"
-            square
-            tooltip="Make this variant represent the default product."
-            onChange={() => handleChange("main", !form.main)}
-            checked={form.main}
-            isDisabled={!form?.main && mainChoice}
-          />
-
-          <Input
-            label="Variant Name"
-            value={form?.variantName}
-            onChangeFunc={(val) => handleChange("variantName", val)}
-            placeholder="Enter Variant Name"
-            formError={errors.variantName}
-            showFormError={formTwo?.showFormError}
-            isRequired
-            isDisabled={!currentProductVariant?.id}
-          />
-
-          <div className="flex flex-col md:flex-row justify-center items-start w-full gap-3 md:gap-6">
-            <Input
-              label="Variant Cost Price (₦‎)"
-              value={form?.variantCostPrice}
-              onChangeFunc={(val) => handleChange("variantCostPrice", val)}
-              placeholder="Enter Variant Cost Price"
-              formError={errors.variantCostPrice}
-              showFormError={formTwo?.showFormError}
-              prefix={"₦‎"}
-              type="number"
-              isDisabled={form.main}
-            />
-
-            <Input
-              label="Variant Sale Price (₦‎)"
-              labelControl={
-                profitMargin && (
-                  <span
-                    className={classNames("text-sm", {
-                      "text-red": profitMargin < 0,
-                      "text-green": profitMargin > 0,
-                      "text-grey-text": profitMargin === 0,
-                    })}
-                  >{`${
-                    profitMargin < 0 ? "Loss" : "Profit"
-                  }: ₦${numberWithCommas(profitMargin)}`}</span>
-                )
-              }
-              value={form?.variantSalePrice}
-              onChangeFunc={(val) => handleChange("variantSalePrice", val)}
-              placeholder="Enter Variant Sale Price"
-              formError={errors.variantSalePrice}
-              showFormError={formTwo?.showFormError}
-              prefix={"₦‎"}
-              tooltip="Selling price of this variant"
-              type="number"
-              isDisabled={form.main}
-            />
-          </div>
-
-          {!form.main && (
+          {isInventory ? null : (
             <>
+              <CheckBox
+                label="Set this variant as main"
+                square
+                tooltip="Make this variant represent the default product."
+                onChange={() => handleChange("main", !form.main)}
+                checked={form.main}
+                isDisabled={!form?.main && mainChoice}
+              />
+
+              <Input
+                label="Variant Name"
+                value={form?.variantName}
+                onChangeFunc={(val) => handleChange("variantName", val)}
+                placeholder="Enter Variant Name"
+                formError={errors.variantName}
+                showFormError={formTwo?.showFormError}
+                isRequired
+                isDisabled={!currentProductVariant?.id}
+              />
+
+              <div className="flex flex-col md:flex-row justify-center items-start w-full gap-3 md:gap-6">
+                <Input
+                  label="Variant Cost Price (₦‎)"
+                  value={form?.variantCostPrice}
+                  onChangeFunc={(val) => handleChange("variantCostPrice", val)}
+                  placeholder="Enter Variant Cost Price"
+                  formError={errors.variantCostPrice}
+                  showFormError={formTwo?.showFormError}
+                  prefix={"₦‎"}
+                  type="number"
+                  isDisabled={form.main}
+                />
+
+                <Input
+                  label="Variant Sale Price (₦‎)"
+                  labelControl={
+                    profitMargin && (
+                      <span
+                        className={classNames("text-sm", {
+                          "text-red": profitMargin < 0,
+                          "text-green": profitMargin > 0,
+                          "text-grey-text": profitMargin === 0,
+                        })}
+                      >{`${
+                        profitMargin < 0 ? "Loss" : "Profit"
+                      }: ₦${numberWithCommas(profitMargin)}`}</span>
+                    )
+                  }
+                  value={form?.variantSalePrice}
+                  onChangeFunc={(val) => handleChange("variantSalePrice", val)}
+                  placeholder="Enter Variant Sale Price"
+                  formError={errors.variantSalePrice}
+                  showFormError={formTwo?.showFormError}
+                  prefix={"₦‎"}
+                  tooltip="Selling price of this variant"
+                  type="number"
+                  isDisabled={form.main}
+                />
+              </div>
+            </>
+          )}
+
+          {isInventory ? (
+            <>
+              {" "}
               <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
                 <Input
                   label="Variant Quantity"
@@ -282,39 +298,50 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
                   showFormError={formTwo?.showFormError}
                   type="number"
                 />
-
-                <div className="w-full">
-                  <div
-                    className={classNames(
-                      "flex justify-start items-center gap-2 cursor-pointer w-fit",
-                      {
-                        "text-green-light": form.visibility,
-                        "text-grey-fade": !form.visibility,
-                      }
-                    )}
-                    onClick={() => handleChange("visibility", !form.visibility)}
+                <Input
+                  label="Variant Quantity"
+                  value={form?.variantQuantity}
+                  onChangeFunc={(val) => handleChange("variantQuantity", val)}
+                  placeholder="Enter Variant Quantity"
+                  formError={errors.variantQuantity}
+                  showFormError={formTwo?.showFormError}
+                  type="number"
+                />
+              </div>
+            </>
+          ) : null}
+          {!form.main && (
+            <>
+              <div className="w-full">
+                <div
+                  className={classNames(
+                    "flex justify-start items-center gap-2 cursor-pointer w-fit",
+                    {
+                      "text-green-light": form.visibility,
+                      "text-grey-fade": !form.visibility,
+                    }
+                  )}
+                  onClick={() => handleChange("visibility", !form.visibility)}
+                >
+                  <label
+                    className={
+                      "general-input-label mb-1 relative text-[13px] font-bold !flex justify-start items-center gap-1.5 cursor-pointer"
+                    }
                   >
-                    <label
-                      className={
-                        "general-input-label mb-1 relative text-[13px] font-bold !flex justify-start items-center gap-1.5 cursor-pointer"
-                      }
-                    >
-                      Visibility {form.visibility ? "On" : "Off"}
-                    </label>
-                    <span className="-mt-1">
-                      {form.visibility ? (
-                        <AiOutlineEye size={20} className="current-svg" />
-                      ) : (
-                        <AiOutlineEyeInvisible
-                          size={20}
-                          className="current-svg"
-                        />
-                      )}
-                    </span>
-                  </div>
+                    Visibility {form.visibility ? "On" : "Off"}
+                  </label>
+                  <span className="-mt-1">
+                    {form.visibility ? (
+                      <AiOutlineEye size={20} className="current-svg" />
+                    ) : (
+                      <AiOutlineEyeInvisible
+                        size={20}
+                        className="current-svg"
+                      />
+                    )}
+                  </span>
                 </div>
               </div>
-
               <ImagePicker
                 label=" Add Variant Image"
                 showFormError={formTwo?.showFormError && errors.imageUrls}

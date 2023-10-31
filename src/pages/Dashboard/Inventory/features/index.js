@@ -20,7 +20,7 @@ import ProductsStore from "pages/Dashboard/Products/store";
 import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import { numberWithCommas } from "utils/formatter";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "components/General/Button";
 import CheckBox from "components/General/Input/CheckBox";
 import Input from "components/General/Input/Input";
@@ -89,6 +89,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       label: `Archived products (${productsArchivedCount || "-"})`,
     },
   ];
+  const navigate = useNavigate();
   const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,7 +187,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       return;
     }
 
-    setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" });
+    navigate(`/dashboard/inventory/edit/${warehouse_id}/${row?.id}`);
   };
 
   const columns = [
