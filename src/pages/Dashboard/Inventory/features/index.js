@@ -377,7 +377,6 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
 
   useEffect(() => scrollToTop(), [displayedProducts]);
 
-  console.log("products: ", toJS(products));
   return (
     <>
       <div className={classNames("h-full w-full", { "md:pr-4": !isModal })}>

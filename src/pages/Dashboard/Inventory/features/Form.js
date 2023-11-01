@@ -11,11 +11,13 @@ import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductsStore from "pages/Dashboard/Products/store";
+import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import cleanPayload from "utils/cleanPayload";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
 import DetailsModal from "pages/Dashboard/Products/features/DetailsModal";
 import { isEmpty } from "lodash";
+import Select from "components/General/Input/Select";
 
 const { PRODUCT_VARIANT } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
@@ -30,9 +32,10 @@ const Form = ({ details, toggler }) => {
 
   const { editProductInventory, editProductInventoryLoading, product } =
     ProductsStore;
-
+  const { warehouses, loading } = WareHousesStore;
   const schema = yup.object({
     quantity: yup.string().required("Please enter product quantity"),
+    warehouseId: yup.string().required("Please select warehouse"),
   });
 
   const defaultValues = {
@@ -40,6 +43,7 @@ const Form = ({ details, toggler }) => {
     lowInQuantityValue: "",
     costPrice: "",
     productOptions: product_id ? product?.productOptions : [],
+    warehouseId: warehouse_id || "",
   };
 
   const {
@@ -65,6 +69,7 @@ const Form = ({ details, toggler }) => {
     quantity: watch("quantity"),
     costPrice: watch("costPrice"),
     productOptions: watch("productOptions"),
+    warehouseId: watch("warehouseId"),
   };
 
   const handleEditOption = (val, prop, rest) => {
@@ -87,14 +92,38 @@ const Form = ({ details, toggler }) => {
     });
   };
   const handleOnSubmit = (e) => {
+    const choiceInventory = form?.productOptions?.map((item) => {
+      return [
+        ...item?.choices?.map((choice, index) => {
+          if (choice?.main) {
+            return {
+              costPrice: form?.costPrice,
+              lowInQuantityValue: form?.lowInQuantityValue,
+              productOptionChoiceIndex: index,
+              productOptionId: item?.id,
+              quantity: form.quantity,
+            };
+          } else
+            return {
+              costPrice: choice?.costPrice,
+              lowInQuantityValue: choice?.lowInQuantityValue,
+              productOptionChoiceIndex: index,
+              productOptionId: item?.id,
+              quantity: form.quantity,
+            };
+        }),
+      ];
+    });
+    console.log("choiceInventory: ", choiceInventory);
     const payload = {
       ...form,
       productId: details?.id,
-      warehouseId: warehouse_id,
+      productOptions: null,
+      choiceInventory,
     };
     cleanPayload(payload);
     editProductInventory({
-      data: payload,
+      data: { costPrice: form.costPrice, products: [payload] },
       onSuccess: () => toggler(),
       page: details?.currentPage,
       warehouse_id,
@@ -176,9 +205,9 @@ const Form = ({ details, toggler }) => {
               Update Inventory for this product&apos;s variants
             </span>
 
-            {!isEmpty(product?.productOptions) && (
+            {!isEmpty(form?.productOptions) && (
               <div className="flex flex-wrap justify-start items-start gap-2 w-full">
-                {product?.productOptions?.map((item, i) => {
+                {form?.productOptions?.map((item, i) => {
                   return (
                     <div
                       key={i}
@@ -240,6 +269,28 @@ const Form = ({ details, toggler }) => {
           </div>
 
           <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
+            <span className="text-grey-text text-lg uppercase">
+              Inventory Warehouse
+            </span>
+            <span className="text-grey-text text-sm">
+              Select the warehouse to apply the inventory update to. Current
+              warehouse is already selected by default.
+            </span>
+            <Select
+              label="Select Warehouse"
+              placeholder="Select Warehouse"
+              options={warehouses}
+              onChange={(val) =>
+                handleChange({ prop: "warehouseId", val: val?.value })
+              }
+              value={warehouses?.find(
+                (item) => item?.value === form?.warehouseId
+              )}
+              formError={errors.warehouseId}
+              showFormError={formTwo?.showFormError}
+              isLoading={loading}
+              fullWidth
+            />
             <Button
               onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
               isLoading={editProductInventoryLoading}
