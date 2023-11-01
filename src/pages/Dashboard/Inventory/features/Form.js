@@ -28,6 +28,7 @@ const Form = ({ details, toggler }) => {
     currentProductOption: {},
     modalType: "",
     showFormError: false,
+    productOptionModified: false,
   });
 
   const { editProductInventory, editProductInventoryLoading, product } =
@@ -61,6 +62,9 @@ const Form = ({ details, toggler }) => {
     resolver: yupResolver(schema),
   });
   const handleChange = async ({ prop, val, rest, isFormTwo }) => {
+    if (prop === "productOptions") {
+      setFormTwo({ ...formTwo, productOptionModified: true });
+    }
     isFormTwo && setFormTwo({ ...formTwo, [prop]: val });
     const updatedVal = rest ? [...rest, ...val] : val;
     setValue(prop, updatedVal);
@@ -122,7 +126,7 @@ const Form = ({ details, toggler }) => {
       ...form,
       productId: product_id,
       productOptions: null,
-      choiceInventory,
+      choiceInventory: formTwo.productOptionModified ? choiceInventory : null,
     };
     cleanPayload(payload);
     editProductInventory({
@@ -174,11 +178,11 @@ const Form = ({ details, toggler }) => {
               showFormError={formTwo?.showFormError}
               type="number"
               isRequired
-              required
             />
 
             <Input
               label="Low in stock value"
+              isRequired
               value={form?.lowInQuantityValue}
               onChangeFunc={(val) =>
                 handleChange({ prop: "lowInQuantityValue", val })
