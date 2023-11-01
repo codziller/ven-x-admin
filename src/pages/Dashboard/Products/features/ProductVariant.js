@@ -38,6 +38,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
   const inventorySchema = {
     quantity: yup.string().required("Please enter variant name"),
     lowInQuantityValue: yup.string().required("Please enter variant name"),
+    costPrice: yup.string().required("Please enter variant cost price"),
   };
   const schema = yup.object({
     variantName: yup.string().required("Please enter variant name"),
@@ -48,12 +49,14 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     variantName: currentProductVariant?.variantName || "",
     variantCostPrice: currentProductVariant?.variantCostPrice || "",
     variantSalePrice: currentProductVariant?.variantSalePrice || "",
-    variantQuantity: currentProductVariant?.variantQuantity || "",
     imageUrls: currentProductVariant?.imageUrls || [],
     videoUrls: currentProductVariant?.videoUrls || [],
     visibility: currentProductVariant.visibility === false ? false : true,
     description: currentProductVariant?.description || "",
     main: !!currentProductVariant?.main,
+    quantity: "",
+    lowInQuantityValue: "",
+    costPrice: "",
   };
 
   const {
@@ -89,6 +92,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     main: watch("main"),
     quantity: watch("quantity"),
     lowInQuantityValue: watch("lowInQuantityValue"),
+    costPrice: watch("costPrice"),
   };
 
   useEffect(() => {
@@ -286,19 +290,19 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
             <>
               <Input
                 label="Variant Quantity"
-                value={form?.variantQuantity}
-                onChangeFunc={(val) => handleChange("variantQuantity", val)}
+                value={form?.quantity}
+                onChangeFunc={(val) => handleChange("quantity", val)}
                 placeholder="Enter Variant Quantity"
-                formError={errors.variantQuantity}
+                formError={errors.quantity}
                 showFormError={formTwo?.showFormError}
                 type="number"
               />
               <Input
-                label="Variant Quantity"
-                value={form?.variantQuantity}
-                onChangeFunc={(val) => handleChange("variantQuantity", val)}
-                placeholder="Enter Variant Quantity"
-                formError={errors.variantQuantity}
+                label="Variant Low In Stock Value"
+                value={form?.lowInQuantityValue}
+                onChangeFunc={(val) => handleChange("lowInQuantityValue", val)}
+                placeholder="Enter Variant Low In Stock Value"
+                formError={errors.lowInQuantityValue}
                 showFormError={formTwo?.showFormError}
                 type="number"
               />
@@ -385,7 +389,6 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
 
             <Button
               onClick={() => {
-                handleOnSubmit();
                 setFormTwo({ ...formTwo, showFormError: true });
               }}
               isLoading={formTwo.editLoading}
