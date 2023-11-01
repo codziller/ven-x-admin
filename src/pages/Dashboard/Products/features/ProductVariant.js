@@ -28,7 +28,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
   const isInventory = details?.isInventory;
   const { product_id } = useParams();
   const isEdit = !isEmpty(currentProductVariant);
-  console.log("currentProductVariant: ", currentProductVariant);
+
   const { editProductVariant } = ProductsStore;
   const [formTwo, setFormTwo] = useState({
     showFormError: false,
@@ -114,11 +114,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     if (isEdit) {
       try {
         handleChangeTwo("editLoading", true);
-        const imagesUrls = await Promise.all([
-          uploadImagesToCloud(form?.imageUrls),
-          uploadImagesToCloud(form?.videoUrls),
-        ]);
-
+        let imagesUrls = [];
+        if (form.imageUrls || form.videoUrls) {
+          imagesUrls = await Promise.all([
+            uploadImagesToCloud(form?.imageUrls),
+            uploadImagesToCloud(form?.videoUrls),
+          ]);
+        }
         const payload = {
           ...form,
           productVariantId: currentProductVariant?.id,
@@ -126,36 +128,30 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
           videoUrls: imagesUrls?.[1],
         };
         cleanPayload(payload);
-        if (currentProductVariant?.id) {
-          await editProductVariant({
-            product_id,
-            data: payload,
-            onSuccess: () => toggler?.(),
-          });
-        } else {
-          const newChoices = currentProductOption?.choices?.map((item) =>
-            cleanPayload(
-              item?.variantName === payload.variantName ? payload : item
-            )
-          );
-          const newProductOptions = productOptions?.map((item) => {
-            if (item?.name === currentProductOption?.name) {
-              return cleanPayload({
-                ...currentProductOption,
-                choices: newChoices,
-                productOptionId: currentProductOption?.id,
-              });
-            } else {
-              return item;
-            }
-          });
-          console.log("newProductOptions: ", newProductOptions);
-          handleOnChange({
-            prop: "productOptions",
-            val: newProductOptions,
-          });
-          toggler?.();
-        }
+        console.log("payload in variant: ", payload);
+
+        const newChoices = currentProductOption?.choices?.map((item) =>
+          cleanPayload(
+            item?.variantName === payload.variantName ? payload : item
+          )
+        );
+        const newProductOptions = productOptions?.map((item) => {
+          if (item?.name === currentProductOption?.name) {
+            return cleanPayload({
+              ...currentProductOption,
+              choices: newChoices,
+              productOptionId: currentProductOption?.id,
+            });
+          } else {
+            return item;
+          }
+        });
+        console.log("newProductOptions: ", newProductOptions);
+        handleOnChange({
+          prop: "productOptions",
+          val: newProductOptions,
+        });
+        toggler?.();
       } catch (error) {
         console.log("ERRor: ", error);
       } finally {
