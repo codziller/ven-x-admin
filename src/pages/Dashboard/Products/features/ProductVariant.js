@@ -56,8 +56,6 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     main: !!currentProductVariant?.main,
   };
 
-  console.log("currentProductOption: ", currentProductOption);
-
   const {
     handleSubmit,
     formState: { errors },
@@ -109,9 +107,9 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     }
   }, [form.main]);
 
-  console.log("currentProductVariant: ", currentProductVariant);
   const handleOnSubmit = async (e) => {
-    console.log("payload in variant: ", payload);
+    console.log("is edit: ", isEdit);
+
     if (isEdit) {
       try {
         handleChangeTwo("editLoading", true);
