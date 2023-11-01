@@ -384,7 +384,10 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
             />
 
             <Button
-              onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
+              onClick={() => {
+                handleOnSubmit();
+                setFormTwo({ ...formTwo, showFormError: true });
+              }}
               isLoading={formTwo.editLoading}
               type="submit"
               text={isEdit ? "Save Changes here right now" : "Add"}
