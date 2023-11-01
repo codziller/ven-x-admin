@@ -406,21 +406,10 @@ const editProductSubscriptionQuery = gql`
 `;
 const editProductInventoryQuery = gql`
   mutation updateMultipleProductInventory(
-    $lowInQuantityValue: String!
-    $productId: String!
-    $quantity: String!
-    $warehouseId: String!
     $costPrice: String
+    $products: [UpdateProductInventoryInput!]!
   ) {
-    updateMultipleProductInventory(
-      products: {
-        lowInQuantityValue: $lowInQuantityValue
-        productId: $productId
-        quantity: $quantity
-        warehouseId: $warehouseId
-        costPrice: $costPrice
-      }
-    ) {
+    updateMultipleProductInventory(products: $products, costPrice: $costPrice) {
       status
     }
   }

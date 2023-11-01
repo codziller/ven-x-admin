@@ -35,6 +35,9 @@ const Form = ({ details, toggler }) => {
   const { warehouses, loading } = WareHousesStore;
   const schema = yup.object({
     quantity: yup.string().required("Please enter product quantity"),
+    lowInQuantityValue: yup
+      .string()
+      .required("Please enter low in stock value"),
     warehouseId: yup.string().required("Please select warehouse"),
   });
 
@@ -101,7 +104,7 @@ const Form = ({ details, toggler }) => {
               lowInQuantityValue: form?.lowInQuantityValue,
               productOptionChoiceIndex: index,
               productOptionId: item?.id,
-              quantity: form.quantity,
+              quantity: Number(form.quantity),
             };
           } else
             return {
@@ -109,7 +112,7 @@ const Form = ({ details, toggler }) => {
               lowInQuantityValue: choice?.lowInQuantityValue,
               productOptionChoiceIndex: index,
               productOptionId: item?.id,
-              quantity: form.quantity,
+              quantity: Number(form.quantity),
             };
         }),
       ];
@@ -117,7 +120,7 @@ const Form = ({ details, toggler }) => {
     console.log("choiceInventory: ", choiceInventory);
     const payload = {
       ...form,
-      productId: details?.id,
+      productId: product_id,
       productOptions: null,
       choiceInventory,
     };
