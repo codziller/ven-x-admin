@@ -287,27 +287,34 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
 
           {isInventory ? (
             <>
-              {" "}
-              <div className="flex flex-col md:flex-row justify-center items-center w-full gap-3 md:gap-6">
-                <Input
-                  label="Variant Quantity"
-                  value={form?.variantQuantity}
-                  onChangeFunc={(val) => handleChange("variantQuantity", val)}
-                  placeholder="Enter Variant Quantity"
-                  formError={errors.variantQuantity}
-                  showFormError={formTwo?.showFormError}
-                  type="number"
-                />
-                <Input
-                  label="Variant Quantity"
-                  value={form?.variantQuantity}
-                  onChangeFunc={(val) => handleChange("variantQuantity", val)}
-                  placeholder="Enter Variant Quantity"
-                  formError={errors.variantQuantity}
-                  showFormError={formTwo?.showFormError}
-                  type="number"
-                />
-              </div>
+              <Input
+                label="Variant Quantity"
+                value={form?.variantQuantity}
+                onChangeFunc={(val) => handleChange("variantQuantity", val)}
+                placeholder="Enter Variant Quantity"
+                formError={errors.variantQuantity}
+                showFormError={formTwo?.showFormError}
+                type="number"
+              />
+              <Input
+                label="Variant Quantity"
+                value={form?.variantQuantity}
+                onChangeFunc={(val) => handleChange("variantQuantity", val)}
+                placeholder="Enter Variant Quantity"
+                formError={errors.variantQuantity}
+                showFormError={formTwo?.showFormError}
+                type="number"
+              />
+              <Input
+                label="Cost Price (₦‎)"
+                value={form?.costPrice}
+                onChangeFunc={(val) => handleChange({ prop: "costPrice", val })}
+                placeholder="Enter Cost Price"
+                formError={errors.costPrice}
+                showFormError={formTwo?.showFormError}
+                prefix={"₦‎"}
+                type="number"
+              />
             </>
           ) : null}
           {!form.main && (
