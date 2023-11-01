@@ -395,7 +395,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               }}
               isLoading={formTwo.editLoading}
               type="submit"
-              text={isEdit ? "Save Changes here right now" : "Add"}
+              text={isEdit ? "Save Changes" : "Add"}
               className="mb-2"
               fullWidth
             />
