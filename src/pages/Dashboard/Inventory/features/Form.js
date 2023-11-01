@@ -39,7 +39,7 @@ const Form = ({ details, toggler }) => {
     quantity: "",
     lowInQuantityValue: "",
     costPrice: "",
-    productOptions: [],
+    productOptions: product_id ? product?.productOptions : [],
   };
 
   const {
