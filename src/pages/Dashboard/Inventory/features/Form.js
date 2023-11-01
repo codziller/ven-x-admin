@@ -36,9 +36,10 @@ const Form = ({ details, toggler }) => {
   });
 
   const defaultValues = {
-    quantity: details?.quantity || "",
-    lowInQuantityValue: details?.lowInQuantityValue || "",
-    costPrice: details?.costPrice || "",
+    quantity: "",
+    lowInQuantityValue: "",
+    costPrice: "",
+    productOptions: [],
   };
 
   const {
@@ -63,6 +64,7 @@ const Form = ({ details, toggler }) => {
     lowInQuantityValue: watch("lowInQuantityValue"),
     quantity: watch("quantity"),
     costPrice: watch("costPrice"),
+    productOptions: watch("productOptions"),
   };
 
   const handleEditOption = (val, prop, rest) => {
@@ -98,7 +100,7 @@ const Form = ({ details, toggler }) => {
       warehouse_id,
     });
   };
-
+  console.log("Form in inventory: ", form);
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">

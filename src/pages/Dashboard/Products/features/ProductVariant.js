@@ -149,7 +149,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               return item;
             }
           });
-
+          console.log("newProductOptions: ", newProductOptions);
           handleOnChange({
             prop: "productOptions",
             val: newProductOptions,
@@ -202,7 +202,9 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
 
         <p className="font-600 text-xl">
           {isEdit
-            ? `Edit Product Variant (${currentProductVariant?.variantName})`
+            ? `Edit Product Variant ${isInventory ? "Inventory " : ""} (${
+                currentProductVariant?.variantName
+              })`
             : "Add Product Variant"}
         </p>
 
@@ -308,7 +310,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               <Input
                 label="Cost Price (₦‎)"
                 value={form?.costPrice}
-                onChangeFunc={(val) => handleChange({ prop: "costPrice", val })}
+                onChangeFunc={(val) => handleChange("costPrice", val)}
                 placeholder="Enter Cost Price"
                 formError={errors.costPrice}
                 showFormError={formTwo?.showFormError}
@@ -317,7 +319,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
               />
             </>
           ) : null}
-          {!form.main && (
+          {!form.main && !isInventory && (
             <>
               <div className="w-full">
                 <div
