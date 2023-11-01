@@ -56,9 +56,9 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     visibility: currentProductVariant.visibility === false ? false : true,
     description: currentProductVariant?.description || "",
     main: !!currentProductVariant?.main,
-    quantity: "",
-    lowInQuantityValue: "",
-    costPrice: "",
+    quantity: currentProductVariant?.quantity || "",
+    lowInQuantityValue: currentProductVariant?.lowInQuantityValue || "",
+    costPrice: currentProductVariant?.costPrice || "",
   };
 
   const {
