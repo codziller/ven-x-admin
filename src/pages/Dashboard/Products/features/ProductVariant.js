@@ -37,7 +37,9 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
 
   const inventorySchema = {
     quantity: yup.string().required("Please enter variant name"),
-    lowInQuantityValue: yup.string().required("Please enter variant name"),
+    lowInQuantityValue: yup
+      .string()
+      .required("Please enter variant low in stock value"),
     costPrice: yup.string().required("Please enter variant cost price"),
   };
   const schema = yup.object({
