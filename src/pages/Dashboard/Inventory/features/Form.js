@@ -92,33 +92,38 @@ const Form = ({ details, toggler }) => {
   };
 
   const handleCloseModal = () => {
-    setFormTwo({
-      ...formTwo,
-      currentProductOption: {},
-      modalType: false,
+    setFormTwo((prev) => {
+      return {
+        ...prev,
+        currentProductOption: {},
+        currentProductVariant: {},
+        modalType: false,
+      };
     });
   };
   const handleOnSubmit = (e) => {
     const choiceInventory = form?.productOptions?.map((item) => {
       return [
-        ...item?.choices?.map((choice, index) => {
-          if (choice?.main) {
-            return {
-              costPrice: form?.costPrice,
-              lowInQuantityValue: form?.lowInQuantityValue,
-              productOptionChoiceIndex: index,
-              productOptionId: item?.id,
-              quantity: Number(form.quantity),
-            };
-          } else
-            return {
-              costPrice: choice?.costPrice,
-              lowInQuantityValue: choice?.lowInQuantityValue,
-              productOptionChoiceIndex: index,
-              productOptionId: item?.id,
-              quantity: Number(form.quantity),
-            };
-        }),
+        ...item?.choices
+          ?.map((choice, index) => {
+            if (choice?.main) {
+              return {
+                costPrice: form?.costPrice,
+                lowInQuantityValue: form?.lowInQuantityValue,
+                productOptionChoiceIndex: index,
+                productOptionId: item?.id,
+                quantity: Number(form.quantity),
+              };
+            } else
+              return {
+                costPrice: choice?.costPrice,
+                lowInQuantityValue: choice?.lowInQuantityValue,
+                productOptionChoiceIndex: index,
+                productOptionId: item?.id,
+                quantity: Number(choice.quantity),
+              };
+          })
+          ?.filter((item) => item?.lowInQuantityValue),
       ];
     });
     console.log("choiceInventory: ", choiceInventory);
@@ -137,6 +142,7 @@ const Form = ({ details, toggler }) => {
     });
   };
   console.log("Form in inventory: ", form);
+  console.log("formTwo in inventory: ", formTwo);
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
