@@ -1,6 +1,41 @@
 import { gql } from "graphql-request";
 import { graphQlInstance } from "services";
 
+const getWebMarketingImagesQuery = ({ page }) => gql`
+  {
+    __typename
+    webMarketingImages(pageNumber: "${page}") {
+      total
+      results {
+        dataId
+        headerNavId
+        id
+        imageUrl
+        isForYou
+        landscapeImageUrl
+        pageToLinkTo
+        updatedAt
+      }
+    }
+  }
+`;
+
+const getWebMarketingImageQuery = ({ id }) => gql`
+  {
+    __typename
+    webMarketingImage(id: "${id}") {
+      dataId
+        headerNavId
+        id
+        imageUrl
+        isForYou
+        landscapeImageUrl
+        pageToLinkTo
+        updatedAt
+    }
+  }
+`;
+
 const getMobileBrandsOfTheMomentsQuery = ({ page }) => gql`
   {
     __typename
@@ -231,6 +266,56 @@ const getMobilePagePostQuery = ({ id }) => gql`
   }
 `;
 
+const createWebMarketingImageQuery = gql`
+  mutation createWebMarketingImage(
+    $dataId: String
+    $headerNavId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+    $landscapeImageUrl: String!
+    $pageToLinkTo: PageToLinkToEnum
+  ) {
+    createWebMarketingImage(
+      createWebMarketingImageInput: {
+        dataId: $dataId
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        pageToLinkTo: $pageToLinkTo
+        landscapeImageUrl: $landscapeImageUrl
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editWebMarketingImageQuery = gql`
+  mutation updateWebMarketingImage(
+    $dataId: String
+    $headerNavId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+    $landscapeImageUrl: String!
+    $pageToLinkTo: PageToLinkToEnum
+    $id: String!
+  ) {
+    updateWebMarketingImage(
+      updateWebMarketingImageInput: {
+        dataId: $dataId
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        pageToLinkTo: $pageToLinkTo
+        landscapeImageUrl: $landscapeImageUrl
+        id: $id
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const createMobileBrandsOfTheMomentQuery = gql`
   mutation createMobileBrandsOfTheMoment(
     $dataId: String
@@ -373,29 +458,29 @@ const createDiscountQuery = gql`
   mutation createDiscount(
     $brandIds: [String!]
     $categoryIds: [String!]
-    $descriptionText: String!
+    $discountBuyXValue: Int
     $discountCode: String!
+    $discountGetXValue: Int
+    $discountGetYProductId: String
+    $discountGetYValue: Int
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
-    $imageUrl: String!
+    $name: String!
     $productIds: [String!]
-    $showOnMobile: Boolean!
-    $showOnWeb: Boolean!
-    $titleText: String!
   ) {
     createDiscount(
       createDiscountInput: {
         brandIds: $brandIds
         categoryIds: $categoryIds
-        descriptionText: $descriptionText
+        discountBuyXValue: $discountBuyXValue
         discountCode: $discountCode
+        discountGetXValue: $discountGetXValue
+        discountGetYProductId: $discountGetYProductId
+        discountGetYValue: $discountGetYValue
         discountType: $discountType
         discountValue: $discountValue
-        imageUrl: $imageUrl
+        name: $name
         productIds: $productIds
-        showOnMobile: $showOnMobile
-        showOnWeb: $showOnWeb
-        titleText: $titleText
       }
     ) {
       id
@@ -405,26 +490,32 @@ const createDiscountQuery = gql`
 
 const editDiscountQuery = gql`
   mutation updateDiscount(
-    $descriptionText: String!
+    $brandIds: [String!]
+    $categoryIds: [String!]
+    $discountBuyXValue: Int
     $discountCode: String!
+    $discountGetXValue: Int
+    $discountGetYProductId: String
+    $discountGetYValue: Int
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
-    $imageUrl: String!
-    $showOnMobile: Boolean!
-    $showOnWeb: Boolean!
-    $titleText: String!
+    $name: String!
+    $productIds: [String!]
     $id: String!
   ) {
     updateDiscount(
       updateDiscountInput: {
-        descriptionText: $descriptionText
+        brandIds: $brandIds
+        categoryIds: $categoryIds
+        discountBuyXValue: $discountBuyXValue
         discountCode: $discountCode
+        discountGetXValue: $discountGetXValue
+        discountGetYProductId: $discountGetYProductId
+        discountGetYValue: $discountGetYValue
         discountType: $discountType
         discountValue: $discountValue
-        imageUrl: $imageUrl
-        showOnMobile: $showOnMobile
-        showOnWeb: $showOnWeb
-        titleText: $titleText
+        name: $name
+        productIds: $productIds
         id: $id
       }
     ) {
@@ -586,6 +677,16 @@ const deleteBrandQuery = gql`
 `;
 
 const apis = {
+  getWebMarketingImages: ({ page }) =>
+    graphQlInstance(getWebMarketingImagesQuery({ page }), {
+      method: "GET",
+    }),
+
+  getWebMarketingImage: ({ id }) =>
+    graphQlInstance(getWebMarketingImageQuery({ id }), {
+      method: "GET",
+    }),
+
   getMobileBrandsOfTheMoments: ({ page }) =>
     graphQlInstance(getMobileBrandsOfTheMomentsQuery({ page }), {
       method: "GET",
@@ -647,6 +748,16 @@ const apis = {
   getMobilePagePost: ({ id }) =>
     graphQlInstance(getMobilePagePostQuery({ id }), {
       method: "GET",
+    }),
+
+  createWebMarketingImage: (variables) =>
+    graphQlInstance(createWebMarketingImageQuery, {
+      variables,
+    }),
+
+  editWebMarketingImage: (variables) =>
+    graphQlInstance(editWebMarketingImageQuery, {
+      variables,
     }),
 
   createMobileBrandsOfTheMoment: (variables) =>
