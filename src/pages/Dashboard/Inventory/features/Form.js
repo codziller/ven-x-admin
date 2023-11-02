@@ -102,9 +102,9 @@ const Form = ({ details, toggler }) => {
     });
   };
   const handleOnSubmit = (e) => {
-    const choiceInventory = form?.productOptions?.map((item) => {
-      return [
-        ...item?.choices
+    const choiceInventory = form?.productOptions
+      ?.map((item) => {
+        return item?.choices
           ?.map((choice, index) => {
             if (choice?.main) {
               return {
@@ -123,9 +123,9 @@ const Form = ({ details, toggler }) => {
                 quantity: Number(choice.quantity),
               };
           })
-          ?.filter((item) => item?.lowInQuantityValue),
-      ];
-    });
+          ?.filter((item) => item?.lowInQuantityValue);
+      })
+      .flatMap((item) => item);
     console.log("choiceInventory: ", choiceInventory);
     const payload = {
       ...form,
