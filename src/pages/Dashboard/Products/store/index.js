@@ -190,9 +190,10 @@ class ProductsStore {
   createProduct = async ({ data, onSuccess }) => {
     this.createProductLoading = true;
     try {
-      await apis.createProduct(data);
+      const response = await apis.createProduct(data);
       successToast("Operation Successful!", "Product created Successfully.");
-      onSuccess?.();
+      console.log("resposne: ", response);
+      onSuccess?.(response?.createProduct);
       // await this.getProducts({ data: { page: 1 } });
     } catch (error) {
       this.error = error;

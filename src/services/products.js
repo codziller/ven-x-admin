@@ -70,6 +70,12 @@ lowInQuantityValue
 quantity
 warehouseId
 }
+productCostPrice {
+  costPrice
+  updatedAt
+  id
+  quantityLeft
+}
 archive
        
     }
@@ -473,6 +479,12 @@ const searchProductsQuery = ({ page, searchQuery }) => gql`
         salePrice
         imageUrls
         archive 
+        productCostPrice {
+          costPrice
+          updatedAt
+          id
+          quantityLeft
+        }
       }
     }
   }

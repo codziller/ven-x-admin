@@ -14,12 +14,15 @@ import ProductsStore from "pages/Dashboard/Products/store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import cleanPayload from "utils/cleanPayload";
-import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
+import { INVENTORY_MODAL_TYPES, PRODUCT_MODAL_TYPES } from "utils/appConstant";
 import DetailsModal from "pages/Dashboard/Products/features/DetailsModal";
+import TransactionDetailsModal from "./DetailsModal";
 import { isEmpty } from "lodash";
 import Select from "components/General/Input/Select";
+import { numberWithCommas } from "utils/formatter";
 
 const { PRODUCT_VARIANT } = PRODUCT_MODAL_TYPES;
+const { COST_PRICE_HISTORY } = INVENTORY_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
   const { warehouse_id, product_id } = useParams();
   const navigate = useNavigate();
@@ -70,7 +73,9 @@ const Form = ({ details, toggler }) => {
     setValue(prop, updatedVal);
     await trigger(prop);
   };
-
+  const handleChangeTwo = async (prop, val) => {
+    setFormTwo({ ...formTwo, [prop]: val });
+  };
   const form = {
     lowInQuantityValue: watch("lowInQuantityValue"),
     quantity: watch("quantity"),
@@ -143,17 +148,27 @@ const Form = ({ details, toggler }) => {
   };
   console.log("Form in inventory: ", form);
   console.log("formTwo in inventory: ", formTwo);
+  const currentWareHouseInventory = product?.warehouseInventory?.find(
+    (item) => item?.warehouseId === form.warehouseId
+  );
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
         {details?.link ? (
-          <div className="mb-5 w-full flex justify-start">
+          <div className="mb-5 w-full flex justify-between">
             <div
               onClick={() => navigate(-1)}
               className="scale-90 cursor-pointer"
             >
               <ArrowBack />
             </div>
+
+            <Button
+              onClick={() => handleChangeTwo("modalType", COST_PRICE_HISTORY)}
+              text="View Cost Prices"
+              className=""
+              whiteBg
+            />
           </div>
         ) : (
           <button onClick={() => toggler?.()} className="scale-90 mb-5">
@@ -175,6 +190,12 @@ const Form = ({ details, toggler }) => {
             <span className="text-grey-text text-sm">
               Update this product&apos;s inventory
             </span>
+
+            <span className="text-grey-text text-sm">
+              Current quantity in warehouse:{" "}
+              {numberWithCommas(currentWareHouseInventory?.quantity)}
+            </span>
+
             <Input
               label="Quantity"
               value={form?.quantity}
@@ -281,7 +302,7 @@ const Form = ({ details, toggler }) => {
             )}
           </div>
 
-          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
+          <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto h-full">
             <span className="text-grey-text text-lg uppercase">
               Inventory Warehouse
             </span>
@@ -327,6 +348,12 @@ const Form = ({ details, toggler }) => {
         toggler={handleCloseModal}
         handleChange={handleChange}
         form={form}
+      />
+
+      <TransactionDetailsModal
+        active={formTwo?.modalType === COST_PRICE_HISTORY}
+        details={{ ...product, modalSize: "lg", modalType: COST_PRICE_HISTORY }}
+        toggler={handleCloseModal}
       />
     </>
   );

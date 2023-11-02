@@ -55,7 +55,7 @@ const {
 } = PRODUCT_MODAL_TYPES;
 const { grams, milliliters } = WEIGHT_TYPES;
 const Form = ({ details, toggler }) => {
-  const { product_id } = useParams();
+  const { product_id, warehouse_id } = useParams();
   const location = useLocation();
   const isViewMode = location.pathname.includes("/dashboard/products/view/");
   const { createProduct, product, editProduct, editProductOption } =
@@ -502,7 +502,15 @@ const Form = ({ details, toggler }) => {
       } else {
         await createProduct({
           data: payload,
-          onSuccess: () => navigate(-1),
+          onSuccess: (response) => {
+            if (!isEmpty(payload?.productOptions)) {
+              navigate(
+                `/dashboard/inventory/edit/${warehouse_id}/${response?.id}`
+              );
+            } else {
+              navigate(-1);
+            }
+          },
         });
       }
     } catch (error) {
@@ -517,8 +525,7 @@ const Form = ({ details, toggler }) => {
   };
 
   console.log("main form: ", form);
-  console.log("main form errors: ", errors);
-  console.log("selectedInventories: ", selectedInventories);
+
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
