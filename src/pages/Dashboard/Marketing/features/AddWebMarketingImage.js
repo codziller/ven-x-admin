@@ -4,33 +4,37 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
-import { TailSpin } from "react-loader-spinner";
 import Button from "components/General/Button/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
-import ImagePicker from "components/General/Input/ImagePicker";
-import CheckBox from "components/General/Input/CheckBox";
 import {
   MEDIA_MODAL_TYPES,
   PRODUCT_MODAL_TYPES,
   SLIDE_LINK_TYPES,
 } from "utils/appConstant";
-import { isArray, isEmpty, lowerCase } from "lodash";
-import BrandsStore from "pages/Dashboard/Brands/store";
-import ProductsStore from "pages/Dashboard/Products/store";
-import CategoriesStore from "pages/Dashboard/Categories/store";
+import { ReactComponent as Plus } from "assets/icons/add.svg";
 import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
+import ImagePicker from "components/General/Input/ImagePicker";
+import CategoriesStore from "pages/Dashboard/Categories/store";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
+import BrandsStore from "pages/Dashboard/Brands/store";
+import ProductsStore from "pages/Dashboard/Products/store";
+import { isArray, isEmpty, lowerCase } from "lodash";
+import { errorToast } from "components/General/Toast/Toast";
+import CheckBox from "components/General/Input/CheckBox";
+import { TailSpin } from "react-loader-spinner";
 import cleanPayload from "utils/cleanPayload";
-import { flattenCategories } from "utils/functions";
-import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
+import Input from "components/General/Input/Input";
+import Textarea from "components/General/Textarea/Textarea";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
-const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
+
 const Form = observer(() => {
   const { warehouse_id, media_id, position } = useParams();
+  const { headerNavs, getHeaderNavs } = CategoriesStore;
+
   const navigate = useNavigate();
   const [formTwo, setFormTwo] = useState({
     modalType: "",
@@ -38,23 +42,27 @@ const Form = observer(() => {
     createLoading: false,
   });
 
+  useEffect(() => {
+    getHeaderNavs();
+  }, []);
+
   const schema = yup.object({});
 
   const { getBrand, brand, getBrandLoading } = BrandsStore;
   const { getProductName, product, getProductLoading } = ProductsStore;
-
   const {
-    createMobilePagePost,
-    editMobilePagePost,
-    mobilePagePost,
-    loadingMobilePagePost,
+    createWebMarketingImage,
+    editWebMarketingImage,
+    webMarketingImage,
+    loadingWebMarketingImage,
   } = MarketingStore;
 
   const defaultValues = {
-    dataId: media_id ? mobilePagePost?.dataId : "",
-    imageUrl: media_id ? mobilePagePost?.imageUrl : [],
+    headerNavId: position !== "forYou" ? position : "",
+    imageUrl: media_id ? webMarketingImage?.imageUrl : [],
+    dataId: media_id ? webMarketingImage?.dataId : "",
     pageToLinkTo: media_id
-      ? mobilePagePost?.pageToLinkTo
+      ? webMarketingImage?.pageToLinkTo
       : SLIDE_LINK_TYPES[0]?.value,
   };
 
@@ -71,9 +79,6 @@ const Form = observer(() => {
   });
 
   const handleChange = async ({ prop, val }) => {
-    // if (prop === "pageToLinkTo") {
-    //   handleChange("dataId", "");
-    // }
     setValue(prop, val);
     await trigger(prop);
   };
@@ -83,9 +88,10 @@ const Form = observer(() => {
   };
 
   const form = {
-    dataId: watch("dataId"),
+    headerNavId: watch("headerNavId"),
     imageUrl: watch("imageUrl"),
     pageToLinkTo: watch("pageToLinkTo"),
+    dataId: watch("dataId"),
   };
 
   useEffect(() => {
@@ -99,6 +105,14 @@ const Form = observer(() => {
     }
   }, [form.dataId, form.pageToLinkTo]);
 
+  const selectedHeaderNav = useMemo(
+    () =>
+      !isEmpty(headerNavs)
+        ? headerNavs?.find((item) => item?.id === form?.headerNavId)?.name
+        : "",
+    [headerNavs, form?.headerNavId]
+  );
+
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
 
@@ -106,39 +120,28 @@ const Form = observer(() => {
       const imagesUrls = await uploadImageToCloud(
         isArray(form?.imageUrl) ? form?.imageUrl?.[0] : form?.imageUrl
       );
-
+      const payload = {
+        ...form,
+        isForYou: !!(position === "forYou"),
+        imageUrl: imagesUrls,
+        landscapeImageUrl: imagesUrls,
+      };
+      cleanPayload(payload);
       if (!media_id) {
-        const payload = {
-          ...form,
-          position,
-          imageUrl: imagesUrls,
-        };
-
-        cleanPayload(payload);
-
-        await createMobilePagePost({
+        await createWebMarketingImage({
           data: payload,
           onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       } else {
-        const payload = {
-          ...form,
-          position,
-          mobilePagePostId: media_id,
-          imageUrl: imagesUrls,
-        };
-
-        cleanPayload(payload);
-
-        await editMobilePagePost({
-          data: payload,
+        await editWebMarketingImage({
+          data: { ...payload, id: media_id },
           onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
         });
         return;
       }
     } catch (error) {
-      console.log("imagesUrls error: ", error);
+      console.log("error: ", error);
       errorToast(
         "Error!",
         "Error encountered uploading images. Kindly Check the image format."
@@ -148,7 +151,7 @@ const Form = observer(() => {
     }
   };
 
-  return loadingMobilePagePost ? (
+  return loadingWebMarketingImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -165,14 +168,23 @@ const Form = observer(() => {
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
-                  Edit Mobile Page Slider ({position})
+                  Edit Web Marketing Image (
+                  {position === "forYou" ? "For You" : selectedHeaderNav})
                 </h2>
               ) : (
                 <h2 className="section-heading mb-3 text-xl">
-                  Add Mobile Page Slider ({position})
+                  Add Web Marketing Image (
+                  {position === "forYou" ? "For You" : selectedHeaderNav})
                 </h2>
               )}
 
+              <ImagePicker
+                label="Select Image "
+                handleDrop={(val) => handleChange({ prop: "imageUrl", val })}
+                images={form.imageUrl}
+                multiple={false}
+                isBanner
+              />
               <form
                 onSubmit={handleSubmit(handleOnSubmit)}
                 className="flex flex-col md:flex-row justify-start items-start gap-10 w-full overflow-y-auto"
@@ -184,11 +196,10 @@ const Form = observer(() => {
                       "general-input-label relative text-[13px] font-bold text-grey-dark !flex justify-start items-center gap-1 cursor-pointer"
                     }
                   >
-                    Slide type
+                    Page type
                   </label>
-
                   <span className="text-grey-text text-sm mb-3 -mt-2">
-                    Select the page type to be linked with this post
+                    Select the page type to be linked with this marketing image
                   </span>
                   {SLIDE_LINK_TYPES.map((item) => (
                     <CheckBox
@@ -200,7 +211,6 @@ const Form = observer(() => {
                       checked={form?.pageToLinkTo === item.value}
                     />
                   ))}
-
                   {form.pageToLinkTo && (
                     <div className="flex flex-col justify-start items-start gap-1 w-full">
                       <label
@@ -209,7 +219,7 @@ const Form = observer(() => {
                         }
                       >
                         Select the {lowerCase(form?.pageToLinkTo)} to be linked
-                        with this post
+                        with this marketing image.
                       </label>
 
                       <div className="flex flex-col justify-start items-end gap-1 w-full">
@@ -244,29 +254,6 @@ const Form = observer(() => {
                       </div>
                     </div>
                   )}
-                </div>
-
-                {/* Second section */}
-                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto">
-                  <div className="flex flex-col justify-start items-start gap-1">
-                    <span className="text-grey-text text-lg uppercase">
-                      Post Image
-                    </span>
-                    <span className="text-grey-text text-sm">
-                      Select Post Image
-                    </span>
-                  </div>
-
-                  <ImagePicker
-                    label="Select Image "
-                    handleDrop={(val) =>
-                      handleChange({ prop: "imageUrl", val })
-                    }
-                    images={form.imageUrl}
-                    multiple={false}
-                    isBanner
-                  />
-
                   <Button
                     onClick={() =>
                       setFormTwo({ ...formTwo, showFormError: true })
@@ -277,7 +264,11 @@ const Form = observer(() => {
                     className="mt-8 mb-5"
                     fullWidth
                   />
+                  ``
                 </div>
+
+                {/* Second section */}
+                <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
                 {/* Third section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 overflow-y-auto"></div>
               </form>
@@ -285,7 +276,6 @@ const Form = observer(() => {
           </div>
         </div>
       </div>
-
       <DetailsModal
         active={formTwo?.modalType === BRAND}
         details={{ prop: "dataId", modalType: BRAND }}
@@ -300,31 +290,18 @@ const Form = observer(() => {
         handleChange={handleChange}
         form={form}
       />
-      <DetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY_OPTIONS}
-        details={{ modalType: PRODUCT_CATEGORY_OPTIONS }}
-        toggler={() => handleChangeTwo("modalType", false)}
-        handleChange={handleChange}
-        form={form}
-        type="Post"
-      />
-      <CategoryDetailsModal
-        active={formTwo?.modalType === PRODUCT_CATEGORY}
-        details={{ modalType: "add", isAdd: true }}
-        toggler={() => handleChangeTwo("modalType", false)}
-      />
     </>
   );
 });
 
-const AddMobilePagePost = () => {
+const AddHomePagePost = () => {
   const { media_id } = useParams();
-  const { loadingMobilePagePost, getMobilePagePost } = MarketingStore;
+  const { loadingWebMarketingImage, getWebMarketingImage } = MarketingStore;
 
   useEffect(() => {
-    media_id && getMobilePagePost({ data: { id: media_id } });
+    media_id && getWebMarketingImage({ data: { id: media_id } });
   }, []);
-  return loadingMobilePagePost ? (
+  return loadingWebMarketingImage ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
     </div>
@@ -333,4 +310,4 @@ const AddMobilePagePost = () => {
   );
 };
 
-export default observer(AddMobilePagePost);
+export default observer(AddHomePagePost);

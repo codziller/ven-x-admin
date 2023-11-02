@@ -18,6 +18,14 @@ class MarketingStore {
   createImageLoading = false;
   editImageLoading = false;
 
+  webMarketingImages = [];
+  webMarketingImage = null;
+  webMarketingImagesCount = null;
+  loadingWebMarketingImages = false;
+  loadingWebMarketingImage = false;
+  createWebMarketingImageLoading = false;
+  editWebMarketingImageLoading = false;
+
   mobileBrandsOfTheMoments = [];
   mobileBrandsOfTheMoment = null;
   mobileBrandsOfTheMomentsCount = null;
@@ -100,6 +108,33 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.loadingImage = false;
+    }
+  };
+
+  getWebMarketingImages = async ({ data }) => {
+    this.loadingWebMarketingImages = true;
+    try {
+      let res = await apis.getWebMarketingImages(data);
+      res = res?.webMarketingImages;
+      this.webMarketingImages = res?.results || [];
+      this.webMarketingImagesCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingWebMarketingImages = false;
+    }
+  };
+
+  getWebMarketingImage = async ({ data }) => {
+    this.loadingWebMarketingImage = true;
+    try {
+      let res = await apis.getWebMarketingImage(data);
+      res = res?.webMarketingImage;
+      this.webMarketingImage = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingWebMarketingImage = false;
     }
   };
 
@@ -329,6 +364,40 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.editPromoBannerLoading = false;
+    }
+  };
+
+  createWebMarketingImage = async ({ data, onSuccess, page }) => {
+    this.createWebMarketingImageLoading = true;
+    try {
+      await apis.createWebMarketingImage(data);
+      successToast(
+        "Operation Successful!",
+        "Web Marketing Image Created Successfully."
+      );
+      onSuccess?.();
+      await this.getWebMarketingImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createWebMarketingImageLoading = false;
+    }
+  };
+
+  editWebMarketingImage = async ({ data, onSuccess, page }) => {
+    this.editWebMarketingImageLoading = true;
+    try {
+      await apis.editWebMarketingImage(data);
+      successToast(
+        "Operation Successful!",
+        "Web Marketing Image Updated Successfully."
+      );
+      onSuccess?.();
+      await this.getWebMarketingImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editWebMarketingImageLoading = false;
     }
   };
 

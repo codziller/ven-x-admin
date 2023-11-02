@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import clsx from "classnames";
+import { Link } from "react-router-dom";
 
-const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
+const Tabs = ({ tabs = [], activeTab, setActiveTab, baseUrl }) => {
   const tabRef = useRef(null);
   const elementsRef = useRef([]);
 
@@ -25,7 +26,7 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
 
   return (
     <div className="w-full flex relative mb-6">
-      <div className="w-full ">
+      <div className="w-full overflow-x-auto ">
         <div
           className="flex flex-row justify-start items-start w-full gap-2"
           ref={tabRef}
@@ -33,7 +34,8 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
           {tabs.map((tab, index) => {
             const tabName = tab?.name || tab;
             return (
-              <span
+              <Link
+                to={baseUrl ? `${baseUrl}?tab=${tab?.name}` : "#"}
                 key={index}
                 ref={(el) => (elementsRef.current[index] = el)}
                 className={clsx(
@@ -46,7 +48,7 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab }) => {
                 onClick={() => setActiveTab(tab?.name || tab)}
               >
                 {tab?.label || tab}
-              </span>
+              </Link>
             );
           })}
         </div>
@@ -69,6 +71,7 @@ Tabs.propTypes = {
   tabs: PropTypes.array,
   activeTab: PropTypes.string,
   setActiveTab: PropTypes.func,
+  baseUrl: PropTypes.string,
 };
 
 export default Tabs;
