@@ -51,12 +51,16 @@ class MarketingStore {
   editPromoBannerLoading = false;
 
   discounts = [];
+  discountsArchived = [];
   discount = null;
   discountsCount = null;
   loadingDiscounts = false;
+  discountsArchivedCount = 0;
   loadingDiscount = false;
+  loadingArchivedDiscounts = false;
   createDiscountLoading = false;
   editDiscountLoading = false;
+  deleteDiscountLoading = false;
 
   homeSliderImages = [];
   homeSliderImage = null;
@@ -229,6 +233,20 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.loadingDiscounts = false;
+    }
+  };
+
+  getArchivedDiscounts = async ({ data }) => {
+    this.loadingArchivedDiscounts = true;
+    try {
+      let res = await apis.getArchivedDiscounts(data);
+      res = res?.archived_discounts;
+      this.discountsArchived = res?.results || [];
+      this.discountsArchivedCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingArchivedDiscounts = false;
     }
   };
 
@@ -560,6 +578,20 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.editMobilePagePostLoading = false;
+    }
+  };
+
+  deleteDiscount = async ({ data, onSuccess, page }) => {
+    this.deleteDiscountLoading = true;
+    try {
+      await apis.deleteDiscount(data);
+      successToast("Operation Successful!", "Discount archived successfully.");
+      onSuccess?.();
+      await this.getDiscounts({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteDiscountLoading = false;
     }
   };
 }

@@ -156,6 +156,32 @@ const getDiscountsQuery = ({ page }) => gql`
   }
 `;
 
+const getArchivedDiscountsQuery = ({ page }) => gql`
+  {
+    __typename
+    archived_discounts(pageNumber: "${page}") {
+      total
+      results {
+        archived
+        discountBuyXValue
+        discountCode
+        discountGetXValue
+        discountGetYProduct {
+          name
+          id
+        }
+        discountGetYProductId
+        discountGetYValue
+        discountType
+        discountValue
+        id
+        name
+        updatedAt
+      }
+    }
+  }
+`;
+
 const getDiscountQuery = ({ id }) => gql`
   {
     __typename
@@ -690,6 +716,13 @@ const deleteBrandQuery = gql`
   }
 `;
 
+const deleteDiscountQuery = gql`
+  mutation removeDiscount($id: String!) {
+    removeDiscount(id: $id) {
+      status
+    }
+  }
+`;
 const apis = {
   getWebMarketingImages: ({ page }) =>
     graphQlInstance(getWebMarketingImagesQuery({ page }), {
@@ -734,6 +767,12 @@ const apis = {
     graphQlInstance(getDiscountsQuery({ page }), {
       method: "GET",
     }),
+
+  getArchivedDiscounts: ({ page }) =>
+    graphQlInstance(getArchivedDiscountsQuery({ page }), {
+      method: "GET",
+    }),
+
   getDiscount: ({ id }) =>
     graphQlInstance(getDiscountQuery({ id }), {
       method: "GET",
@@ -841,6 +880,10 @@ const apis = {
 
   deleteBrand: (variables) =>
     graphQlInstance(deleteBrandQuery, {
+      variables,
+    }),
+  deleteDiscount: (variables) =>
+    graphQlInstance(deleteDiscountQuery, {
       variables,
     }),
 };
