@@ -137,15 +137,15 @@ const getDiscountsQuery = ({ page }) => gql`
       total
       results {
         archived
-        discountBuyXValue
+        discountBuyXvalue
         discountCode
-        discountGetXValue
+        discountGetXvalue
         discountGetYProduct {
           name
           id
         }
-        discountGetYProductId
-        discountGetYValue
+        discountGetYproductId
+        discountGetYvalue
         discountType
         discountValue
         id
@@ -163,15 +163,15 @@ const getArchivedDiscountsQuery = ({ page }) => gql`
       total
       results {
         archived
-        discountBuyXValue
+        discountBuyXvalue
         discountCode
-        discountGetXValue
+        discountGetXvalue
         discountGetYProduct {
           name
           id
         }
-        discountGetYProductId
-        discountGetYValue
+        discountGetYproductId
+        discountGetYvalue
         discountType
         discountValue
         id
@@ -187,15 +187,15 @@ const getDiscountQuery = ({ id }) => gql`
     __typename
     discount(id: "${id}") {
       archived
-      discountBuyXValue
+      discountBuyXvalue
       discountCode
-      discountGetXValue
+      discountGetXvalue
       discountGetYProduct {
         name
         id
       }
-      discountGetYProductId
-      discountGetYValue
+      discountGetYproductId
+      discountGetYvalue
       discountType
       discountValue
       id
@@ -498,11 +498,11 @@ const createDiscountQuery = gql`
   mutation createDiscount(
     $brandIds: [String!]
     $categoryIds: [String!]
-    $discountBuyXValue: Int
+    $discountBuyXvalue: Int
     $discountCode: String!
-    $discountGetXValue: Int
-    $discountGetYProductId: String
-    $discountGetYValue: Int
+    $discountGetXvalue: Int
+    $discountGetYproductId: String
+    $discountGetYvalue: Int
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $name: String!
@@ -512,11 +512,11 @@ const createDiscountQuery = gql`
       createDiscountInput: {
         brandIds: $brandIds
         categoryIds: $categoryIds
-        discountBuyXValue: $discountBuyXValue
+        discountBuyXvalue: $discountBuyXvalue
         discountCode: $discountCode
-        discountGetXValue: $discountGetXValue
-        discountGetYProductId: $discountGetYProductId
-        discountGetYValue: $discountGetYValue
+        discountGetXvalue: $discountGetXvalue
+        discountGetYproductId: $discountGetYproductId
+        discountGetYvalue: $discountGetYvalue
         discountType: $discountType
         discountValue: $discountValue
         name: $name
@@ -532,11 +532,11 @@ const editDiscountQuery = gql`
   mutation updateDiscount(
     $brandIds: [String!]
     $categoryIds: [String!]
-    $discountBuyXValue: Int
+    $discountBuyXvalue: Int
     $discountCode: String!
-    $discountGetXValue: Int
-    $discountGetYProductId: String
-    $discountGetYValue: Int
+    $discountGetXvalue: Int
+    $discountGetYproductId: String
+    $discountGetYvalue: Int
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $name: String!
@@ -547,11 +547,11 @@ const editDiscountQuery = gql`
       updateDiscountInput: {
         brandIds: $brandIds
         categoryIds: $categoryIds
-        discountBuyXValue: $discountBuyXValue
+        discountBuyXvalue: $discountBuyXvalue
         discountCode: $discountCode
-        discountGetXValue: $discountGetXValue
-        discountGetYProductId: $discountGetYProductId
-        discountGetYValue: $discountGetYValue
+        discountGetXvalue: $discountGetXvalue
+        discountGetYproductId: $discountGetYproductId
+        discountGetYvalue: $discountGetYvalue
         discountType: $discountType
         discountValue: $discountValue
         name: $name

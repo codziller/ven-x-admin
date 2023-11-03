@@ -75,10 +75,10 @@ const Form = observer(() => {
     discountValue: media_id ? discount?.discountValue : "",
     discountType: media_id ? discount?.discountType : "",
     name: media_id ? discount?.name : "",
-    discountBuyXValue: media_id ? discount?.discountBuyXValue : "",
-    discountGetXValue: media_id ? discount?.discountGetXValue : "",
-    discountGetYProductId: media_id ? discount?.discountGetYProductId : "",
-    discountGetYValue: media_id ? discount?.discountGetYValue : "",
+    discountBuyXvalue: media_id ? discount?.discountBuyXvalue : "",
+    discountGetXvalue: media_id ? discount?.discountGetXvalue : "",
+    discountGetYproductId: media_id ? discount?.discountGetYproductId : "",
+    discountGetYvalue: media_id ? discount?.discountGetYvalue : "",
   };
 
   const {
@@ -132,20 +132,20 @@ const Form = observer(() => {
     discountCode: watch("discountCode"),
     discountValue: watch("discountValue"),
     discountType: watch("discountType"),
-    discountBuyXValue: watch("discountBuyXValue"),
-    discountGetXValue: watch("discountGetXValue"),
-    discountGetYProductId: watch("discountGetYProductId"),
-    discountGetYValue: watch("discountGetYValue"),
+    discountBuyXvalue: watch("discountBuyXvalue"),
+    discountGetXvalue: watch("discountGetXvalue"),
+    discountGetYproductId: watch("discountGetYproductId"),
+    discountGetYvalue: watch("discountGetYvalue"),
   };
 
   useEffect(() => {
     if (
-      form?.discountGetYProductId &&
+      form?.discountGetYproductId &&
       form?.discountType === BUY_X_GET_Y_FREE
     ) {
-      getProductName({ data: { id: form.discountGetYProductId } });
+      getProductName({ data: { id: form.discountGetYproductId } });
     }
-  }, [form?.discountGetYProductId, form?.discountType]);
+  }, [form?.discountGetYproductId, form?.discountType]);
 
   useEffect(() => {
     if (
@@ -160,10 +160,10 @@ const Form = observer(() => {
     const {
       discountType,
       discountValue,
-      discountGetXValue,
-      discountGetYValue,
-      discountBuyXValue,
-      discountGetYProductId,
+      discountGetXvalue,
+      discountGetYvalue,
+      discountBuyXvalue,
+      discountGetYproductId,
       productIds,
       categoryIds,
       brandIds,
@@ -175,21 +175,21 @@ const Form = observer(() => {
       warningToast("Error!", "Please enter discount value");
       return;
     }
-    if (discountType?.includes("BUY") && !discountBuyXValue) {
+    if (discountType?.includes("BUY") && !discountBuyXvalue) {
       warningToast("Error!", "Please enter number of product (X) to be bought");
       return;
     }
-    if (discountType === BUY_X_GET_X_FREE && !discountGetXValue) {
+    if (discountType === BUY_X_GET_X_FREE && !discountGetXvalue) {
       warningToast("Error!", "Please enter number of product (X) to be given");
       return;
     }
 
-    if (discountType === BUY_X_GET_Y_FREE && !discountGetYProductId) {
+    if (discountType === BUY_X_GET_Y_FREE && !discountGetYproductId) {
       warningToast("Error!", "Please  Select product (Y) to be given");
       return;
     }
 
-    if (discountType === BUY_X_GET_Y_FREE && !discountGetYValue) {
+    if (discountType === BUY_X_GET_Y_FREE && !discountGetYvalue) {
       warningToast("Error!", "Please enter number of product (Y) to be given");
       return;
     }
@@ -212,9 +212,9 @@ const Form = observer(() => {
       const payload = {
         ...form,
         discountValue: form.discountValue || "0",
-        discountGetYValue: discountGetYValue ? Number(discountGetYValue) : "",
-        discountGetXValue: discountGetXValue ? Number(discountGetXValue) : "",
-        discountBuyXValue: discountBuyXValue ? Number(discountBuyXValue) : "",
+        discountGetYvalue: discountGetYvalue ? Number(discountGetYvalue) : "",
+        discountGetXvalue: discountGetXvalue ? Number(discountGetXvalue) : "",
+        discountBuyXvalue: discountBuyXvalue ? Number(discountBuyXvalue) : "",
       };
 
       cleanPayload(payload);
@@ -316,9 +316,9 @@ const Form = observer(() => {
                   {form?.discountType?.includes("BUY") ? (
                     <Input
                       label="Number of product (X) to be bought"
-                      value={form?.discountBuyXValue}
+                      value={form?.discountBuyXvalue}
                       onChangeFunc={(val) =>
-                        handleChange({ prop: "discountBuyXValue", val })
+                        handleChange({ prop: "discountBuyXvalue", val })
                       }
                       placeholder="2"
                       showFormError={formTwo?.showFormError}
@@ -330,9 +330,9 @@ const Form = observer(() => {
                   {form.discountType === BUY_X_GET_X_FREE ? (
                     <Input
                       label="Number of product (X) to be given"
-                      value={form?.discountGetXValue}
+                      value={form?.discountGetXvalue}
                       onChangeFunc={(val) =>
-                        handleChange({ prop: "discountGetXValue", val })
+                        handleChange({ prop: "discountGetXvalue", val })
                       }
                       placeholder="2"
                       showFormError={formTwo?.showFormError}
@@ -349,7 +349,7 @@ const Form = observer(() => {
                         </span>
                       </div>
                       <div className="flex flex-col justify-start items-end gap-1 w-full">
-                        {!isEmpty(form.discountGetYProductId) && (
+                        {!isEmpty(form.discountGetYproductId) && (
                           <div className="flex flex-wrap justify-start items-start gap-2 ">
                             {getProductLoading ? (
                               <TailSpin
@@ -379,9 +379,9 @@ const Form = observer(() => {
 
                       <Input
                         label="Number of product (Y) to be given"
-                        value={form?.discountGetYValue}
+                        value={form?.discountGetYvalue}
                         onChangeFunc={(val) =>
-                          handleChange({ prop: "discountGetYValue", val })
+                          handleChange({ prop: "discountGetYvalue", val })
                         }
                         placeholder="2"
                         showFormError={formTwo?.showFormError}
@@ -559,7 +559,7 @@ const Form = observer(() => {
         active={formTwo?.modalType === BUY_X_GET_Y_FREE}
         details={{
           isMultipleProducts: false,
-          prop: "discountGetYProductId",
+          prop: "discountGetYproductId",
           modalType: BUY_X_GET_Y_FREE,
         }}
         toggler={() => handleChangeTwo("modalType", false)}
