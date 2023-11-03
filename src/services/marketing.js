@@ -530,8 +530,6 @@ const createDiscountQuery = gql`
 
 const editDiscountQuery = gql`
   mutation updateDiscount(
-    $brandIds: [String!]
-    $categoryIds: [String!]
     $discountBuyXvalue: Int
     $discountCode: String!
     $discountGetXvalue: Int
@@ -540,13 +538,10 @@ const editDiscountQuery = gql`
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $name: String!
-    $productIds: [String!]
     $id: String!
   ) {
     updateDiscount(
       updateDiscountInput: {
-        brandIds: $brandIds
-        categoryIds: $categoryIds
         discountBuyXvalue: $discountBuyXvalue
         discountCode: $discountCode
         discountGetXvalue: $discountGetXvalue
@@ -555,7 +550,6 @@ const editDiscountQuery = gql`
         discountType: $discountType
         discountValue: $discountValue
         name: $name
-        productIds: $productIds
         id: $id
       }
     ) {

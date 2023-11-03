@@ -19,14 +19,14 @@ const DeleteDialog = ({ details, toggler }) => {
   } = MarketingStore;
 
   const handleOnSubmit = () => {
-    if (details?.archive) {
+    if (details?.archived) {
       const payload = { ...details, currentPage: "", archive: false };
 
       cleanPayload(payload);
       editDiscount({
         data: payload,
         page: details?.currentPage,
-        onSuccess: toggler(),
+        onSuccess: () => toggler(),
       });
       return;
     }
@@ -53,11 +53,11 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Delete className="scale-90" />
       <p className="font-600 text-xl ">{`${
-        details?.archive ? "Unarchive" : "Archive"
+        details?.archived ? "Unarchive" : "Archive"
       } Discount`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to {details?.archive ? "unarchive" : "archive"}{" "}
+        Are you sure you want to {details?.archived ? "unarchive" : "archive"}{" "}
         <span className="text-black">"{details?.name}"?</span>
       </p>
 
@@ -66,7 +66,7 @@ const DeleteDialog = ({ details, toggler }) => {
         isLoading={deleteDiscountLoading || editWareHouseLoading}
         type="submit"
         text={`Yes, ${
-          details?.archive ? "unarchive" : "archive"
+          details?.archived ? "unarchive" : "archive"
         } this discount`}
         className="mb-2"
         fullWidth
