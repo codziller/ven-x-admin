@@ -17,6 +17,7 @@ const Modal = ({
   containerClassName = "overflow-y-auto",
   modalClassName,
   isSideModal,
+  closeOnClickOutside,
 }) => {
   const modalClassNames = {
     "w-full md:max-w-[86%] md:max-h-[89%] md:w-[86%] md:h-[89%]": size === "xl",
@@ -104,7 +105,15 @@ const Modal = ({
         )}
       </div>
 
-      <div className="fixed top-0 left-0 h-screen w-full !my-0 "></div>
+      <div
+        onClick={() => {
+          if (!closeOnClickOutside) {
+            return;
+          }
+          toggler();
+        }}
+        className="fixed top-0 left-0 h-screen w-full !my-0 "
+      ></div>
     </div>
   );
 };

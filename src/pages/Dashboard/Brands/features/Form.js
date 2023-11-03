@@ -244,26 +244,6 @@ const Form = ({ details, toggler }) => {
               )}
             </div>
           </div>
-          <Wysiwyg
-            label="Brand Description"
-            editorState={formTwo?.brandDescription}
-            onEditorStateChange={(val) => {
-              handleChange("brandDescription", val, false, true, true);
-            }}
-            placeholder="Enter brand description"
-            formError={errors.brandDescription}
-            showFormError={formTwo?.showFormError}
-          />
-
-          <Textarea
-            label="Brand Short Text"
-            value={form?.brandShortText}
-            onChangeFunc={(val) => handleChange("brandShortText", val)}
-            placeholder="Enter a short text for this brand"
-            formError={errors.brandShortText}
-            showFormError={formTwo?.showFormError}
-            required
-          />
 
           <ImagePicker
             label=" Add Brand Logo"
@@ -287,17 +267,7 @@ const Form = ({ details, toggler }) => {
             }
             multiple
           />
-          <ImagePicker
-            label=" Add Brand Videos "
-            showFormError={formTwo?.showFormError && errors.videoUrls}
-            handleDrop={(val) => handleChange("videoUrls", val, form.videoUrls)}
-            images={form.videoUrls}
-            type="video"
-            removeImage={(file) =>
-              removeFile(file, "videoUrls", form.videoUrls)
-            }
-            multiple
-          />
+
           <Button
             onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
             isLoading={formTwo.createLoading}

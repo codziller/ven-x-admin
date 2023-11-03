@@ -136,12 +136,21 @@ const getDiscountsQuery = ({ page }) => gql`
     discounts(pageNumber: "${page}") {
       total
       results {
-        id
-        imageUrl
-        showOnMobile
-        showOnWeb 
-        titleText
+        archived
+        discountBuyXValue
         discountCode
+        discountGetXValue
+        discountGetYProduct {
+          name
+          id
+        }
+        discountGetYProductId
+        discountGetYValue
+        discountType
+        discountValue
+        id
+        name
+        updatedAt
       }
     }
   }
@@ -151,16 +160,21 @@ const getDiscountQuery = ({ id }) => gql`
   {
     __typename
     discount(id: "${id}") {
-        archived
-        descriptionText
-        discountCode
-        discountType
-        discountValue
+      archived
+      discountBuyXValue
+      discountCode
+      discountGetXValue
+      discountGetYProduct {
+        name
         id
-        imageUrl
-        showOnMobile
-        showOnWeb
-        titleText
+      }
+      discountGetYProductId
+      discountGetYValue
+      discountType
+      discountValue
+      id
+      name
+      updatedAt
     }
   }
 `;

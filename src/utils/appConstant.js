@@ -1,12 +1,6 @@
+import { lowerCase } from "lodash";
 import { numberWithCommas } from "./formatter";
-import NodeIcon from "assets/icons/node.png";
-import RubyIcon from "assets/icons/ruby.png";
-import PhpIcon from "assets/icons/php.png";
-import PythonIcon from "assets/icons/python.png";
 import cerave from "assets/images/cerave.png";
-import shm from "assets/images/shm.png";
-import corsx from "assets/images/corsx.png";
-import rashel from "assets/images/rashel.png";
 
 export const pageCount = 60;
 
@@ -51,37 +45,7 @@ export const STAT_DATE_TYPE = {
   MONTHLY: "months",
   WEEKLY: "weeks",
 };
-export const languageOptions = [
-  {
-    id: 63,
-    name: "JavaScript (Node.js 12.14.0)",
-    label: "Node",
-    value: "javascript",
-    logo: <img alt="node" src={NodeIcon} className="w-[22px] h-[22px]" />,
-  },
-  {
-    id: 72,
-    name: "Ruby (2.7.0)",
-    label: "Ruby",
-    value: "ruby",
-    logo: <img alt="ruby" src={RubyIcon} className="w-[22px] h-[22px]" />,
-  },
-  {
-    id: 68,
-    name: "PHP (7.4.1)",
-    label: "PHP",
-    value: "php",
-    logo: <img alt="php" src={PhpIcon} className="w-[22px] h-[22px]" />,
-  },
 
-  {
-    id: 71,
-    name: "Python (3.8.1)",
-    label: "Python",
-    value: "python",
-    logo: <img alt="python" src={PythonIcon} className="w-[22px] h-[22px]" />,
-  },
-];
 export const barOptions = {
   chart: { height: 300, type: "bar", toolbar: { show: false } },
   grid: {
@@ -222,207 +186,6 @@ export const transactions = [
     frequency: "2",
     duration: "weeks",
   },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "months",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "years",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "years",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Transfer",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
-  {
-    id: "1252657612",
-    payment_method: "Card",
-    order_date: "2022-02-25T12:05:30.322212Z",
-    delivery_date: "2022-02-25T12:05:30.322212Z",
-    total: "24000",
-    currency: "₦‎",
-    frequency: "2",
-    duration: "weeks",
-  },
 ];
 export const products = [
   {
@@ -433,87 +196,6 @@ export const products = [
     category: "Skin Product",
     quantity: 32,
     images: [cerave],
-  },
-  {
-    name: "Dr Rashel Vitamin C Face Serum",
-    price: "43000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [rashel],
-  },
-  {
-    name: "COSRX Advanced Snail 96",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [corsx],
-  },
-  {
-    name: "Simple Hydrating Moisturizer",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [shm],
-  },
-  {
-    name: "Simple Hydrating Moisturizer",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [shm],
-  },
-  {
-    name: "Cerave foaming facial cleanser",
-    price: "23000",
-    currency: "₦",
-    discount: 10,
-    category: "Skin Product",
-    quantity: 32,
-    images: [cerave],
-  },
-  {
-    name: "Dr Rashel Vitamin C Face Serum",
-    price: "43000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [rashel],
-  },
-  {
-    name: "COSRX Advanced Snail 96",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [corsx],
-  },
-  {
-    name: "Simple Hydrating Moisturizer",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [shm],
-  },
-  {
-    name: "Simple Hydrating Moisturizer",
-    price: "13000",
-    currency: "₦",
-    discount: 0,
-    category: "Skin Product",
-    quantity: 32,
-    images: [shm],
   },
 ].map((item, i) => {
   return { id: i + 1, ...item };
@@ -527,86 +209,11 @@ export const staffs = [
     date: "2022-02-25T12:05:30.322212Z",
     products: "4",
   },
-  {
-    name: "Ogunfemi Adebisi",
-    role: "Basic Staff",
-    email: "mubbzy124@gmail.com",
-    phone_number: "0812 368 4453",
-    date: "2022-02-25T12:05:30.322212Z",
-    products: "3",
-  },
-  {
-    name: "Shehu Isa",
-    role: "Basic Staff",
-    email: "mubbzy124@gmail.com",
-    phone_number: "0812 368 4453",
-    date: "2022-02-25T12:05:30.322212Z",
-    products: "6",
-  },
-  {
-    name: "Amaka Oganigwe",
-    role: "Basic Staff",
-    email: "mubbzy124@gmail.com",
-    phone_number: "0812 368 4453",
-    date: "2022-02-25T12:05:30.322212Z",
-    products: "9",
-  },
-  {
-    name: "Aisha Abass",
-    role: "Basic Staff",
-    email: "mubbzy124@gmail.com",
-    phone_number: "0812 368 4453",
-    date: "2022-02-25T12:05:30.322212Z",
-    products: "8",
-  },
-  {
-    name: "Temitope Abdulazeez",
-    role: "Basic Staff",
-    email: "mubbzy124@gmail.com",
-    phone_number: "0812 368 4453",
-    date: "2022-02-25T12:05:30.322212Z",
-    products: "4",
-  },
 ].map((item, i) => {
   return { id: i + 1, ...item };
 });
 
 export const promos = [
-  {
-    code: "425681",
-    price: "15000",
-    currency: "₦",
-    status: "Active",
-    date: "2022-02-25T12:05:30.322212Z",
-  },
-  {
-    code: "425681",
-    price: "15000",
-    currency: "₦",
-    status: "Expired",
-    date: "2022-02-25T12:05:30.322212Z",
-  },
-  {
-    code: "425681",
-    price: "15000",
-    currency: "₦",
-    status: "Active",
-    date: "2022-02-25T12:05:30.322212Z",
-  },
-  {
-    code: "425681",
-    price: "15000",
-    currency: "₦",
-    status: "Active",
-    date: "2022-02-25T12:05:30.322212Z",
-  },
-  {
-    code: "425681",
-    price: "15000",
-    currency: "₦",
-    status: "Active",
-    date: "2022-02-25T12:05:30.322212Z",
-  },
   {
     code: "425681",
     price: "15000",
@@ -714,6 +321,8 @@ export const GENDERS = [
 
 export const WEIGHT_TYPES = { grams: "grams", milliliters: "milliliters" };
 
+const formatCapitalUnderscoreText = (text) =>
+  lowerCase(text)?.replaceAll("_", " ");
 export const ORDER_STATUSES = {
   CANCELLED: "CANCELLED",
   COMPLETED: "COMPLETED",
@@ -728,4 +337,34 @@ export const ORDER_STATUS_OPTIONS = [
   { label: ORDER_STATUSES.PENDING, value: ORDER_STATUSES.PENDING },
   { label: ORDER_STATUSES.COMPLETED, value: ORDER_STATUSES.COMPLETED },
   { label: ORDER_STATUSES.CANCELLED, value: ORDER_STATUSES.CANCELLED },
+];
+
+export const DISCOUNT_TYPES = {
+  BUY_X_GET_X_FREE: "BUY_X_GET_X_FREE",
+  BUY_X_GET_Y_FREE: "BUY_X_GET_Y_FREE",
+  FIXED: "FIXED",
+  FREE_SHIPPING: "FREE_SHIPPING",
+  PERCENTAGE: "PERCENTAGE",
+};
+export const DISCOUNT_TYPES_OPTION = [
+  {
+    label: formatCapitalUnderscoreText(DISCOUNT_TYPES.FIXED),
+    value: DISCOUNT_TYPES.FIXED,
+  },
+  {
+    label: formatCapitalUnderscoreText(DISCOUNT_TYPES.PERCENTAGE),
+    value: DISCOUNT_TYPES.PERCENTAGE,
+  },
+  {
+    label: formatCapitalUnderscoreText(DISCOUNT_TYPES.FREE_SHIPPING),
+    value: DISCOUNT_TYPES.FREE_SHIPPING,
+  },
+  {
+    label: formatCapitalUnderscoreText(DISCOUNT_TYPES.BUY_X_GET_Y_FREE),
+    value: DISCOUNT_TYPES.BUY_X_GET_Y_FREE,
+  },
+  {
+    label: formatCapitalUnderscoreText(DISCOUNT_TYPES.BUY_X_GET_X_FREE),
+    value: DISCOUNT_TYPES.BUY_X_GET_X_FREE,
+  },
 ];

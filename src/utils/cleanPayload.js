@@ -1,8 +1,12 @@
-import { isBoolean, isEmpty } from "lodash";
+import { isBoolean, isEmpty, isNumber } from "lodash";
 
 const cleanPayload = (payload) => {
   Object.keys(payload).forEach((key) => {
-    if (!isBoolean(payload[key]) && isEmpty(payload[key])) {
+    if (
+      !isNumber(payload[key]) &&
+      !isBoolean(payload[key]) &&
+      isEmpty(payload[key])
+    ) {
       delete payload[key];
     }
   });
