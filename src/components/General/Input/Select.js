@@ -110,8 +110,6 @@ const Select = ({
     return options?.find((_) => _?.value === value);
   }, [rest, options]);
 
-  label === "Role" && console.log("selectValue: ", selectValue);
-
   return (
     <div className={`${fullWidth ? "w-[calc(100%-1px)]" : "w-fit"}`}>
       {label && (

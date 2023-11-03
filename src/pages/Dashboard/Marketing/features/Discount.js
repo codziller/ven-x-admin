@@ -175,13 +175,11 @@ const Discount = ({ isModal, handleDiscountSelect }) => {
   }, [searchDiscountLoading, loadingArchivedDiscounts, loadingDiscounts]);
 
   useEffect(() => scrollToTop(), [displayedDiscounts]);
-  const mobileDiscount = discounts;
-  // const webDiscount = discounts?.filter((_) => _?.showOnWeb);
 
   return (
     <div className="h-full w-full">
       <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
-        {loadingDiscounts ? (
+        {isLoading ? (
           <CircleLoader blue />
         ) : (
           <>
