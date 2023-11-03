@@ -321,7 +321,7 @@ export const GENDERS = [
 
 export const WEIGHT_TYPES = { grams: "grams", milliliters: "milliliters" };
 
-const formatCapitalUnderscoreText = (text) =>
+export const formatCapitalUnderscoreText = (text) =>
   lowerCase(text)?.replaceAll("_", " ");
 export const ORDER_STATUSES = {
   CANCELLED: "CANCELLED",

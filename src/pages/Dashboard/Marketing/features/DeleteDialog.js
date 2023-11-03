@@ -1,64 +1,42 @@
-import React, { useState } from "react";
-import * as yup from "yup";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React from "react";
 import PropTypes from "prop-types";
-
+import { Link } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
+
 import Button from "components/General/Button/Button";
-import { Link } from "react-router-dom";
+import MarketingStore from "../store";
+import cleanPayload from "utils/cleanPayload";
 
-export default function DeleteDialog({ details, toggler }) {
-  const schema = yup.object({
-    name: yup.string().required("Please enter your name"),
-    country: yup.string().required("Please select your country"),
-    amount: yup.string().required("Please enter amount"),
-    quantity: yup.string().required("Please enter quantity"),
-  });
-
-  //
-
-  //   const { actions } = signInSlice;
-
-  const defaultValues = {
-    name: "",
-    country: "",
-    amount: "",
-    quantity: "",
-  };
-
+const DeleteDialog = ({ details, toggler }) => {
   const {
-    handleSubmit,
-    formState: { errors, isValid },
-    setValue,
-    trigger,
-    watch,
-  } = useForm({
-    defaultValues,
-    mode: "onSubmit",
-    resolver: yupResolver(schema),
-  });
+    deleteDiscount,
+    deleteDiscountLoading,
+    editDiscount,
+    editWareHouseLoading,
+  } = MarketingStore;
 
-  const handleChange = async (prop, val) => {
-    setValue(prop, val);
-    await trigger(prop);
-  };
+  const handleOnSubmit = () => {
+    if (details?.archive) {
+      const payload = { ...details, currentPage: "", archive: false };
 
-  const form = {
-    name: watch("name"),
-    country: watch("country"),
-    amount: watch("amount"),
-    quantity: watch("quantity"),
-  };
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-    if (isValid) {
-      toggler?.();
+      cleanPayload(payload);
+      editDiscount({
+        data: payload,
+        page: details?.currentPage,
+        onSuccess: toggler(),
+      });
+      return;
     }
-    // onSubmit(e);
-    // dispatch(actions.signInUser({ username: name, country }));
+    const payload = { id: details?.id };
+    deleteDiscount({
+      data: payload,
+      onSuccess: () => {
+        toggler();
+      },
+    });
   };
 
   return (
@@ -74,17 +52,22 @@ export default function DeleteDialog({ details, toggler }) {
       )}
 
       <Delete className="scale-90" />
-      <p className="font-600 text-xl ">Delete Promo Code</p>
+      <p className="font-600 text-xl ">{`${
+        details?.archive ? "Unarchive" : "Archive"
+      } Discount`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to delete{" "}
-        <span className="text-black">"{details?.code}"?</span>
+        Are you sure you want to {details?.archive ? "unarchive" : "archive"}{" "}
+        <span className="text-black">"{details?.name}"?</span>
       </p>
 
       <Button
-        onClick={() => toggler?.()}
+        onClick={handleOnSubmit}
+        isLoading={deleteDiscountLoading || editWareHouseLoading}
         type="submit"
-        text="Yes, Delete this promo code"
+        text={`Yes, ${
+          details?.archive ? "unarchive" : "archive"
+        } this discount`}
         className="mb-2"
         fullWidth
         redBg
@@ -92,7 +75,7 @@ export default function DeleteDialog({ details, toggler }) {
 
       <Button
         onClick={() => toggler?.()}
-        type="submit"
+        isDisabled={deleteDiscountLoading || editWareHouseLoading}
         text="No, Cancel"
         className="mb-5"
         fullWidth
@@ -100,8 +83,10 @@ export default function DeleteDialog({ details, toggler }) {
       />
     </div>
   );
-}
+};
 DeleteDialog.propTypes = {
   toggler: PropTypes.func,
   details: PropTypes.object,
 };
+
+export default observer(DeleteDialog);

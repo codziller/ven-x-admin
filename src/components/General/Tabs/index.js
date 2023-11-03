@@ -33,7 +33,7 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab, baseUrl }) => {
         >
           {tabs.map((tab, index) => {
             const tabName = tab?.name || tab;
-            return (
+            return baseUrl ? (
               <Link
                 to={baseUrl ? `${baseUrl}?tab=${tab?.name}` : "#"}
                 key={index}
@@ -49,6 +49,21 @@ const Tabs = ({ tabs = [], activeTab, setActiveTab, baseUrl }) => {
               >
                 {tab?.label || tab}
               </Link>
+            ) : (
+              <div
+                key={index}
+                ref={(el) => (elementsRef.current[index] = el)}
+                className={clsx(
+                  `w-fit px-2 pb-3 text-center cursor-pointer whitespace-nowrap text-sm`,
+                  {
+                    "text-blue ": activeTab === tabName,
+                    "text-grey-text": activeTab !== tabName,
+                  }
+                )}
+                onClick={() => setActiveTab(tab?.name || tab)}
+              >
+                {tab?.label || tab}
+              </div>
             );
           })}
         </div>
