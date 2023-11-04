@@ -12,6 +12,7 @@ import Discount from "./Discount";
 import MobileBrandsOfTheMoment from "./MobileBrandsOfTheMoment";
 import WebMarketingImage from "./WebMarketingImage";
 import { useParams, useLocation } from "react-router-dom";
+import MarketingTextInput from "./MarketingTextInput";
 
 const MarketingPage = () => {
   const { warehouse_id } = useParams();
@@ -19,6 +20,10 @@ const MarketingPage = () => {
   const currentTab = new URLSearchParams(location.search).get("tab");
   console.log("currentTab: ", currentTab);
   const TABS = [
+    {
+      name: "marketingTextContent",
+      label: "Marketing Text Content",
+    },
     { name: "homePageSliders", label: "Home Page Sliders" },
     { name: "homePagePosts", label: "Home Page Posts" },
     {
@@ -75,14 +80,15 @@ const MarketingPage = () => {
             setActiveTab={setActiveTab}
           />
 
-          {activeTab === TABS[0].name ? <HomePageSlider /> : null}
-          {activeTab === TABS[1].name ? <HomePagePost /> : null}
-          {activeTab === TABS[2].name ? <MobilePagePost /> : null}
-          {activeTab === TABS[3].name ? <MobileMarketingImage /> : null}
-          {activeTab === TABS[4].name ? <MobileBrandsOfTheMoment /> : null}
-          {activeTab === TABS[5].name ? <PromoBanner /> : null}
-          {activeTab === TABS[6].name ? <WebMarketingImage /> : null}
-          {activeTab === TABS[7].name ? <Discount /> : null}
+          {activeTab === TABS[0].name ? <MarketingTextInput /> : null}
+          {activeTab === TABS[1].name ? <HomePageSlider /> : null}
+          {activeTab === TABS[2].name ? <HomePagePost /> : null}
+          {activeTab === TABS[3].name ? <MobilePagePost /> : null}
+          {activeTab === TABS[4].name ? <MobileMarketingImage /> : null}
+          {activeTab === TABS[5].name ? <MobileBrandsOfTheMoment /> : null}
+          {activeTab === TABS[6].name ? <PromoBanner /> : null}
+          {activeTab === TABS[7].name ? <WebMarketingImage /> : null}
+          {activeTab === TABS[8].name ? <Discount /> : null}
         </div>
       </div>
 

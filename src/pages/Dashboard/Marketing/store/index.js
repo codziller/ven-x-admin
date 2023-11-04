@@ -18,6 +18,10 @@ class MarketingStore {
   createImageLoading = false;
   editImageLoading = false;
 
+  marketingText = null;
+  loadingMarketingText = false;
+  editMarketingTextLoading = false;
+
   webMarketingImages = [];
   webMarketingImage = null;
   webMarketingImagesCount = null;
@@ -112,6 +116,19 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.loadingImage = false;
+    }
+  };
+
+  getMarketingText = async () => {
+    this.loadingMarketingText = true;
+    try {
+      let res = await apis.getMarketingText();
+      res = res?.marketingText;
+      this.marketingText = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingMarketingText = false;
     }
   };
 
@@ -354,6 +371,22 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.editImageLoading = false;
+    }
+  };
+
+  editMarketingText = async ({ data, onSuccess }) => {
+    this.editMarketingTextLoading = true;
+    try {
+      await apis.editMarketingText(data);
+      successToast(
+        "Operation Successful!",
+        "Marketing text content updated successfully."
+      );
+      onSuccess?.();
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.editMarketingTextLoading = false;
     }
   };
 

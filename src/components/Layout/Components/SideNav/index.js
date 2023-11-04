@@ -260,7 +260,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           title: "Marketing",
           slug: "/dashboard/marketing",
           label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/marketing/${warehouse_id}`,
+          link: `/dashboard/marketing/${warehouse_id}/?tab=marketingTextContent`,
           icon: (
             <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
           ),

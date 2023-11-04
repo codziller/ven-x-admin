@@ -306,6 +306,22 @@ const getMobilePagePostQuery = ({ id }) => gql`
   }
 `;
 
+const getMarketingTextQuery = () => gql`
+  {
+    __typename
+    marketingText {
+      appOrderDiscountText
+      donationDescriptionText
+      donationImageUrl
+      donationTitleText
+      donationUrlToLinkTo
+      emailExclusiveText
+      freeShippingText
+      loyaltyText
+    }
+  }
+`;
+
 const createWebMarketingImageQuery = gql`
   mutation createWebMarketingImage(
     $dataId: String
@@ -702,6 +718,34 @@ const editMobilePagePostQuery = gql`
   }
 `;
 
+const editMarketingTextQuery = gql`
+  mutation patchMarketingText(
+    $appOrderDiscountText: String
+    $donationDescriptionText: String
+    $donationImageUrl: String
+    $donationTitleText: String
+    $donationUrlToLinkTo: String
+    $emailExclusiveText: String
+    $freeShippingText: String
+    $loyaltyText: String
+  ) {
+    patchMarketingText(
+      marketingTextInput: {
+        appOrderDiscountText: $appOrderDiscountText
+        donationDescriptionText: $donationDescriptionText
+        donationImageUrl: $donationImageUrl
+        donationTitleText: $donationTitleText
+        donationUrlToLinkTo: $donationUrlToLinkTo
+        emailExclusiveText: $emailExclusiveText
+        freeShippingText: $freeShippingText
+        loyaltyText: $loyaltyText
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const deleteBrandQuery = gql`
   mutation removeBrand($id: String!) {
     removeBrand(id: $id) {
@@ -797,6 +841,11 @@ const apis = {
       method: "GET",
     }),
 
+  getMarketingText: () =>
+    graphQlInstance(getMarketingTextQuery(), {
+      method: "GET",
+    }),
+
   createWebMarketingImage: (variables) =>
     graphQlInstance(createWebMarketingImageQuery, {
       variables,
@@ -869,6 +918,11 @@ const apis = {
     }),
   editMobilePagePost: (variables) =>
     graphQlInstance(editMobilePagePostQuery, {
+      variables,
+    }),
+
+  editMarketingText: (variables) =>
+    graphQlInstance(editMarketingTextQuery, {
       variables,
     }),
 

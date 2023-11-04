@@ -37,7 +37,7 @@ const Textarea = ({
   rows,
   showFormError,
   formError,
-  labelClass = "text-grey-text",
+  labelClass = "",
 }) => {
   const [active, setActive] = useState(false);
   const domNode = useClickOutside(() => {

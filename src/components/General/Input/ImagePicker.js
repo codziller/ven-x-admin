@@ -9,6 +9,7 @@ import { ReactComponent as Gallery } from "assets/icons/gallery-black.svg";
 import { FormErrorMessage } from "../FormErrorMessage";
 import classNames from "classnames";
 import ImageList from "./ImageList";
+import { TbDimensions } from "react-icons/tb";
 
 const baseStyle = {
   flex: 1,
@@ -53,7 +54,7 @@ export default function ImagePicker({
   isBanner,
   isPost,
   isMarketingImg,
-
+  dimension,
   ...rest
 }) {
   const imageArray = isString(images) ? [images] : images;
@@ -93,6 +94,13 @@ export default function ImagePicker({
         <Gallery />
         <p className="text-xs text-grey">{placeholder}</p>
 
+        {dimension ? (
+          <p className="flex justify-center items-center gap-1 font-medium text-sm text-blue">
+            <TbDimensions size={18} /> Dimension: {dimension?.width}
+            <span className="text-red">{"X"}</span>
+            {dimension?.height}
+          </p>
+        ) : null}
         {!isEmpty(imageArray) && (
           <p className="text-xs text-blue-bright">
             {imageArray?.length} {imageArray?.length === 1 ? type : `${type}s`}{" "}
@@ -131,4 +139,5 @@ ImagePicker.propTypes = {
   isBanner: PropTypes.bool,
   isPost: PropTypes.bool,
   isMarketingImg: PropTypes.bool,
+  dimension: PropTypes.string,
 };
