@@ -8,7 +8,8 @@ import { ReactComponent as Overview } from "assets/icons/overview.svg";
 import { ReactComponent as Products } from "assets/icons/products.svg";
 import { ReactComponent as Staff } from "assets/icons/staff.svg";
 import { ReactComponent as Gallery } from "assets/icons/gallery.svg";
-
+import Logo from "assets/images/logo-main.png";
+import LogoSmall from "assets/images/logo-small.png";
 import { TbBrandDenodo, TbCategory2, TbPackageImport } from "react-icons/tb";
 import {
   PiArrowsInLineVerticalDuotone,
@@ -326,7 +327,15 @@ const SideNav = ({
           <div className="pl-9 pr-3.5 py-3.5 flex flex-col justify-start items-start gap-1 w-full overflow-hidden">
             <div className="flex text-white">
               <span className=" text-xl font-600">
-                {sidenavCollapsed ? "BH" : "beautyhut."}
+                {sidenavCollapsed ? (
+                  <img
+                    alt="logo"
+                    src={LogoSmall}
+                    className="w-[50px] h-[40px]"
+                  />
+                ) : (
+                  <img alt="logo" src={Logo} className="w-[120px] h-[60px]" />
+                )}
               </span>
             </div>
 
