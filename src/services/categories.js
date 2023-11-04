@@ -67,6 +67,28 @@ const getHeaderNavsQuery = () => gql`
     }
   }
 `;
+
+const getHeaderNavsHiddenQuery = () => gql`
+  {
+    __typename
+    headerNavs_hidden {
+      archive
+      categories {
+        name
+        id
+        subCategories {
+          name
+          id
+        }
+      }
+      id
+      name
+      imageUrl
+      position
+      createdAt
+    }
+  }
+`;
 const getCategoryQuery = ({ id }) => gql`
   {
     __typename
@@ -107,11 +129,21 @@ const createHeaderNavQuery = gql`
 `;
 
 const editHeaderNavQuery = gql`
-  mutation updateHeaderNav($name: String!, $id: String!, $imageUrl: String!) {
+  mutation updateHeaderNav(
+    $name: String!
+    $id: String!
+    $imageUrl: String!
+    $isPrivate: Boolean
+  ) {
     updateHeaderNav(
-      updateHeaderNavInput: { name: $name, id: $id, imageUrl: $imageUrl }
+      updateHeaderNavInput: {
+        name: $name
+        id: $id
+        imageUrl: $imageUrl
+        isPrivate: $isPrivate
+      }
     ) {
-      id
+      status
     }
   }
 `;
@@ -177,6 +209,11 @@ const apis = {
     graphQlInstance(getHeaderNavsQuery(), {
       method: "GET",
     }),
+  getHeaderNavsHidden: () =>
+    graphQlInstance(getHeaderNavsHiddenQuery(), {
+      method: "GET",
+    }),
+
   getCategory: ({ id }) =>
     graphQlInstance(getCategoryQuery({ id }), {
       method: "GET",

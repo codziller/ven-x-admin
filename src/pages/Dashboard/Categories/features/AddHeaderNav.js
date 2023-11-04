@@ -9,6 +9,7 @@ import { observer } from "mobx-react-lite";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
+import CheckBox from "components/General/Input/CheckBox";
 import Input from "components/General/Input/Input";
 import CategoriesStore from "../store";
 import cleanPayload from "utils/cleanPayload";
@@ -18,11 +19,14 @@ import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import { isArray } from "lodash";
 
 const AddHeaderNav = ({ details, toggler }) => {
+  console.log("details: ", details);
   const {
     createHeaderNav,
     editHeaderNav,
     deleteHeaderNav,
     deleteHeaderNavLoading,
+    editHeaderNavLoading,
+    createHeaderNavLoading,
   } = CategoriesStore;
 
   const [formTwo, setFormTwo] = useState({
@@ -40,6 +44,7 @@ const AddHeaderNav = ({ details, toggler }) => {
   const defaultValues = {
     name: details?.name,
     imageUrl: details?.id ? details?.imageUrl : [],
+    isPrivate: details?.id ? details?.isPrivate : false,
   };
 
   const {
@@ -64,6 +69,7 @@ const AddHeaderNav = ({ details, toggler }) => {
   const form = {
     name: watch("name"),
     imageUrl: watch("imageUrl"),
+    isPrivate: watch("isPrivate"),
   };
 
   const handleOnSubmit = async (e) => {
@@ -77,6 +83,7 @@ const AddHeaderNav = ({ details, toggler }) => {
         name: form.name,
         id: details?.id,
         imageUrl: imagesUrls,
+        isPrivate: form.isPrivate,
       };
 
       cleanPayload(payload);
@@ -117,7 +124,7 @@ const AddHeaderNav = ({ details, toggler }) => {
         {details?.isAdd ? (
           <p className="font-600 mb-3 text-xl">Add Header Nav</p>
         ) : (
-          <p className="font-600 mb-3 text-xl  ">Edit Header Nav</p>
+          <p className="font-600 mb-3 text-xl">Edit Header Nav</p>
         )}
 
         <form
@@ -133,7 +140,11 @@ const AddHeaderNav = ({ details, toggler }) => {
             showFormError={formTwo?.showFormError}
             required
           />
-
+          <CheckBox
+            label="Hide Header Nav"
+            onChange={() => handleChange("isPrivate", !form.isPrivate)}
+            checked={form?.isPrivate}
+          />
           <ImagePicker
             label="Header Nav Image"
             handleDrop={(val) => handleChange("imageUrl", val)}
@@ -145,7 +156,11 @@ const AddHeaderNav = ({ details, toggler }) => {
 
           <Button
             onClick={() => setFormTwo({ ...formTwo, showFormError: true })}
-            isLoading={formTwo.createLoading}
+            isLoading={
+              formTwo.createLoading ||
+              editHeaderNavLoading ||
+              createHeaderNavLoading
+            }
             type="submit"
             text={details?.isAdd ? "Add Header Nav" : "Save Changes"}
             className="mb-2 "

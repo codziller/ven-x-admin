@@ -17,6 +17,7 @@ import CategoriesStore from "../store";
 import { flattenArrayToString } from "utils/functions";
 import Tabs from "components/General/Tabs";
 import HeaderNavs from "./HeaderNavs";
+import HeaderNavsHidden from "./HeaderNavsHidden";
 
 export const dateFilters = [
   {
@@ -41,6 +42,7 @@ export const dateFilters = [
 const TABS = [
   { name: "categories", label: "Categories" },
   { name: "headerNavs", label: "Header Navs" },
+  { name: "headerNavsHidden", label: "Hidden Header Navs" },
 ];
 const CategoriesPage = () => {
   const { categories, getCategories, loading } = CategoriesStore;
@@ -196,6 +198,7 @@ const CategoriesPage = () => {
         )}
 
         {activeTab === TABS[1].name && <HeaderNavs />}
+        {activeTab === TABS[2].name && <HeaderNavsHidden />}
       </div>
 
       <TransactionDetailsModal

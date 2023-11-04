@@ -14,11 +14,13 @@ class CategoriesStore {
   // ====================================================
   categories = [];
   headerNavs = [];
+  headerNavsHidden = [];
   category = null;
   categoriesCount = null;
   error = null;
   loading = false;
   loadingHeaderNavs = false;
+  loadingHeaderNavsHidden = false;
   createCategoryLoading = false;
   editCategoryLoading = false;
   getCategoryLoading = false;
@@ -51,6 +53,23 @@ class CategoriesStore {
       this.error = error;
     } finally {
       this.loadingHeaderNavs = false;
+    }
+  };
+
+  getHeaderNavsHidden = async () => {
+    this.loadingHeaderNavsHidden = true;
+    try {
+      let res = await apis.getHeaderNavsHidden();
+      res = res?.headerNavs_hidden;
+
+      this.headerNavsHidden =
+        res?.map((item) => {
+          return { ...item, label: item?.name, value: item?.id };
+        }) || [];
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingHeaderNavsHidden = false;
     }
   };
   getCategoryBrands = async () => {
@@ -169,7 +188,8 @@ class CategoriesStore {
           "HeaderNav updated Successfully."
         );
       onSuccess?.();
-      await this.getHeaderNavs();
+      this.getHeaderNavs();
+      this.getHeaderNavsHidden();
     } catch (error) {
       this.error = error;
     } finally {

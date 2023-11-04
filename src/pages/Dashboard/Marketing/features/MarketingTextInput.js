@@ -34,7 +34,6 @@ const Form = observer(() => {
   const { editMarketingText, marketingText, loadingMarketingText } =
     MarketingStore;
 
-  console.log("marketingText: ", marketingText);
   const defaultValues = {
     donationDescriptionText: marketingText?.donationDescriptionText || "",
     donationImageUrl: marketingText?.donationImageUrl || [],
