@@ -65,6 +65,7 @@ import AddStaff from "pages/Dashboard/Staff/features/AddStaff";
 import AddMobileBrandsOfTheMoment from "pages/Dashboard/Marketing/features/AddMobileBrandsOfTheMoment";
 import EditInventory from "pages/Dashboard/Inventory/features/EditInventory";
 import AddWebMarketingImage from "pages/Dashboard/Marketing/features/AddWebMarketingImage";
+import AddWebLinkMarketingImage from "pages/Dashboard/Marketing/features/AddWebLinkMarketingImage";
 
 const Router = () => {
   return (
@@ -402,6 +403,15 @@ const Router = () => {
           <Route
             path="edit-mobile-marketing-image/:warehouse_id/:position/:media_id"
             element={<AddMobileMarketingImage />}
+          />
+
+          <Route
+            path="add-web-link-marketing-image/:warehouse_id/:position"
+            element={<AddWebLinkMarketingImage />}
+          />
+          <Route
+            path="edit-web-link-marketing-image/:warehouse_id/:position/:media_id"
+            element={<AddWebLinkMarketingImage />}
           />
 
           <Route

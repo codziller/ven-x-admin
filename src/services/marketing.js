@@ -106,6 +106,39 @@ const getMobileMarketingImageQuery = ({ id }) => gql`
   }
 `;
 
+const getWebLinkMarketingImagesQuery = ({ page }) => gql`
+  {
+    __typename
+    webLinkMarketingImages(pageNumber: "${page}") {
+      total
+      results {
+        archive
+        headerNavId
+        updatedAt
+        id
+        imageUrl
+        isForYou
+      }
+    }
+  }
+`;
+
+const getWebLinkMarketingImageQuery = ({ id }) => gql`
+  {
+    __typename
+    webLinkMarketingImage(id: "${id}") {
+        archive
+        headerNavId
+        updatedAt
+        id
+        imageUrl
+        isForYou
+        pageToLinkTo
+        dataId
+    }
+  }
+`;
+
 const getPromoBannersQuery = ({ page }) => gql`
   {
     __typename
@@ -472,6 +505,52 @@ const editMobileMarketingImageQuery = gql`
   }
 `;
 
+const createWebLinkMarketingImageQuery = gql`
+  mutation createWebLinkMarketingImage(
+    $headerNavId: String
+    $imageUrl: String!
+    $isForYou: Boolean!
+    $dataId: String
+    $pageToLinkTo: PageToLinkToEnum
+  ) {
+    createWebLinkMarketingImage(
+      createWebLinkMarketingImageInput: {
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        dataId: $dataId
+        pageToLinkTo: $pageToLinkTo
+      }
+    ) {
+      id
+    }
+  }
+`;
+
+const editWebLinkMarketingImageQuery = gql`
+  mutation updateWebLinkMarketingImage(
+    $headerNavId: String
+    $imageUrl: String
+    $isForYou: Boolean
+    $dataId: String
+    $pageToLinkTo: PageToLinkToEnum
+    $id: String!
+  ) {
+    updateWebLinkMarketingImage(
+      updateWebLinkMarketingImageInput: {
+        headerNavId: $headerNavId
+        imageUrl: $imageUrl
+        isForYou: $isForYou
+        dataId: $dataId
+        pageToLinkTo: $pageToLinkTo
+        id: $id
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 const createPromoBannerQuery = gql`
   mutation createPromoBanner(
     $showOnMobile: Boolean!
@@ -792,6 +871,16 @@ const apis = {
       method: "GET",
     }),
 
+  getWebLinkMarketingImages: ({ page }) =>
+    graphQlInstance(getWebLinkMarketingImagesQuery({ page }), {
+      method: "GET",
+    }),
+
+  getWebLinkMarketingImage: ({ id }) =>
+    graphQlInstance(getWebLinkMarketingImageQuery({ id }), {
+      method: "GET",
+    }),
+
   getPromoBanners: ({ page }) =>
     graphQlInstance(getPromoBannersQuery({ page }), {
       method: "GET",
@@ -873,6 +962,16 @@ const apis = {
 
   editMobileMarketingImage: (variables) =>
     graphQlInstance(editMobileMarketingImageQuery, {
+      variables,
+    }),
+
+  createWebLinkMarketingImage: (variables) =>
+    graphQlInstance(createWebLinkMarketingImageQuery, {
+      variables,
+    }),
+
+  editWebLinkMarketingImage: (variables) =>
+    graphQlInstance(editWebLinkMarketingImageQuery, {
       variables,
     }),
 

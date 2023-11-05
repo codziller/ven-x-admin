@@ -13,6 +13,7 @@ import MobileBrandsOfTheMoment from "./MobileBrandsOfTheMoment";
 import WebMarketingImage from "./WebMarketingImage";
 import { useParams, useLocation } from "react-router-dom";
 import MarketingTextInput from "./MarketingTextInput";
+import WebLinkMarketingImage from "./WebLinkMarketingImage";
 
 const MarketingPage = () => {
   const { warehouse_id } = useParams();
@@ -35,6 +36,14 @@ const MarketingPage = () => {
       label: "Mobile Marketing Images",
     },
     {
+      name: "webLinkMarketingImages",
+      label: "Web Marketing Images",
+    },
+    {
+      name: "webMarketingImage",
+      label: "Web Marketing Images (LandScape)",
+    },
+    {
       name: "mobileBrandsOfTheMoment",
       label: "Mobile Brands Of The Moment",
     },
@@ -43,10 +52,6 @@ const MarketingPage = () => {
       label: "Promo Banners",
     },
 
-    {
-      name: "webMarketingImage",
-      label: "Web Marketing Images",
-    },
     {
       name: "discounts",
       label: "Discounts",
@@ -80,15 +85,22 @@ const MarketingPage = () => {
             setActiveTab={setActiveTab}
           />
 
-          {activeTab === TABS[0].name ? <MarketingTextInput /> : null}
-          {activeTab === TABS[1].name ? <HomePageSlider /> : null}
-          {activeTab === TABS[2].name ? <HomePagePost /> : null}
-          {activeTab === TABS[3].name ? <MobilePagePost /> : null}
-          {activeTab === TABS[4].name ? <MobileMarketingImage /> : null}
-          {activeTab === TABS[5].name ? <MobileBrandsOfTheMoment /> : null}
-          {activeTab === TABS[6].name ? <PromoBanner /> : null}
-          {activeTab === TABS[7].name ? <WebMarketingImage /> : null}
-          {activeTab === TABS[8].name ? <Discount /> : null}
+          {activeTab === "marketingTextContent" ? <MarketingTextInput /> : null}
+          {activeTab === "homePageSliders" ? <HomePageSlider /> : null}
+          {activeTab === "homePagePosts" ? <HomePagePost /> : null}
+          {activeTab === "mobilePagePosts" ? <MobilePagePost /> : null}
+          {activeTab === "mobileMarketingImages" ? (
+            <MobileMarketingImage />
+          ) : null}
+          {activeTab === "webLinkMarketingImages" ? (
+            <WebLinkMarketingImage />
+          ) : null}
+          {activeTab === "webMarketingImage" ? (
+            <MobileBrandsOfTheMoment />
+          ) : null}
+          {activeTab === "mobileBrandsOfTheMoment" ? <PromoBanner /> : null}
+          {activeTab === "promoBanners" ? <WebMarketingImage /> : null}
+          {activeTab === "discounts" ? <Discount /> : null}
         </div>
       </div>
 
