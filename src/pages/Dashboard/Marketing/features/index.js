@@ -95,11 +95,11 @@ const MarketingPage = () => {
           {activeTab === "webLinkMarketingImages" ? (
             <WebLinkMarketingImage />
           ) : null}
-          {activeTab === "webMarketingImage" ? (
+          {activeTab === "mobileBrandsOfTheMoment" ? (
             <MobileBrandsOfTheMoment />
           ) : null}
-          {activeTab === "mobileBrandsOfTheMoment" ? <PromoBanner /> : null}
-          {activeTab === "promoBanners" ? <WebMarketingImage /> : null}
+          {activeTab === "promoBanners" ? <PromoBanner /> : null}
+          {activeTab === "webMarketingImage" ? <WebMarketingImage /> : null}
           {activeTab === "discounts" ? <Discount /> : null}
         </div>
       </div>
