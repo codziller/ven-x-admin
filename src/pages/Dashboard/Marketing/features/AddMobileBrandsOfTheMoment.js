@@ -220,6 +220,7 @@ const Form = observer(() => {
                     }
                     images={form.imageUrl}
                     multiple={false}
+                    dimension={{ width: "170px", height: "215px" }}
                     isMarketingImg
                   />
                 </div>

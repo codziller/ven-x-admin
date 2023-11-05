@@ -264,6 +264,7 @@ const Form = observer(() => {
                     }
                     images={form.imageUrl}
                     multiple={false}
+                    dimension={{ width: "375px", height: "438px" }}
                     isBanner
                   />
 

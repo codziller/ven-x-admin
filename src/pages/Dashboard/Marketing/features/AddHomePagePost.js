@@ -291,6 +291,7 @@ const Form = observer(() => {
                     formError={errors.sourceImageUrl}
                     showFormError={formTwo?.showFormError}
                     multiple={false}
+                    dimension={{ width: "400px", height: "500px" }}
                     isPost
                   />
                   <Button

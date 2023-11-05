@@ -265,6 +265,7 @@ const Form = ({ details, toggler }) => {
             removeImage={(file) =>
               removeFile(file, "imageUrls", form.imageUrls)
             }
+            dimension={{ width: "1000px", height: "200px" }}
             multiple
           />
 

@@ -152,6 +152,7 @@ const AddHeaderNav = ({ details, toggler }) => {
             formError={errors.imageUrl}
             showFormError={formTwo?.showFormError}
             multiple={false}
+            dimension={{ width: "100px", height: "100px" }}
           />
 
           <Button

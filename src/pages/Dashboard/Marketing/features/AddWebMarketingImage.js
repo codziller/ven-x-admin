@@ -183,6 +183,7 @@ const Form = observer(() => {
                 handleDrop={(val) => handleChange({ prop: "imageUrl", val })}
                 images={form.imageUrl}
                 multiple={false}
+                dimension={{ width: "1000px", height: "244px" }}
                 isBanner
               />
               <form
