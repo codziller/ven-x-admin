@@ -199,7 +199,7 @@ const Form = observer(() => {
       return;
     }
 
-    if (isEmpty(productIds || categoryIds || brandIds)) {
+    if (isEmpty(productIds?.[0] || categoryIds?.[0] || brandIds?.[0])) {
       warningToast(
         "Error!",
         "Please select products, brands, or categories to apply this discount to"
@@ -241,6 +241,7 @@ const Form = observer(() => {
     }
   };
 
+  console.log("Formm: ", form);
   return loadingDiscount ? (
     <div className="w-full flex justify-center items-center min-h-[150px]">
       <CircleLoader blue />
