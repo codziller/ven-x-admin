@@ -76,13 +76,13 @@ const Form = observer(() => {
     if (!media_id) {
       await createPromoBanner({
         data: payload,
-        onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+        onSuccess: () => navigate(-1),
       });
       return;
     } else {
       await editPromoBanner({
         data: { ...payload, id: media_id },
-        onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+        onSuccess: () => navigate(-1),
       });
       return;
     }

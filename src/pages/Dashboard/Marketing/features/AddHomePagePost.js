@@ -118,7 +118,7 @@ const Form = observer(() => {
 
         await createImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       } else {
@@ -133,7 +133,7 @@ const Form = observer(() => {
 
         await editImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       }

@@ -113,7 +113,7 @@ const Form = observer(() => {
 
         await createHomeSliderImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       } else {
@@ -128,7 +128,7 @@ const Form = observer(() => {
 
         await editHomeSliderImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       }

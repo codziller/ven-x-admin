@@ -130,13 +130,13 @@ const Form = observer(() => {
       if (!media_id) {
         await createWebMarketingImage({
           data: payload,
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       } else {
         await editWebMarketingImage({
           data: { ...payload, id: media_id },
-          onSuccess: () => navigate(`/dashboard/marketing/${warehouse_id}`),
+          onSuccess: () => navigate(-1),
         });
         return;
       }
