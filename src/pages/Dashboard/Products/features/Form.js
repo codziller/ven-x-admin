@@ -40,10 +40,11 @@ import ProductsStore from "../store";
 import cleanPayload from "utils/cleanPayload";
 import { errorToast, warningToast } from "components/General/Toast/Toast";
 import { flatMap, isEmpty } from "lodash";
-import { flattenCategories } from "utils/functions";
+import { convertToJs, flattenCategories } from "utils/functions";
 import { uploadImagesToCloud } from "utils/uploadImagesToCloud";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
+import moment from "moment";
 const {
   PRODUCT_OPTION,
   PRODUCT_SUBSCRIPTION,
@@ -148,7 +149,11 @@ const Form = ({ details, toggler }) => {
     brandId: product_id ? product?.brandId : "",
     categoryIds: product_id ? product?.categories?.map((item) => item?.id) : [],
     ribbon: product_id ? product?.ribbon : "",
-    costPrice: product_id ? product?.costPrice : "",
+    costPrice: product_id
+      ? convertToJs(product)?.productCostPrice?.sort((a, b) =>
+          moment(a?.updatedAt).isBefore(moment(b?.updatedAt)) ? 0 : -1
+        )?.[0]?.costPrice
+      : "",
     salePrice: product_id ? product?.salePrice : "",
     discountValue: product_id ? product?.discountValue : "",
     // quantity: product_id ? product?.quantity : "",
