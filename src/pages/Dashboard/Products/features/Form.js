@@ -59,8 +59,14 @@ const Form = ({ details, toggler }) => {
   const { product_id, warehouse_id } = useParams();
   const location = useLocation();
   const isViewMode = location.pathname.includes("/dashboard/products/view/");
-  const { createProduct, product, editProduct, editProductOption } =
-    ProductsStore;
+  const {
+    createProduct,
+    product,
+    editProduct,
+    editProductOption,
+    createProductOption,
+    createProductOptionLoading,
+  } = ProductsStore;
   const { getCategories, categories } = CategoriesStore;
   const { brands, getBrands, loading } = BrandsStore;
   const { warehouses, getWarehouses } = WareHousesStore;
@@ -426,9 +432,12 @@ const Form = ({ details, toggler }) => {
           onSuccess: () => navigate(-1),
         });
       } else {
-        const payload = { ...option, id: "" };
+        const payload = {
+          createProductOptionInput: option,
+          productId: product_id,
+        };
         cleanPayload(payload);
-        await editProductOption({
+        await createProductOption({
           product_id,
           data: payload,
           onSuccess: () => navigate(-1),

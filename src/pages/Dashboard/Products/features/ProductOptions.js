@@ -163,7 +163,7 @@ const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
     });
     toggler?.();
   };
-  console.log("errors; ", errors);
+
   return (
     <div className="flex flex-col justify-center items-start gap-y-2 w-full h-full pb-4 overflow-y-auto">
       {details?.link ? (

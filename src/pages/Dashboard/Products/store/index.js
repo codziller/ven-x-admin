@@ -30,6 +30,8 @@ class ProductsStore {
   editProductLoading = false;
   getProductLoading = false;
 
+  createProductOptionLoading = false;
+
   editProductVariantLoading = false;
   editProductOptionLoading = false;
   editProductSubscriptionLoading = false;
@@ -229,6 +231,23 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.editProductVariantLoading = false;
+    }
+  };
+
+  createProductOption = async ({ data, onSuccess, product_id }) => {
+    this.createProductOptionLoading = true;
+    try {
+      await apis.createProductOption(data);
+      successToast(
+        "Operation Successful!",
+        "Product option created Successfully."
+      );
+      onSuccess?.();
+      this.getProduct({ data: { id: product_id } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createProductOptionLoading = false;
     }
   };
   editProductOption = async ({ data, onSuccess, product_id }) => {
