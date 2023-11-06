@@ -47,20 +47,16 @@ const getBrandQuery = ({ id }) => gql`
 
 const createBrandQuery = gql`
   mutation createBrand(
-    $brandDescription: String!
     $brandLogoUrl: String!
     $brandName: String!
-    $brandShortText: String!
     $categoryId: String
     $imageUrls: [String!]
     $videoUrls: [String!]
   ) {
     createBrand(
       createBrandInput: {
-        brandDescription: $brandDescription
         brandLogoUrl: $brandLogoUrl
         brandName: $brandName
-        brandShortText: $brandShortText
         categoryId: $categoryId
         imageUrls: $imageUrls
         videoUrls: $videoUrls
