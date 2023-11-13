@@ -126,20 +126,24 @@ const Form = ({ details, toggler }) => {
 
   const schema = yup.object({
     name: yup.string().required("Please enter name"),
-    warehouseInventory: yup.array().of(
-      yup.object().shape({
-        quantity: yup
-          .number()
-          .required("Quantity is required")
-          .integer("Quantity must be an integer")
-          .min(1, "Quantity must be greater than 0"),
-        lowInQuantityValue: yup
-          .number()
-          .required("Low in Stock Value is required")
-          .integer("Low in Stock Value must be an integer")
-          .min(1, "Low in Stock Value must be greater than 0"),
-      })
-    ),
+    ...(product_id
+      ? {}
+      : {
+          warehouseInventory: yup.array().of(
+            yup.object().shape({
+              quantity: yup
+                .number()
+                .required("Quantity is required")
+                .integer("Quantity must be an integer")
+                .min(1, "Quantity must be greater than 0"),
+              lowInQuantityValue: yup
+                .number()
+                .required("Low in Stock Value is required")
+                .integer("Low in Stock Value must be an integer")
+                .min(1, "Low in Stock Value must be greater than 0"),
+            })
+          ),
+        }),
     categoryIds: yup
       .array()
       .min(1, "Select at least one category for this product")
@@ -544,6 +548,7 @@ const Form = ({ details, toggler }) => {
   };
 
   console.log("main form: ", form);
+  console.log("main errors: ", errors);
 
   return (
     <>
