@@ -422,7 +422,6 @@ const Form = ({ details, toggler }) => {
 
   const handleSubmitProductOption = async (option) => {
     try {
-      console.log("option: ", option);
       handleChangeTwo("productOptionId", option?.id || option?.name);
       if (option?.id) {
         const payload = {
@@ -432,7 +431,6 @@ const Form = ({ details, toggler }) => {
           id: "",
         };
         cleanPayload(payload);
-        console.log("payload: ", payload);
         await editProductOption({
           product_id,
           data: payload,
