@@ -425,7 +425,14 @@ const Form = ({ details, toggler }) => {
       console.log("option: ", option);
       handleChangeTwo("productOptionId", option?.id || option?.name);
       if (option?.id) {
-        const payload = { ...option, id: "" };
+        const payload = {
+          ...option,
+          choices: option?.choices?.map((item) => cleanPayload(item)),
+          productOptionId: option?.id,
+          id: "",
+        };
+        cleanPayload(payload);
+        console.log("payload: ", payload);
         await editProductOption({
           product_id,
           data: payload,
