@@ -135,6 +135,8 @@ const getWebLinkMarketingImageQuery = ({ id }) => gql`
         isForYou
         pageToLinkTo
         dataId
+        titleText
+        descriptionText
     }
   }
 `;
@@ -512,6 +514,8 @@ const createWebLinkMarketingImageQuery = gql`
     $isForYou: Boolean!
     $dataId: String
     $pageToLinkTo: PageToLinkToEnum
+    $titleText: String!
+    $descriptionText: String!
   ) {
     createWebLinkMarketingImage(
       createWebLinkMarketingImageInput: {
@@ -520,6 +524,8 @@ const createWebLinkMarketingImageQuery = gql`
         isForYou: $isForYou
         dataId: $dataId
         pageToLinkTo: $pageToLinkTo
+        titleText: $titleText
+        descriptionText: $descriptionText
       }
     ) {
       id
@@ -534,6 +540,8 @@ const editWebLinkMarketingImageQuery = gql`
     $isForYou: Boolean
     $dataId: String
     $pageToLinkTo: PageToLinkToEnum
+    $titleText: String
+    $descriptionText: String
     $id: String!
   ) {
     updateWebLinkMarketingImage(
@@ -543,6 +551,8 @@ const editWebLinkMarketingImageQuery = gql`
         isForYou: $isForYou
         dataId: $dataId
         pageToLinkTo: $pageToLinkTo
+        titleText: $titleText
+        descriptionText: $descriptionText
         id: $id
       }
     ) {

@@ -5,8 +5,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import Button from "components/General/Button/Button";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
+import Textarea from "components/General/Textarea/Textarea";
+import Input from "components/General/Input/Input";
 import {
   MEDIA_MODAL_TYPES,
   PRODUCT_MODAL_TYPES,
@@ -62,6 +64,8 @@ const Form = observer(() => {
     pageToLinkTo: media_id
       ? webLinkMarketingImage?.pageToLinkTo
       : SLIDE_LINK_TYPES[0]?.value,
+    titleText: media_id ? webLinkMarketingImage?.titleText : "",
+    descriptionText: media_id ? webLinkMarketingImage?.descriptionText : "",
   };
 
   const {
@@ -90,6 +94,8 @@ const Form = observer(() => {
     imageUrl: watch("imageUrl"),
     pageToLinkTo: watch("pageToLinkTo"),
     dataId: watch("dataId"),
+    titleText: watch("titleText"),
+    descriptionText: watch("descriptionText"),
   };
 
   useEffect(() => {
@@ -181,25 +187,28 @@ const Form = observer(() => {
               >
                 {/* First section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
-                  {/* <div className="flex flex-col justify-start items-end gap-1 w-full">
-                    {form?.headerNavId && <p>{selectedHeaderNav}</p>}
-                    <Button
-                      onClick={() =>
-                        handleChangeTwo("modalType", PRODUCT_CATEGORY_OPTIONS)
-                      }
-                      text="Select Category"
-                      icon={<Plus className="text-black current-svg" />}
-                      className=""
-                      whiteBg
-                      fullWidth
-                    />
+                  <Input
+                    label="Post Title"
+                    value={form?.titleText}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "titleText", val })
+                    }
+                    placeholder="Enter Title"
+                    formError={errors.titleText}
+                    showFormError={formTwo?.showFormError}
+                  />
 
-                    <div className="h-[13px]">
-                      {errors?.headerNavId && (
-                        <FormErrorMessage type={errors?.headerNavId} />
-                      )}
-                    </div>
-                  </div> */}
+                  <Textarea
+                    label="Post Description"
+                    value={form?.descriptionText}
+                    onChangeFunc={(val) =>
+                      handleChange({ prop: "descriptionText", val })
+                    }
+                    placeholder="Enter Description"
+                    formError={errors.descriptionText}
+                    showFormError={formTwo?.showFormError}
+                    required
+                  />
 
                   <ImagePicker
                     label="Select Image "

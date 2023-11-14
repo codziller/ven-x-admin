@@ -7,7 +7,7 @@ import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black
 import { TailSpin } from "react-loader-spinner";
 import Button from "components/General/Button/Button";
 import Textarea from "components/General/Textarea/Textarea";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import ImagePicker from "components/General/Input/ImagePicker";
 import CheckBox from "components/General/Input/CheckBox";
@@ -57,7 +57,6 @@ const Form = observer(() => {
     titleText: media_id ? image?.titleText : "",
   };
 
-  console.log("image: ", image);
   const {
     handleSubmit,
     formState: { errors },
