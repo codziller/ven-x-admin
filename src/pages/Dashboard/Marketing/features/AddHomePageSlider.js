@@ -196,7 +196,7 @@ const Form = observer(() => {
                     />
                   ))}
 
-                  {form.pageToLinkTo && (
+                  {form.pageToLinkTo === "NONE" ? null : form.pageToLinkTo ? (
                     <div className="flex flex-col justify-start items-start gap-1 w-full">
                       <label
                         className={
@@ -238,7 +238,7 @@ const Form = observer(() => {
                         />
                       </div>
                     </div>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Second section */}

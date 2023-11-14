@@ -283,6 +283,7 @@ export const WALLET_ACTIONS = { Credit: "Credit", Debit: "Debit" };
 export const SLIDE_LINK_TYPES = [
   { name: "Brand Page", value: "BRAND" },
   { name: "Product Page", value: "PRODUCT" },
+  { name: "No Page", value: "NONE" },
 ];
 
 export const MEDIA_MODAL_TYPES = { BRAND: "BRAND", PRODUCT: "PRODUCT" };
