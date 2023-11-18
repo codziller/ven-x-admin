@@ -353,6 +353,10 @@ const getMarketingTextQuery = () => gql`
       emailExclusiveText
       freeShippingText
       loyaltyText
+      appOrderDiscountTextVisibility
+      emailExclusiveTextVisibility
+      freeShippingTextVisibility
+      loyaltyTextVisibility
     }
   }
 `;
@@ -817,6 +821,10 @@ const editMarketingTextQuery = gql`
     $emailExclusiveText: String
     $freeShippingText: String
     $loyaltyText: String
+    $appOrderDiscountTextVisibility: Boolean!
+    $emailExclusiveTextVisibility: Boolean!
+    $freeShippingTextVisibility: Boolean!
+    $loyaltyTextVisibility: Boolean!
   ) {
     patchMarketingText(
       marketingTextInput: {
@@ -828,6 +836,10 @@ const editMarketingTextQuery = gql`
         emailExclusiveText: $emailExclusiveText
         freeShippingText: $freeShippingText
         loyaltyText: $loyaltyText
+        appOrderDiscountTextVisibility: $appOrderDiscountTextVisibility
+        emailExclusiveTextVisibility: $emailExclusiveTextVisibility
+        freeShippingTextVisibility: $freeShippingTextVisibility
+        loyaltyTextVisibility: $loyaltyTextVisibility
       }
     ) {
       id

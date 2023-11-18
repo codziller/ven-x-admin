@@ -16,6 +16,7 @@ import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import cleanPayload from "utils/cleanPayload";
+import CheckBox from "components/General/Input/CheckBox";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
@@ -40,6 +41,11 @@ const Form = observer(() => {
     emailExclusiveText: marketingText?.emailExclusiveText || "",
     freeShippingText: marketingText?.freeShippingText || "",
     loyaltyText: marketingText?.loyaltyText || "",
+    appOrderDiscountTextVisibility:
+      !!marketingText?.appOrderDiscountTextVisibility,
+    emailExclusiveTextVisibility: !!marketingText?.emailExclusiveTextVisibility,
+    freeShippingTextVisibility: !!marketingText?.freeShippingTextVisibility,
+    loyaltyTextVisibility: !!marketingText?.loyaltyTextVisibility,
   };
 
   const {
@@ -72,6 +78,11 @@ const Form = observer(() => {
     emailExclusiveText: watch("emailExclusiveText"),
     freeShippingText: watch("freeShippingText"),
     loyaltyText: watch("loyaltyText"),
+
+    appOrderDiscountTextVisibility: watch("appOrderDiscountTextVisibility"),
+    emailExclusiveTextVisibility: watch("emailExclusiveTextVisibility"),
+    freeShippingTextVisibility: watch("freeShippingTextVisibility"),
+    loyaltyTextVisibility: watch("loyaltyTextVisibility"),
   };
 
   const handleOnSubmit = async () => {
@@ -200,7 +211,17 @@ const Form = observer(() => {
                     formError={errors.freeShippingText}
                     showFormError={formTwo?.showFormError}
                   />
-
+                  <CheckBox
+                    label="Hide Free Shipping Text"
+                    onChange={() =>
+                      handleChange({
+                        prop: "freeShippingTextVisibility",
+                        val: !form.freeShippingTextVisibility,
+                      })
+                    }
+                    checked={form?.freeShippingTextVisibility}
+                  />
+                  <hr className="w-full my-2" />
                   <Input
                     label="Loyalty Text"
                     value={form?.loyaltyText}
@@ -211,7 +232,17 @@ const Form = observer(() => {
                     formError={errors.loyaltyText}
                     showFormError={formTwo?.showFormError}
                   />
-
+                  <CheckBox
+                    label="Hide Loyalty Text"
+                    onChange={() =>
+                      handleChange({
+                        prop: "loyaltyTextVisibility",
+                        val: !form.loyaltyTextVisibility,
+                      })
+                    }
+                    checked={form?.loyaltyTextVisibility}
+                  />
+                  <hr className="w-full my-2" />
                   <Input
                     label="App Order Discount Text"
                     value={form?.appOrderDiscountText}
@@ -222,7 +253,17 @@ const Form = observer(() => {
                     formError={errors.appOrderDiscountText}
                     showFormError={formTwo?.showFormError}
                   />
-
+                  <CheckBox
+                    label="Hide App Order Discount Text"
+                    onChange={() =>
+                      handleChange({
+                        prop: "appOrderDiscountTextVisibility",
+                        val: !form.appOrderDiscountTextVisibility,
+                      })
+                    }
+                    checked={form?.appOrderDiscountTextVisibility}
+                  />
+                  <hr className="w-full my-2" />
                   <Input
                     label="Email Exclusive Text"
                     value={form?.emailExclusiveText}
@@ -232,6 +273,17 @@ const Form = observer(() => {
                     placeholder="Sign up for email exclusives"
                     formError={errors.emailExclusiveText}
                     showFormError={formTwo?.showFormError}
+                  />
+
+                  <CheckBox
+                    label="Hide Email Exclusive Text"
+                    onChange={() =>
+                      handleChange({
+                        prop: "emailExclusiveTextVisibility",
+                        val: !form.emailExclusiveTextVisibility,
+                      })
+                    }
+                    checked={form?.emailExclusiveTextVisibility}
                   />
                 </div>
                 {/* Third section */}
