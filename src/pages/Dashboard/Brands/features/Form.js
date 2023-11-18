@@ -38,14 +38,6 @@ const Form = ({ details, toggler }) => {
   const [formTwo, setFormTwo] = useState({
     country: "NG",
     showFormError: false,
-    brandDescription: details?.isAdd
-      ? ""
-      : EditorState.createWithContent(
-          ContentState.createFromBlockArray(
-            convertFromHTML(JSON.parse(details?.brandDescription))
-          )
-        ),
-    // brandDescription: details?.isAdd ? "" : "",
     collapsed: [],
     modalType: "",
     createLoading: false,
@@ -73,8 +65,6 @@ const Form = ({ details, toggler }) => {
 
   const defaultValues = {
     brandName: details?.brandName,
-    brandDescription: details?.isAdd ? "" : details?.brandDescription,
-    // brandDescription: "",
     brandLogoUrl: details?.brandLogoUrl ? [details?.brandLogoUrl] : [],
     brandName: details?.brandName,
     brandShortText: details?.brandShortText,
@@ -113,7 +103,6 @@ const Form = ({ details, toggler }) => {
 
   const form = {
     brandName: watch("brandName"),
-    brandDescription: watch("brandDescription"),
     brandLogoUrl: watch("brandLogoUrl"),
     brandShortText: watch("brandShortText"),
     categoryId: watch("categoryId"),

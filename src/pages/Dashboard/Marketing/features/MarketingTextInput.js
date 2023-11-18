@@ -5,7 +5,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import Button from "components/General/Button/Button";
 import Textarea from "components/General/Textarea/Textarea";
-import { useParams } from "react-router-dom";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import ImagePicker from "components/General/Input/ImagePicker";
 import { MEDIA_MODAL_TYPES } from "utils/appConstant";
@@ -21,8 +20,6 @@ import cleanPayload from "utils/cleanPayload";
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
 const Form = observer(() => {
-  const { media_id } = useParams();
-
   const [formTwo, setFormTwo] = useState({
     modalType: "",
     showFormError: false,
