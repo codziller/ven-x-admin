@@ -161,14 +161,14 @@ const Form = observer(() => {
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
           <div className="flex flex-col md:flex-row md:gap-6 justify-between items-start w-full mb-2">
             <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
-              <div className="mb-5">
+              <div className="mb-5 w-full flex justify-between gap-3">
                 <button onClick={() => navigate(-1)} className="scale-90">
                   <ArrowBack />
                 </button>
                 {media_id ? (
                   <Button
                     onClick={() => handleChangeTwo("modalType", "delete")}
-                    text="Delete Homepage Slide"
+                    text="Delete Marketing Image"
                     redBg
                   />
                 ) : null}
