@@ -4,13 +4,13 @@ import { ReactComponent as Error } from "assets/icons/Toast/error.svg";
 import { ReactComponent as Warning } from "assets/icons/Toast/warning.svg";
 import styled from "styled-components";
 
-const DEFAULT_TOAST_DURATION = 5000;
+const DEFAULT_TOAST_DURATION = 3000;
 
 const defaultConfig = { duration: DEFAULT_TOAST_DURATION };
 
 const ToastLoader = styled.div`
   height: 5px;
-  background-color: var(--bani-blue);
+  background-color: var(--zusco-blue);
   position: absolute;
   left: -200%;
   bottom: 0;
@@ -30,20 +30,21 @@ const ToastLoader = styled.div`
 
 const Toast = () => {
   return (
-    <Toaster position="top-right">
+    <Toaster position="top-left">
       {(t) => (
         <ToastBar
           toast={t}
-          position="top-right"
+          position="top-left"
           style={{
             width: "396px",
-            minHeight: "105px",
+            minHeight: "fit-content",
             background: "#FFFFFF",
             boxShadow: "0px 0px 10px rgba(225, 231, 242, 0.8)",
             borderRadius: "8px",
-            padding: "20px",
+            padding: "15px",
             boxSizing: "border-box",
             overflow: "hidden",
+            zIndex: "99999",
           }}
         >
           {({ icon, message }) => {
@@ -58,23 +59,28 @@ const Toast = () => {
                 icon
               );
             return (
-              <div className="bani-toast">
-                <div className="bani-toast-icon mr-[20px]">{toastIcon}</div>
-                <div className="bani-toast-message">
-                  <span className="bani-toast-header font-700 text-base">
-                    {message.props.title}
-                  </span>
-                  <p className="font-500 text-grey bani-toast-content text-sm mt-[9px]">
-                    {message.props.children}
-                  </p>
-                </div>
-                <div className="ml-auto">
-                  <p
-                    onClick={() => toast.dismiss(t.id)}
-                    className="text-blue font-700 text-[12px] cursor-pointer"
-                  >
-                    Close
-                  </p>
+              <div className="bani-toast w-full">
+                <div className="flex justify-between align-start w-full">
+                  <div className="flex justify-between align-start">
+                    <div className="bani-toast-icon mr-[20px]">{toastIcon}</div>
+                    <div className="bani-toast-message flex flex-col justify-start items-start gap-[8px]">
+                      <span className="bani-toast-header font-semibold text-base">
+                        {message.props.title}
+                      </span>
+                      <p className="helv-regular text-grey-text bani-toast-content text-sm">
+                        {message.props.children}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="ml-auto">
+                    <p
+                      onClick={() => toast.dismiss(t.id)}
+                      className="text-blue helv-medium text-[12px] cursor-pointer"
+                    >
+                      Close
+                    </p>
+                  </div>
                 </div>
                 <ToastLoader duration={t.duration} />
               </div>
@@ -96,10 +102,10 @@ export const warningToast = (title, message) => {
   });
 };
 
-export const successToast = (title, message, config) => {
+export const successToast = (title, message, duration) => {
   toast.success(message, {
     ...defaultConfig,
-    ...config,
+    duration: duration || DEFAULT_TOAST_DURATION,
     ariaProps: {
       role: "success",
       title,
