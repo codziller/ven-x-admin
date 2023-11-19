@@ -4,7 +4,7 @@ import { ReactComponent as Error } from "assets/icons/Toast/error.svg";
 import { ReactComponent as Warning } from "assets/icons/Toast/warning.svg";
 import styled from "styled-components";
 
-const DEFAULT_TOAST_DURATION = 3000;
+const DEFAULT_TOAST_DURATION = 5000;
 
 const defaultConfig = { duration: DEFAULT_TOAST_DURATION };
 
