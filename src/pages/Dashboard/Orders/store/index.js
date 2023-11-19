@@ -33,12 +33,17 @@ class OrdersStore {
   brandOrdersCount = null;
   brandOrdersLoading = null;
 
+  userOrders = [];
+  userOrdersCount = null;
+  userOrdersLoading = null;
+
   error = null;
   loading = false;
   createOrderLoading = false;
   updateOrderStatusLoading = false;
   getOrderLoading = false;
   deleteOrderLoading = false;
+  searchResult = [];
   searchResultCount = 0;
   searchLoading = false;
   constructor() {
@@ -49,11 +54,11 @@ class OrdersStore {
   // Actions
   // ====================================================
 
-  searchItems = async ({ data }) => {
+  searchOrders = async ({ data }) => {
     this.searchLoading = true;
     try {
-      let res = await apis.searchUsers(data);
-      res = res?.searchUsers;
+      let res = await apis.searchOrders(data);
+      res = res?.searchOrders;
       this.searchResult = res?.results || [];
       this.searchResultCount = res?.total;
     } catch (error) {
@@ -71,10 +76,23 @@ class OrdersStore {
       this.brandOrders = res?.results || [];
       this.brandOrdersCount = res?.total;
     } catch (error) {
-      console.log("bbsgt error: ", error);
       this.error = error;
     } finally {
       this.brandOrdersLoading = false;
+    }
+  };
+
+  getOrdersByUser = async ({ data }) => {
+    this.userOrdersLoading = true;
+    try {
+      let res = await apis.getOrdersByUser(data);
+      res = res?.orders_by_user_id;
+      this.userOrders = res?.results || [];
+      this.userOrdersCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.userOrdersLoading = false;
     }
   };
 

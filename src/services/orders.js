@@ -1,6 +1,55 @@
 import { gql } from "graphql-request";
 import { graphQlInstance } from "services";
 
+const searchOrdersQuery = ({ page, searchQuery }) => gql`
+  {
+    __typename
+    searchOrders(pageNumber: "${page}", searchQuery: "${searchQuery}") {
+      total
+      results {
+        calculatedOrder {
+          totalAmount
+          user {
+            firstName
+            lastName
+          }
+        }
+        id
+        deliveryMethod
+        orderCode
+        orderStatus
+        paid
+        paymentMethod
+        updatedAt
+      }
+    }
+  }
+`;
+const getOrdersByUserQuery = ({ page, id }) => gql`
+  {
+    __typename
+    orders_by_user_id(pageNumber: "${page}", id: "${id}") {
+      total
+      results {
+        calculatedOrder {
+          totalAmount
+          user {
+            firstName
+            lastName
+          }
+        }
+        id
+        deliveryMethod
+        orderCode
+        orderStatus
+        paid
+        paymentMethod
+        updatedAt
+      }
+    }
+  }
+`;
+
 const getOrdersQuery = ({ page, status }) => gql`
   {
     __typename
@@ -142,6 +191,14 @@ const deleteOrderQuery = gql`
 `;
 
 const apis = {
+  searchOrders: ({ page, searchQuery }) =>
+    graphQlInstance(searchOrdersQuery({ page, searchQuery }), {
+      method: "GET",
+    }),
+  getOrdersByUser: ({ page, id }) =>
+    graphQlInstance(getOrdersByUserQuery({ page, id }), {
+      method: "GET",
+    }),
   getOrders: ({ page, status }) =>
     graphQlInstance(getOrdersQuery({ page, status }), {
       method: "GET",

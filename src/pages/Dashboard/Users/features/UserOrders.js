@@ -14,11 +14,10 @@ import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon
 
 import useWindowDimensions from "hooks/useWindowDimensions";
 import { transactionAmount } from "utils/transactions";
-import TransactionDetailsModal from "./OrderDetailsModal";
+import TransactionDetailsModal from "pages/Dashboard/Orders/features/OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
-import OrdersStore from "../store";
-import { useParams } from "react-router-dom";
+import OrdersStore from "pages/Dashboard/Orders/store";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
@@ -26,6 +25,7 @@ import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import TableDropdown from "components/General/Dropdown/TableDropdown";
 import { convertToJs } from "utils/functions";
+import { useParams } from "react-router-dom";
 export const dateFilters = [
   {
     value: "today",
@@ -54,51 +54,20 @@ export const dateFilters = [
   },
 ];
 
-const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
-  ORDER_STATUSES;
-const Orders = ({ isRecent }) => {
+const UserOrders = ({ isRecent }) => {
+  const { user_id } = useParams();
   const {
-    getOrders,
-    loading,
-    ordersCount,
-    orders,
     searchOrders,
     searchLoading,
     searchResult,
     searchResultCount,
 
-    in_progressOrders,
-    in_progressOrdersCount,
-    pendingOrders,
-    pendingOrdersCount,
-    dispatchedOrders,
-    dispatchedOrdersCount,
-    completedOrders,
-    completedOrdersCount,
-    cancelledOrders,
-    cancelledOrdersCount,
+    getOrdersByUser,
+    userOrders,
+    userOrdersCount,
+    userOrdersLoading,
     updateOrderStatusLoading,
   } = OrdersStore;
-
-  const TABS = [
-    {
-      name: INPROGRESS,
-      label: `Inprogress orders (${in_progressOrdersCount || "0"})`,
-    },
-    { name: PENDING, label: `Pending orders (${pendingOrdersCount || "0"})` },
-    {
-      name: DISPATCHED,
-      label: `Dispatched orders (${dispatchedOrdersCount || "0"})`,
-    },
-    {
-      name: COMPLETED,
-      label: `Completed orders (${completedOrdersCount || "0"})`,
-    },
-    {
-      name: CANCELLED,
-      label: `Cancelled orders (${cancelledOrdersCount || "0"})`,
-    },
-  ];
 
   const { width } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
@@ -106,7 +75,6 @@ const Orders = ({ isRecent }) => {
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [searchInput, setSearchInput] = useState("");
-  const [activeTab, setActiveTab] = useState(TABS[0]?.name);
 
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
@@ -119,22 +87,17 @@ const Orders = ({ isRecent }) => {
     await searchOrders({ data: payload });
   };
 
-  const handleGetAllData = () => {
-    getOrders({ data: { page: 1, status: PENDING } });
-    getOrders({ data: { page: 1, status: DISPATCHED } });
-    getOrders({ data: { page: 1, status: COMPLETED } });
-    getOrders({ data: { page: 1, status: CANCELLED } });
-  };
   const handleGetData = () => {
-    getOrders({ data: { page: currentPage, status: activeTab } });
+    getOrdersByUser({ data: { page: currentPage, id: user_id } });
   };
 
   useEffect(() => {
-    handleGetAllData();
+    handleGetData();
   }, []);
+
   useEffect(() => {
     isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch, activeTab]);
+  }, [currentPage, currentPageSearch, user_id]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -227,96 +190,23 @@ const Orders = ({ isRecent }) => {
     });
   };
   const displayedItems = useMemo(() => {
-    let items = [];
-    switch (activeTab) {
-      case INPROGRESS:
-        items = in_progressOrders;
-        break;
-      case PENDING:
-        items = pendingOrders;
-        break;
-      case DISPATCHED:
-        items = dispatchedOrders;
-        break;
-      case COMPLETED:
-        items = completedOrders;
-        break;
-      case CANCELLED:
-        items = cancelledOrders;
-        break;
-      default:
-        items = orders;
-        break;
-    }
-    return isSearchMode ? searchResult : items;
-  }, [
-    searchResult,
-    activeTab,
-    isSearchMode,
-    in_progressOrders,
-    pendingOrders,
-    dispatchedOrders,
-    completedOrders,
-    cancelledOrders,
-  ]);
+    return isSearchMode ? searchResult : userOrders;
+  }, [searchResult, isSearchMode, userOrders]);
 
   const displayedItemsCount = useMemo(() => {
-    let itemsCount;
-    switch (activeTab) {
-      case INPROGRESS:
-        itemsCount = in_progressOrdersCount;
-        break;
-      case PENDING:
-        itemsCount = pendingOrdersCount;
-        break;
-      case DISPATCHED:
-        itemsCount = dispatchedOrdersCount;
-        break;
-      case COMPLETED:
-        itemsCount = completedOrdersCount;
-        break;
-      case CANCELLED:
-        itemsCount = cancelledOrdersCount;
-        break;
-      default:
-        itemsCount = ordersCount;
-        break;
-    }
-    return isSearchMode ? searchResultCount : itemsCount;
-  }, [searchResult, activeTab, isSearchMode, displayedItems]);
+    return isSearchMode ? searchResultCount : userOrdersCount;
+  }, [searchResult, isSearchMode, displayedItems]);
 
   const isLoading = useMemo(() => {
-    return isSearchMode ? searchLoading : loading;
-  }, [searchLoading, loading]);
+    return isSearchMode ? searchLoading : userOrdersLoading;
+  }, [searchLoading, userOrdersLoading]);
 
   useEffect(() => scrollToTop(), [displayedItems]);
 
-  console.log("searchResult: ", convertToJs(searchResult));
   return (
     <>
       <div className="h-full w-full">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
-          {!isRecent && (
-            <div className="flex justify-between items-center w-full mb-3 gap-1">
-              <div className="sm:min-w-[200px]">
-                <DashboardFilterDropdown
-                  placeholder="Filter by: "
-                  options={dateFilters}
-                  name="payout_filter"
-                  onClick={(e) => setDateFilter(e)}
-                  value={dateFilter?.label}
-                />
-              </div>
-
-              <div className="flex justify-start items-center w-full truncate text-base">
-                {dateFilter.value === "today"
-                  ? moment(dateFilter.start_date).format("MMM Do, YYYY")
-                  : `${moment(dateFilter.start_date).format(
-                      "MMM Do, YYYY"
-                    )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
-              </div>
-            </div>
-          )}
           {isRecent && (
             <p className="font-700 text-start w-full pl-3 mt-5">
               Recent Orders
@@ -336,7 +226,7 @@ const Orders = ({ isRecent }) => {
               />
             </div>
           </div>
-          <Tabs tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} />
+
           {isLoading ? (
             <CircleLoader blue />
           ) : (
@@ -371,9 +261,7 @@ const Orders = ({ isRecent }) => {
                         <span>
                           {isSearchMode && isEmpty(searchResult)
                             ? `There are no results for your search '${searchQuery}'`
-                            : `There are currently no ${lowerCase(
-                                activeTab?.replaceAll("_", " ")
-                              )} orders`}
+                            : `There are currently no orders`}
                         </span>
                       }
                     </div>
@@ -409,4 +297,4 @@ const Orders = ({ isRecent }) => {
   );
 };
 
-export default observer(Orders);
+export default observer(UserOrders);

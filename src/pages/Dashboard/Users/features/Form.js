@@ -6,7 +6,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
 
 import { TailSpin } from "react-loader-spinner";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
@@ -16,27 +15,25 @@ import {
   GENDERS,
   MEDIA_MODAL_TYPES,
   NAIRA,
-  PRODUCT_MODAL_TYPES,
   ROLES,
   WALLET_ACTIONS,
 } from "utils/appConstant";
 import DetailsModal from "./DetailsModal";
 import CheckBox from "components/General/Input/CheckBox";
-import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
 import { observer } from "mobx-react-lite";
-import AffiliateMarketersStore from "../store";
 import cleanPayload from "utils/cleanPayload";
 import { isEmpty } from "lodash";
 import DatePickerComponent from "components/General/DatePicker";
 import moment from "moment";
-import { FormErrorMessage } from "components/General/FormErrorMessage";
 import UsersStore from "../store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import BrandsStore from "pages/Dashboard/Brands/store";
+import OrdersStore from "pages/Dashboard/Orders/store";
 import { numberWithCommas } from "utils/formatter";
 import Select from "components/General/Input/Select";
 import PhoneNumber from "components/General/PhoneNumber/PhoneNumber";
 import usePasswordValidation from "hooks/usePasswordValidation";
+import UserOrders from "./UserOrders";
 
 const { BRAND } = MEDIA_MODAL_TYPES;
 const { Credit, Debit } = WALLET_ACTIONS;
@@ -52,8 +49,9 @@ const Form = ({ details, toggler }) => {
     createUser,
     createUserLoading,
   } = UsersStore;
-  const { warehouses, loading, getWarehouses } = WareHousesStore;
+  const { getWarehouses } = WareHousesStore;
   const { getBrand, brand, getBrandLoading } = BrandsStore;
+  const { userOrdersCount } = OrdersStore;
   useEffect(() => {
     getWarehouses({ data: { page: 1 } });
   }, []);
@@ -560,6 +558,14 @@ const Form = ({ details, toggler }) => {
             />
           </div>
         </form>
+
+        <hr className="w-full my-4" />
+
+        <h2 className="section-heading my-8 text-xl">
+          User Order History ({numberWithCommas(userOrdersCount || 0)})
+        </h2>
+
+        <UserOrders />
       </div>
 
       <DetailsModal
