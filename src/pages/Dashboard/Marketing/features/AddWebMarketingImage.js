@@ -165,6 +165,13 @@ const Form = observer(() => {
                 <button onClick={() => navigate(-1)} className="scale-90">
                   <ArrowBack />
                 </button>
+                {media_id ? (
+                  <Button
+                    onClick={() => handleChangeTwo("modalType", "delete")}
+                    text="Delete Homepage Slide"
+                    redBg
+                  />
+                ) : null}
               </div>
               {media_id ? (
                 <h2 className="section-heading my-8 text-xl">
@@ -290,6 +297,15 @@ const Form = observer(() => {
         toggler={() => handleChangeTwo("modalType", false)}
         handleChange={handleChange}
         form={form}
+      />
+      <DetailsModal
+        active={formTwo?.modalType === "delete"}
+        details={{
+          pageType: "Marketing Image",
+          modalType: "delete",
+          id: media_id,
+        }}
+        toggler={() => handleChangeTwo("modalType", false)}
       />
     </>
   );

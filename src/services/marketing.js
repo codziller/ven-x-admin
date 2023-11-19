@@ -862,6 +862,22 @@ const deleteDiscountQuery = gql`
     }
   }
 `;
+
+const deleteHomeSliderImageQuery = gql`
+  mutation removeHomeSliderImage($id: String!) {
+    removeHomeSliderImage(id: $id) {
+      status
+    }
+  }
+`;
+
+const deleteWebMarketingImageQuery = gql`
+  mutation removeWebMarketingImage($id: String!) {
+    removeWebMarketingImage(id: $id) {
+      status
+    }
+  }
+`;
 const apis = {
   getWebMarketingImages: ({ page }) =>
     graphQlInstance(getWebMarketingImagesQuery({ page }), {
@@ -1053,6 +1069,15 @@ const apis = {
     }),
   deleteDiscount: (variables) =>
     graphQlInstance(deleteDiscountQuery, {
+      variables,
+    }),
+  deleteHomeSliderImage: (variables) =>
+    graphQlInstance(deleteHomeSliderImageQuery, {
+      variables,
+    }),
+
+  deleteWebMarketingImage: (variables) =>
+    graphQlInstance(deleteWebMarketingImageQuery, {
       variables,
     }),
 };

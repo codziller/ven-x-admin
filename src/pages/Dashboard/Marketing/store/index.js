@@ -29,6 +29,7 @@ class MarketingStore {
   loadingWebMarketingImage = false;
   createWebMarketingImageLoading = false;
   editWebMarketingImageLoading = false;
+  deleteWebMarketingImageLoading = false;
 
   mobileBrandsOfTheMoments = [];
   mobileBrandsOfTheMoment = null;
@@ -81,6 +82,7 @@ class MarketingStore {
   loadingHomeSliderImage = false;
   createHomeSliderImageLoading = false;
   editHomeSliderImageLoading = false;
+  deleteHomeSliderImageLoading = false;
 
   mobilePagePosts = [];
   mobilePagePost = null;
@@ -694,6 +696,40 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.deleteDiscountLoading = false;
+    }
+  };
+
+  deleteHomeSliderImage = async ({ data, onSuccess, page }) => {
+    this.deleteHomeSliderImageLoading = true;
+    try {
+      await apis.deleteHomeSliderImage(data);
+      successToast(
+        "Operation Successful!",
+        "Slider image deleted successfully."
+      );
+      onSuccess?.();
+      await this.getHomeSliderImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteHomeSliderImageLoading = false;
+    }
+  };
+
+  deleteWebMarketingImage = async ({ data, onSuccess, page }) => {
+    this.deleteWebMarketingImageLoading = true;
+    try {
+      await apis.deleteWebMarketingImage(data);
+      successToast(
+        "Operation Successful!",
+        "Web marketing image deleted successfully."
+      );
+      onSuccess?.();
+      await this.getWebMarketingImages({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteWebMarketingImageLoading = false;
     }
   };
 }

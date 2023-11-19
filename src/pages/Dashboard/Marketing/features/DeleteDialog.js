@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
@@ -16,8 +16,12 @@ const DeleteDialog = ({ details, toggler }) => {
     deleteDiscountLoading,
     editDiscount,
     editWareHouseLoading,
+    deleteHomeSliderImage,
+    deleteHomeSliderImageLoading,
+    deleteWebMarketingImage,
+    deleteWebMarketingImageLoading,
   } = MarketingStore;
-
+  const navigate = useNavigate();
   const handleOnSubmit = () => {
     if (details?.archived) {
       const payload = { ...details, currentPage: "", archive: false };
@@ -30,13 +34,41 @@ const DeleteDialog = ({ details, toggler }) => {
       });
       return;
     }
+
     const payload = { id: details?.id };
-    deleteDiscount({
-      data: payload,
-      onSuccess: () => {
-        toggler();
-      },
-    });
+    const pageType = details?.pageType || "Discount";
+    switch (pageType) {
+      case "Discount":
+        deleteDiscount({
+          data: payload,
+          onSuccess: () => {
+            toggler();
+          },
+        });
+        break;
+
+      case "Homepage Slide":
+        deleteHomeSliderImage({
+          data: payload,
+          onSuccess: () => {
+            toggler();
+            navigate(-1);
+          },
+        });
+        break;
+      case "Marketing Image":
+        deleteWebMarketingImage({
+          data: payload,
+          onSuccess: () => {
+            toggler();
+            navigate(-1);
+          },
+        });
+        break;
+
+      default:
+        break;
+    }
   };
 
   return (
@@ -53,21 +85,41 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Delete className="scale-90" />
       <p className="font-600 text-xl ">{`${
-        details?.archived ? "Unarchive" : "Archive"
-      } Discount`}</p>
+        details?.pageType
+          ? "Delete"
+          : details?.archived
+          ? "Unarchive"
+          : "Archive"
+      } ${details?.pageType || "Discount"}`}</p>
 
       <p className="mb-3 text-sm text-grey text-center">
-        Are you sure you want to {details?.archived ? "unarchive" : "archive"}{" "}
-        <span className="text-black">"{details?.name}"?</span>
+        Are you sure you want to{" "}
+        {details?.pageType
+          ? "Delete"
+          : details?.archived
+          ? "unarchive"
+          : "archive"}{" "}
+        <span className="text-black">
+          "{details?.pageType ? "Delete" : details?.name}"?
+        </span>
       </p>
 
       <Button
         onClick={handleOnSubmit}
-        isLoading={deleteDiscountLoading || editWareHouseLoading}
+        isLoading={
+          deleteDiscountLoading ||
+          editWareHouseLoading ||
+          deleteHomeSliderImageLoading ||
+          deleteWebMarketingImageLoading
+        }
         type="submit"
         text={`Yes, ${
-          details?.archived ? "unarchive" : "archive"
-        } this discount`}
+          details?.pageType
+            ? "Delete"
+            : details?.archived
+            ? "unarchive"
+            : "archive"
+        } this ${details?.pageType || "discount"}`}
         className="mb-2"
         fullWidth
         redBg
@@ -75,7 +127,12 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Button
         onClick={() => toggler?.()}
-        isDisabled={deleteDiscountLoading || editWareHouseLoading}
+        isDisabled={
+          deleteDiscountLoading ||
+          editWareHouseLoading ||
+          deleteHomeSliderImageLoading ||
+          deleteWebMarketingImageLoading
+        }
         text="No, Cancel"
         className="mb-5"
         fullWidth
