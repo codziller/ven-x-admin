@@ -1,15 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import moment from "moment";
-import _, { isEmpty, lowerCase } from "lodash";
-import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
+import _, { isEmpty } from "lodash";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import {
-  ORDER_STATUSES,
-  ORDER_STATUS_OPTIONS,
-  pageCount,
-} from "utils/appConstant";
+import { ORDER_STATUS_OPTIONS, pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
@@ -22,9 +17,7 @@ import SearchBar from "components/General/Searchbar/SearchBar";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import classNames from "classnames";
-import Tabs from "components/General/Tabs";
 import TableDropdown from "components/General/Dropdown/TableDropdown";
-import { convertToJs } from "utils/functions";
 import { useParams } from "react-router-dom";
 export const dateFilters = [
   {

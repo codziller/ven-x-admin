@@ -7,6 +7,7 @@ import moment from "moment";
 import { transactionAmount } from "utils/transactions";
 import classNames from "classnames";
 import { Link, useParams } from "react-router-dom";
+import { convertToJs } from "utils/functions";
 export const DetailBlock = ({ title, value, values, valueClassName }) => {
   const { warehouse_id } = useParams();
   return (
@@ -44,10 +45,54 @@ const OrderDetails = ({ details }) => {
   useEffect(() => {
     getOrder({ data: { id: details?.id } });
   }, [order?.id]);
+  console.log("order", convertToJs(order));
+  const orderSource = order?.orderSource;
+  const orderIsInStore =
+    orderSource === "FACEBOOK" ||
+    orderSource === "INSTAGRAM" ||
+    orderSource === "STORE" ||
+    orderSource === "WHATSAPP";
 
+  const userName = orderIsInStore
+    ? `${order?.guestFirstName || "N/A"} 
+${order?.guestLastName || ""}`
+    : `${order?.calculatedOrder?.user?.firstName} 
+    ${order?.calculatedOrder?.user?.lastName}`;
+
+  const userEmail = orderIsInStore
+    ? `${order?.guestEmail || "N/A"}`
+    : `${order?.calculatedOrder?.user?.email}`;
+  const userPhoneNumber = orderIsInStore
+    ? `${order?.guestPhoneNumber || "N/A"}`
+    : `${order?.calculatedOrder?.user?.phoneNumber}`;
+
+  const deliveryAddress = orderIsInStore
+    ? `${order?.guestAddress || "N/A"}`
+    : `${order?.calculatedOrder?.address?.addressText}`;
+  const deliveryFee = orderIsInStore
+    ? `${order?.guestDeliveryFee || "N/A"}`
+    : `${order?.calculatedOrder?.deliveryFee}`;
+
+  const deliveryMethod = order?.deliveryMethod;
   return (
     <div className="gap-y-4 py-4 w-full h-full pb-4">
-      <h3 className="text-lg mb-5">Order Details</h3>
+      <h3 className="text-lg mb-5">
+        Order Details -{" "}
+        {!getOrderLoading ? (
+          <span
+            className={classNames({
+              "text-grey-text3": !orderSource,
+              "text-blue-bright":
+                orderSource === "WEB" || orderSource === "APP",
+              "text-blue-textHover": orderSource === "STORE",
+              "text-green": orderSource === "WHATSAPP",
+              "text-red-deep": orderSource === "INSTAGRAM",
+            })}
+          >
+            {orderSource ? `${orderSource} ORDER` : `Order Source Unspecified`}
+          </span>
+        ) : null}
+      </h3>
 
       {getOrderLoading ? (
         <div className="w-full flex justify-center items-center min-h-36">
@@ -56,28 +101,20 @@ const OrderDetails = ({ details }) => {
       ) : (
         <div className="flex flex-col justify-start items-start w-full border border-grey-bordercolor rounded">
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-            <DetailBlock
-              title="Customer"
-              value={`${order?.calculatedOrder?.user?.firstName} 
-          ${order?.calculatedOrder?.user?.lastName}`}
-            />
+            <DetailBlock title="Customer" value={userName} />
 
             <DetailBlock
               title="Gender"
-              value={`${order?.calculatedOrder?.user?.gender}`}
+              value={`${
+                !orderIsInStore ? order?.calculatedOrder?.user?.gender : "N/A"
+              }`}
             />
           </div>
 
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-            <DetailBlock
-              title="Email"
-              value={`${order?.calculatedOrder?.user?.email}`}
-            />
+            <DetailBlock title="Email" value={userEmail} />
 
-            <DetailBlock
-              title="Phone"
-              value={`${order?.calculatedOrder?.user?.phoneNumber}`}
-            />
+            <DetailBlock title="Phone" value={userPhoneNumber} />
           </div>
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
             <DetailBlock title="Order Code" value={order?.orderCode} />
@@ -123,17 +160,11 @@ const OrderDetails = ({ details }) => {
           </div>
 
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-            <DetailBlock
-              title="Delivery Address"
-              value={order?.calculatedOrder?.address?.addressText}
-            />
+            <DetailBlock title="Delivery Address" value={deliveryAddress} />
           </div>
 
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-            <DetailBlock
-              title="Delivery Fee"
-              value={order?.calculatedOrder?.deliveryFee}
-            />
+            <DetailBlock title="Delivery Fee" value={deliveryFee} />
 
             <DetailBlock
               title="Service Charge"

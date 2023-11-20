@@ -18,6 +18,7 @@ const DeleteDialog = ({ details, toggler }) => {
     deleteProductLoading,
     editProduct,
     editWareHouseLoading,
+    editProductLoading,
   } = ProductsStore;
   const navigate = useNavigate();
   const handleOnSubmit = () => {
@@ -73,7 +74,9 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Button
         onClick={handleOnSubmit}
-        isLoading={deleteProductLoading || editWareHouseLoading}
+        isLoading={
+          deleteProductLoading || editWareHouseLoading || editProductLoading
+        }
         type="submit"
         text={`Yes, ${details?.archive ? "unarchive" : "archive"} this product`}
         className="mb-2"
@@ -83,7 +86,9 @@ const DeleteDialog = ({ details, toggler }) => {
 
       <Button
         onClick={() => toggler?.()}
-        isDisabled={deleteProductLoading || editWareHouseLoading}
+        isDisabled={
+          deleteProductLoading || editWareHouseLoading || editProductLoading
+        }
         text="No, Cancel"
         className="mb-5"
         fullWidth

@@ -155,8 +155,8 @@ const Orders = ({ isRecent }) => {
       name: "Customer",
       selector: (row) => (
         <span onClick={() => handleView(row)}>
-          {row?.calculatedOrder?.user?.firstName}{" "}
-          {row?.calculatedOrder?.user?.lastName}
+          {row?.guestFirstName || row?.calculatedOrder?.user?.firstName}{" "}
+          {row?.guestLastName || row?.calculatedOrder?.user?.lastName}
         </span>
       ),
       sortable: false,
@@ -189,17 +189,29 @@ const Orders = ({ isRecent }) => {
     },
 
     {
-      name: "Payment status",
+      name: "Order Source",
       selector: (row) => (
         <span
           className={classNames({
-            "text-green": row?.paid,
-            "text-red": !row?.paid,
+            "text-grey-text3": !row?.orderSource,
+            "text-blue-bright":
+              row?.orderSource === "WEB" || row?.orderSource === "APP",
+            "text-blue-textHover": row?.orderSource === "STORE",
+            "text-green": row?.orderSource === "WHATSAPP",
+            "text-red-deep": row?.orderSource === "INSTAGRAM",
           })}
           onClick={() => handleView(row)}
         >
-          {row?.paid ? "paid" : "unpaid"}
+          {row?.orderSource}
         </span>
+      ),
+      sortable: false,
+    },
+
+    {
+      name: "Delivery Method",
+      selector: (row) => (
+        <span onClick={() => handleView(row)}>{row?.deliveryMethod}</span>
       ),
       sortable: false,
     },

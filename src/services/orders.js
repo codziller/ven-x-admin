@@ -18,9 +18,12 @@ const searchOrdersQuery = ({ page, searchQuery }) => gql`
         deliveryMethod
         orderCode
         orderStatus
+        orderSource
         paid
         paymentMethod
         updatedAt
+        guestFirstName
+        guestLastName
       }
     }
   }
@@ -40,11 +43,14 @@ const getOrdersByUserQuery = ({ page, id }) => gql`
         }
         id
         deliveryMethod
+        orderSource
         orderCode
         orderStatus
         paid
         paymentMethod
         updatedAt
+        guestFirstName
+        guestLastName
       }
     }
   }
@@ -65,11 +71,14 @@ const getOrdersQuery = ({ page, status }) => gql`
         }
         id
         deliveryMethod
+        orderSource
         orderCode
         orderStatus
         paid
         paymentMethod
         updatedAt
+        guestFirstName
+        guestLastName
       }
     }
   }
@@ -121,7 +130,18 @@ const getOrderQuery = ({ id }) => gql`
             id
             name
             imageUrls
+         
           }
+          productOption {
+            name
+            choices{
+              variantName
+              variantSalePrice
+              imageUrls
+            }
+          }
+          productOptionChoiceIndex
+          productOptionId
           quantity
         }
         deliveryFee
@@ -138,11 +158,20 @@ const getOrderQuery = ({ id }) => gql`
         }
       }
       deliveryMethod
+      guestAddress
+      guestDeliveryFee
+      guestEmail
+      guestFirstName
+      guestLastName
+      guestPhoneNumber
+      storePaymentMethod
+      orderSource
       id
       orderCode
       orderStatus
       paid
       paymentMethod
+      topshipDispatchStatus
       updatedAt
     }
   }
