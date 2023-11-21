@@ -39,10 +39,7 @@ export const DetailBlock = ({ title, value, values, valueClassName }) => {
               className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
               alt={item?.product?.name}
             />
-            <div
-              key={i}
-              className="flex flex-col  text-sm truncate max-w-[60%] gap-1"
-            >
+            <div key={i} className="flex flex-col  text-sm gap-1">
               <span className="text-grey-label">
                 {item?.product?.name}{" "}
                 <span className="text-red">x{item?.quantity}</span>
@@ -69,7 +66,7 @@ const OrderDetails = ({ details }) => {
   useEffect(() => {
     getOrder({ data: { id: details?.id } });
   }, [order?.id]);
-  console.log("order", convertToJs(order));
+
   const orderSource = order?.orderSource;
   const orderIsInStore =
     orderSource === "FACEBOOK" ||
