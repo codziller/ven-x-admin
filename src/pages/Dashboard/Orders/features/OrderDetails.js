@@ -10,6 +10,7 @@ import { Link, useParams } from "react-router-dom";
 import { convertToJs } from "utils/functions";
 export const DetailBlock = ({ title, value, values, valueClassName }) => {
   const { warehouse_id } = useParams();
+
   return (
     <div
       className={`flex flex-col justify-center items-start w-full gap-2 px-4`}
@@ -20,22 +21,45 @@ export const DetailBlock = ({ title, value, values, valueClassName }) => {
           {value}
         </p>
       )}
-      {values?.map((item, i) => (
-        <Link
-          to={`/dashboard/products/view/${warehouse_id}/${item?.product?.id}`}
-          className="flex justify-start items-center gap-2 w-full underline"
-        >
-          <img
-            src={item?.product?.imageUrls?.[0]}
-            className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
-            alt={item?.product?.name}
-          />
-          <p key={i} className="text-grey-label text-sm truncate max-w-[60%]">
-            {item?.product?.name}{" "}
-            <span className="text-red">x{item?.quantity}</span>
-          </p>
-        </Link>
-      ))}
+      {values?.map((item, i) => {
+        const selectedChoice = item?.productOption?.choices?.find(
+          (_, index) => index === item?.productOptionChoiceIndex
+        );
+        return (
+          <Link
+            to={`/dashboard/products/view/${warehouse_id}/${item?.product?.id}`}
+            className="flex justify-start items-center gap-2 w-full underline"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <img
+              src={
+                selectedChoice?.imageUrls?.[0] || item?.product?.imageUrls?.[0]
+              }
+              className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
+              alt={item?.product?.name}
+            />
+            <div
+              key={i}
+              className="flex flex-col  text-sm truncate max-w-[60%] gap-1"
+            >
+              <span className="text-grey-label">
+                {item?.product?.name}{" "}
+                <span className="text-red">x{item?.quantity}</span>
+              </span>
+
+              {item?.productOption?.name ? (
+                <span className="text-grey">
+                  {item?.productOption?.name}:
+                  <span className="text-black">
+                    {selectedChoice?.variantName}
+                  </span>
+                </span>
+              ) : null}
+            </div>
+          </Link>
+        );
+      })}
     </div>
   );
 };
@@ -157,6 +181,7 @@ ${order?.guestLastName || ""}`
 
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
             <DetailBlock title="Payment Method" value={order?.paymentMethod} />
+            <DetailBlock title="Delivery Method" value={deliveryMethod} />
           </div>
 
           <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">

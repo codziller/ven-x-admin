@@ -25,6 +25,7 @@ const OrderDetailsModal = ({ active, toggler, details }) => {
       size="md"
       active={active}
       toggler={toggler}
+      closeOnClickOutside
     >
       <div className="w-full h-full mb-10">
         <ModalBody>
