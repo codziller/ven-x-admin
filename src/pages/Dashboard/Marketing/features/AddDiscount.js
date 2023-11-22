@@ -39,6 +39,8 @@ import Select from "components/General/Input/Select";
 import Wysiwyg from "components/General/Textarea/Wysiwyg";
 import Input from "components/General/Input/Input";
 import CheckBox from "components/General/Input/CheckBox";
+import moment from "moment";
+import DatePickerComponent from "components/General/DatePicker";
 
 const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
@@ -79,6 +81,7 @@ const Form = observer(() => {
     discountGetXvalue: media_id ? discount?.discountGetXvalue : "",
     discountGetYproductId: media_id ? discount?.discountGetYproductId : "",
     discountGetYvalue: media_id ? discount?.discountGetYvalue : "",
+    discountExpiryTime: media_id ? discount?.discountExpiryTime : "",
   };
 
   const {
@@ -136,6 +139,7 @@ const Form = observer(() => {
     discountGetXvalue: watch("discountGetXvalue"),
     discountGetYproductId: watch("discountGetYproductId"),
     discountGetYvalue: watch("discountGetYvalue"),
+    discountExpiryTime: watch("discountExpiryTime"),
   };
 
   useEffect(() => {
@@ -216,17 +220,24 @@ const Form = observer(() => {
         discountGetXvalue: discountGetXvalue ? Number(discountGetXvalue) : "",
         discountBuyXvalue: discountBuyXvalue ? Number(discountBuyXvalue) : "",
       };
-
+      console.log("payload: ", payload);
       cleanPayload(payload);
       if (!media_id) {
         await createDiscount({
-          data: payload,
+          data: {
+            ...payload,
+            discountExpiryTime: new Date(moment(form?.discountExpiryTime)._d),
+          },
           onSuccess: () => navigate(-1),
         });
         return;
       } else {
         await editDiscount({
-          data: { ...payload, id: media_id },
+          data: {
+            ...payload,
+            id: media_id,
+            discountExpiryTime: new Date(moment(form?.discountExpiryTime)._d),
+          },
           onSuccess: () => navigate(-1),
         });
         return;
@@ -251,7 +262,7 @@ const Form = observer(() => {
       <div className="h-full md:pr-4 pt-1">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
           <div className="flex flex-col md:flex-row md:gap-6 justify-between items-start w-full mb-2">
-            <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
+            <div className="gap-y-4 py-4 w-full h-full pb-4">
               <div className="mb-5">
                 <button onClick={() => navigate(-1)} className="scale-90">
                   <ArrowBack />
@@ -265,7 +276,7 @@ const Form = observer(() => {
 
               <form
                 onSubmit={handleSubmit(handleOnSubmit)}
-                className="flex flex-col md:flex-row justify-start items-start gap-10 w-full overflow-y-auto"
+                className="flex flex-col md:flex-row justify-start items-start gap-10 w-full"
               >
                 {/* First section */}
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
@@ -276,6 +287,30 @@ const Form = observer(() => {
                     placeholder="Enter Discount Name"
                     formError={errors.name}
                     showFormError={formTwo?.showFormError}
+                  />
+                  <DatePickerComponent
+                    label="Discount Expiry Time"
+                    placeholder="Choose Discount Expiry Time"
+                    name="discountExpiryTime"
+                    showTimeSelect
+                    isRequired
+                    value={
+                      moment(form?.discountExpiryTime).isValid()
+                        ? moment(form?.discountExpiryTime)._d
+                        : ""
+                    }
+                    minDate={
+                      moment(form?.end_date).isValid()
+                        ? moment(form?.end_date).subtract(0, "days")._d
+                        : moment().subtract(1, "days")._d
+                    }
+                    dateFormat="dd MMMM yyyy hh:mm"
+                    onChange={(value) =>
+                      handleChange({
+                        prop: "discountExpiryTime",
+                        val: moment(value).format("YYYY-MM-DD hh:mm"),
+                      })
+                    }
                   />
                 </div>
 

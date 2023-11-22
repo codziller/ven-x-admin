@@ -186,6 +186,7 @@ const getDiscountsQuery = ({ page }) => gql`
         id
         name
         updatedAt
+        discountExpiryTime
       }
     }
   }
@@ -615,6 +616,7 @@ const createDiscountQuery = gql`
     $discountType: DISCOUNT_TYPE!
     $discountValue: String!
     $name: String!
+    $discountExpiryTime: DateTime!
     $productIds: [String!]
   ) {
     createDiscount(
@@ -629,6 +631,7 @@ const createDiscountQuery = gql`
         discountType: $discountType
         discountValue: $discountValue
         name: $name
+        discountExpiryTime: $discountExpiryTime
         productIds: $productIds
       }
     ) {
