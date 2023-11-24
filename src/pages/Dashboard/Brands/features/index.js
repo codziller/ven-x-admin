@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 import useTableFilter from "hooks/tableFilter";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { pageCount } from "utils/appConstant";
 import { hasValue } from "utils/validations";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 import { ReactComponent as Plus } from "assets/icons/add.svg";
@@ -23,7 +22,7 @@ import { Button } from "components/General/Button";
 import BrandsStore from "../store";
 import { observer } from "mobx-react-lite";
 import CheckBox from "components/General/Input/CheckBox";
-
+const pageCount = 500;
 export const dateFilters = [
   {
     value: "today",

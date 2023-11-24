@@ -70,10 +70,8 @@ const createBrandQuery = gql`
 const editBrandQuery = gql`
   mutation updateBrand(
     $id: String!
-    $brandDescription: String
     $brandLogoUrl: String
     $brandName: String
-    $brandShortText: String
     $categoryId: String
     $imageUrls: [String!]
     $videoUrls: [String!]
@@ -81,10 +79,8 @@ const editBrandQuery = gql`
     updateBrand(
       updateBrandInput: {
         id: $id
-        brandDescription: $brandDescription
         brandLogoUrl: $brandLogoUrl
         brandName: $brandName
-        brandShortText: $brandShortText
         categoryId: $categoryId
         imageUrls: $imageUrls
         videoUrls: $videoUrls
