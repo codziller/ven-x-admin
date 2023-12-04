@@ -111,6 +111,7 @@ const createUserQuery = gql`
     $phoneNumber: String!
     $role: USER_ROLES
     $warehouseId: String
+    $brandId: String
   ) {
     adminCreateUser(
       dob: $dob
@@ -122,6 +123,7 @@ const createUserQuery = gql`
       phoneNumber: $phoneNumber
       role: $role
       warehouseId: $warehouseId
+      brandId: $brandId
     ) {
       user {
         id
