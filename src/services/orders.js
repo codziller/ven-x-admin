@@ -56,10 +56,10 @@ const getOrdersByUserQuery = ({ page, id }) => gql`
   }
 `;
 
-const getOrdersQuery = ({ page, status }) => gql`
+const getOrdersQuery = ({ page, status, startDate, endDate }) => gql`
   {
     __typename
-    orders(pageNumber: "${page}", status: "${status}") {
+    orders(pageNumber: "${page}", status: "${status}",startDate: "${startDate}", endDate: "${endDate}") {
       total
       results {
         calculatedOrder {
@@ -228,8 +228,8 @@ const apis = {
     graphQlInstance(getOrdersByUserQuery({ page, id }), {
       method: "GET",
     }),
-  getOrders: ({ page, status }) =>
-    graphQlInstance(getOrdersQuery({ page, status }), {
+  getOrders: ({ page, status, startDate, endDate }) =>
+    graphQlInstance(getOrdersQuery({ page, status, startDate, endDate }), {
       method: "GET",
     }),
   getBrandOrders: ({ page, id, startDate, endDate }) =>

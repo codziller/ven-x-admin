@@ -120,13 +120,23 @@ const Orders = ({ isRecent }) => {
   };
 
   const handleGetAllData = () => {
-    getOrders({ data: { page: 1, status: PENDING } });
-    getOrders({ data: { page: 1, status: DISPATCHED } });
-    getOrders({ data: { page: 1, status: COMPLETED } });
-    getOrders({ data: { page: 1, status: CANCELLED } });
+    const endDate = moment(dateFilter.end_date)
+      .add(1, "day")
+      .format("YYYY-MM-DD");
+    const datePayload = { startDate: dateFilter.start_date, endDate };
+    getOrders({ data: { page: 1, status: PENDING, ...datePayload } });
+    getOrders({ data: { page: 1, status: DISPATCHED, ...datePayload } });
+    getOrders({ data: { page: 1, status: COMPLETED, ...datePayload } });
+    getOrders({ data: { page: 1, status: CANCELLED, ...datePayload } });
   };
   const handleGetData = () => {
-    getOrders({ data: { page: currentPage, status: activeTab } });
+    const endDate = moment(dateFilter.end_date)
+      .add(1, "day")
+      .format("YYYY-MM-DD");
+    const datePayload = { startDate: dateFilter.start_date, endDate };
+    getOrders({
+      data: { page: currentPage, status: activeTab, ...datePayload },
+    });
   };
 
   useEffect(() => {
@@ -134,7 +144,7 @@ const Orders = ({ isRecent }) => {
   }, []);
   useEffect(() => {
     isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch, activeTab]);
+  }, [currentPage, currentPageSearch, activeTab, dateFilter]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -295,7 +305,18 @@ const Orders = ({ isRecent }) => {
         break;
     }
     return isSearchMode ? searchResultCount : itemsCount;
-  }, [searchResult, activeTab, isSearchMode, displayedItems]);
+  }, [
+    searchResult,
+    activeTab,
+    isSearchMode,
+    displayedItems,
+    in_progressOrdersCount,
+    pendingOrdersCount,
+    dispatchedOrdersCount,
+    completedOrdersCount,
+    cancelledOrdersCount,
+    ordersCount,
+  ]);
 
   const isLoading = useMemo(() => {
     return isSearchMode ? searchLoading : loading;

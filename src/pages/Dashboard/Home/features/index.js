@@ -2,26 +2,18 @@ import React, { useEffect, useState } from "react";
 
 import moment from "moment";
 import _ from "lodash";
-import qs from "query-string";
 
-import useTableFilter from "hooks/tableFilter";
-import ActiveFilter from "components/General/ActiveFilter";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
 
-import { transactions } from "utils/appConstant";
-import { hasValue } from "utils/validations";
 import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
 import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
 import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg";
-import useWindowDimensions from "hooks/useWindowDimensions";
 import OrdersPage from "pages/Dashboard/Orders/features";
-import { paramsObjectToQueryString } from "utils/request";
 import ProductsStore from "pages/Dashboard/Products/store";
 import OrdersStore from "pages/Dashboard/Orders/store";
 import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
-import { transactionAmount } from "utils/transactions";
 import TransactionDetailsModal from "./OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
 import EarningValueCard from "./EarningValueCard";
@@ -64,27 +56,13 @@ export const dateFilters = [
 ];
 const HomePage = () => {
   const { warehouse_id } = useParams();
-  const requiredFilters = {
-    start_date: "2020-01-01",
-    end_date: moment().format("YYYY-MM-DD"),
-  };
 
-  const defaultFilters = {
-    start_date: "",
-    end_date: "",
-    tx_verb: "",
-    fiat_wallet_id: "",
-    coin_wallet_id: "",
-    account_status: "",
-  };
-
-  const { width } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
 
   const [showDateModal, setShowDateModal] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput] = useState("");
 
   const { userIsAdmin, userIsBrandStaff } = AuthStore;
   const { getProductsCount, productsCount, loading } = ProductsStore;
@@ -103,60 +81,29 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
+    const endDate = moment(dateFilter.end_date)
+      .add(1, "day")
+      .format("YYYY-MM-DD");
     if (userIsBrandStaff) {
       getBrandHomePageStats({
         data: {
-          endDate: dateFilter.end_date,
+          endDate,
           id: warehouse_id,
           startDate: dateFilter.start_date,
         },
       });
+      return;
     }
+
+    getAdminHomePageStats({
+      data: {
+        endDate,
+        startDate: dateFilter.start_date,
+      },
+    });
   }, [userIsBrandStaff, dateFilter, warehouse_id]);
 
-  const params = qs.parse(location.hash?.substring(1));
-
   const searchQuery = searchInput?.trim();
-
-  const { filterData } = useTableFilter({
-    defaultFilters,
-    currentPage,
-    setCurrentPage,
-    params,
-  });
-
-  const fetchMerchants = () => {
-    const filters = {
-      start_date: hasValue(filterData?.start_date)
-        ? filterData?.start_date
-        : requiredFilters.start_date,
-      end_date: hasValue(filterData?.end_date)
-        ? filterData?.end_date
-        : requiredFilters.end_date,
-      ...(hasValue(searchQuery) && {
-        account_trade_name: searchQuery,
-      }),
-      ...(hasValue(filterData?.account_status) && {
-        account_status: filterData.account_status.value,
-      }),
-    };
-
-    const paramsData = {
-      ...filters,
-    };
-
-    if (
-      _.isEqual(
-        { start_date: paramsData.start_date, end_date: paramsData.end_date },
-        requiredFilters
-      )
-    ) {
-      delete paramsData.start_date;
-      delete paramsData.end_date;
-    }
-
-    window.location.hash = paramsObjectToQueryString(paramsData);
-  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -164,19 +111,13 @@ const HomePage = () => {
     }
   }, [searchInput]);
 
-  useEffect(() => {
-    console.log(fetchMerchants);
-    // fetchMerchants();
-  }, [currentPage, filterData]);
-
-  useEffect(() => {
-    if (searchQuery?.length > 1 || !searchQuery) {
-      // fetchMerchants();
-    }
-  }, [searchInput]);
-
   console.log("brandHomePageStats: ", convertToJs(brandHomePageStats));
-  const homepageStats = brandHomePageStats;
+
+  console.log("adminHomePageStats: ", convertToJs(adminHomePageStats));
+
+  const homepageStats = userIsBrandStaff
+    ? brandHomePageStats
+    : adminHomePageStats;
   return (
     <>
       <div className="h-full md:pr-4">
@@ -211,7 +152,7 @@ const HomePage = () => {
             <EarningCard
               icon={<OrdersIcon className="scale-[0.8]" />}
               title="Orders"
-              value={userIsAdmin ? ordersCount : homepageStats?.totalOrders}
+              value={homepageStats?.totalOrders}
               link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={statLoading}
             />
@@ -221,25 +162,20 @@ const HomePage = () => {
               value={homepageStats?.totalRevenue}
               link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
               isLoading={statLoading}
-              decimalValue={"00"}
               isAmount
             />
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Products"
-              value={
-                userIsBrandStaff
-                  ? homepageStats?.totalProducts
-                  : numberWithCommas(productsCount)
-              }
+              value={numberWithCommas(homepageStats?.totalProducts)}
               link={!userIsAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
               isLoading={loading || statLoading}
             />
             {userIsAdmin && (
               <EarningCard
                 icon={<CustomersIcon className="scale-[0.8]" />}
-                title="All Users"
-                value={numberWithCommas(usersCount)}
+                title="Users"
+                value={numberWithCommas(homepageStats?.totalUsers)}
                 link={!userIsAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
                 isLoading={usersLoading}
               />
