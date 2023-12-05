@@ -189,7 +189,6 @@ class OrdersStore {
         "Order status updated Successfully."
       );
       onSuccess?.();
-      await this.getOrders({ data: { page: page || 1 } });
     } catch (error) {
       this.error = error;
     } finally {

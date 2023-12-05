@@ -7,7 +7,6 @@ import moment from "moment";
 import { transactionAmount } from "utils/transactions";
 import classNames from "classnames";
 import { Link, useParams } from "react-router-dom";
-import { convertToJs } from "utils/functions";
 export const DetailBlock = ({ title, value, values, valueClassName }) => {
   const { warehouse_id } = useParams();
 

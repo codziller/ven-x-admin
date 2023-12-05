@@ -5,26 +5,30 @@ import Modal from "components/General/Modal/Modal/Modal";
 import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import TransactionDetails from "./OrderDetails";
 
-const OrderDetailsModal = ({ active, toggler, transaction }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toggler();
+const OrderDetailsModal = ({ active, toggler, details }) => {
+  const renderModalBody = () => {
+    switch (details?.modalType) {
+      case "details":
+        return <TransactionDetails details={details} toggler={toggler} />;
+
+      default:
+        return null;
+    }
   };
   return (
     <Modal
-      isSideModal
+      isSideModal={details?.isSideModal}
       maxHeight="100vh"
       size="md"
       active={active}
       toggler={toggler}
+      closeOnClickOutside
     >
-      <form onSubmit={handleSubmit} className="w-full h-full mb-10">
+      <div className="w-full h-full mb-10">
         <ModalBody>
-          <div className="w-full">
-            <TransactionDetails transaction={transaction} />
-          </div>
+          <div className="w-full">{active && renderModalBody()}</div>
         </ModalBody>
-      </form>
+      </div>
     </Modal>
   );
 };

@@ -14,7 +14,12 @@ const DeleteDialog = ({ details, toggler }) => {
 
   const handleOnSubmit = () => {
     const payload = { id: details?.id, status: details?.value };
-    updateOrderStatus({ data: payload, onSuccess: () => toggler() });
+    updateOrderStatus({
+      data: payload,
+      onSuccess: () => {
+        toggler();
+      },
+    });
   };
 
   console.log("details: ", details);
