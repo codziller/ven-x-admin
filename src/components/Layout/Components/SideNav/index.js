@@ -27,7 +27,6 @@ import {
   MdOutlineRemoveShoppingCart,
   MdOutlineStorage,
 } from "react-icons/md";
-import { FaFileContract } from "react-icons/fa6";
 import { FcBusinesswoman } from "react-icons/fc";
 
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
@@ -71,7 +70,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           label: "Here’s what’s happening with Beautyhut today.",
           link: `/dashboard/subscriptions/${warehouse_id}`,
           icon: (
-            <FaFileContract
+            <MdOutlineForwardToInbox
               size={24}
               className="stroke-current transition-all duration-500 ease-in-out"
             />
@@ -199,18 +198,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
             />
           ),
         },
-        {
-          title: "Subscriptions",
-          slug: "/dashboard/subscriptions",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/subscriptions/${warehouse_id}`,
-          icon: (
-            <MdOutlineForwardToInbox
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
+
         // {
         //   title: "Discount Codes",
         //   slug: "/dashboard/discounts",
