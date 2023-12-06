@@ -81,6 +81,30 @@ archive
     }
   }
 `;
+
+const getProductQuantitySoldByDateFilterQuery = ({
+  id,
+  endDate,
+  startDate,
+}) => gql`
+  {
+    __typename
+    getProductQuantitySoldByDateFilter(id: "${id}",dateFilter:{
+
+      endDate: "${endDate}",
+startDate: "${startDate}"
+    }) {
+   id 
+   name
+   productCostPriceHistory {
+    createdAt
+    newCostPrice
+    oldCostPrice
+   }
+}
+}
+`;
+
 const getProductCostPriceHistoryQuery = ({ id }) => gql`
   {
     __typename

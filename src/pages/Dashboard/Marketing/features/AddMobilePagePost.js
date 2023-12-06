@@ -112,6 +112,7 @@ const Form = observer(() => {
           ...form,
           position,
           imageUrl: imagesUrls,
+          dataId: form?.pageToLinkTo === "NONE" ? "NONE" : form.dataId,
         };
 
         cleanPayload(payload);

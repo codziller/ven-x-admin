@@ -779,7 +779,7 @@ const createMobilePagePostQuery = gql`
   ) {
     createMobilePagePost(
       createMobilePagePostDto: {
-        dataId: $dataI
+        dataId: $dataId
         pageToLinkTo: $pageToLinkTo
         imageUrl: $imageUrl
         position: $position

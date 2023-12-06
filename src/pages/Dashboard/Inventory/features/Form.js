@@ -20,7 +20,35 @@ import TransactionDetailsModal from "./DetailsModal";
 import { isEmpty } from "lodash";
 import Select from "components/General/Input/Select";
 import { numberWithCommas } from "utils/formatter";
+import dateConstants from "utils/dateConstants";
 
+export const dateFilters = [
+  {
+    value: "today",
+    label: "Today",
+    start_date: dateConstants?.today,
+    end_date: dateConstants?.today,
+  },
+  {
+    value: "this_week",
+    label: "This Week",
+    start_date: dateConstants?.startOfWeek,
+    end_date: dateConstants?.endOfWeek,
+  },
+  {
+    value: "all_time",
+    label: "All Time",
+    start_date: dateConstants?.firstDay,
+    end_date: dateConstants?.today,
+  },
+
+  {
+    value: "custom",
+    label: "Custom Date",
+    start_date: dateConstants?.startOfWeek,
+    end_date: dateConstants?.endOfWeek,
+  },
+];
 const { PRODUCT_VARIANT } = PRODUCT_MODAL_TYPES;
 const { COST_PRICE_HISTORY } = INVENTORY_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
@@ -33,6 +61,7 @@ const Form = ({ details, toggler }) => {
     showFormError: false,
     productOptionModified: false,
   });
+  const [dateFilter, setDateFilter] = useState(dateFilters[0]);
 
   const { editProductInventory, editProductInventoryLoading, product } =
     ProductsStore;
@@ -265,6 +294,10 @@ const Form = ({ details, toggler }) => {
                             >
                               <div className="flex justify-start items-center gap-3 ">
                                 <span className="">{choice?.variantName}</span>
+
+                                <span className="">
+                                  {choice?.variantQuantity}
+                                </span>
                               </div>
 
                               {choice?.main ? null : (
@@ -335,6 +368,12 @@ const Form = ({ details, toggler }) => {
             />
           </div>
         </form>
+
+        <h2 className="section-heading mt-6 mb-3 text-xl">
+          Additiona Sales Data
+        </h2>
+
+        <div className="flex flex-col justify-start items-start gap-6 w-full overflow-y-auto"></div>
       </div>
 
       <DetailsModal

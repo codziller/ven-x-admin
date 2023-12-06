@@ -186,6 +186,7 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
     return flattenedProductChoices?.find((item) => item?.main);
   }, [productOptions]);
 
+  console.log("details: ", details);
   return (
     <>
       <div className="flex flex-col justify-center items-start gap-y-2 w-full h-full pb-4 overflow-y-auto">
@@ -212,6 +213,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
         <p className="mb-3 text-sm text-grey text-left">
           You'll be able to manage pricing and inventory for this variant later
           on
+        </p>
+
+        <p className="mb-3 text-sm text-grey-text text-left">
+          Quantity Left:{" "}
+          {currentProductVariant?.variantQuantity
+            ? numberWithCommas(currentProductVariant?.variantQuantity)
+            : "0"}
         </p>
 
         <form

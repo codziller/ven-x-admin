@@ -16,6 +16,7 @@ const EditInventory = () => {
   useEffect(() => {
     getWarehouses({ data: { page: 1 } });
   }, []);
+
   return (
     <>
       <div className="h-full md:pr-4 pt-1 w-full flex justify-center items-start">
