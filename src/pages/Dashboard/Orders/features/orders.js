@@ -105,6 +105,7 @@ const Orders = ({ isRecent }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
+  const [showDateModal, setShowDateModal] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [activeTab, setActiveTab] = useState(TABS[0]?.name);
 
@@ -133,7 +134,10 @@ const Orders = ({ isRecent }) => {
     const endDate = moment(dateFilter.end_date)
       .add(1, "day")
       .format("YYYY-MM-DD");
-    const datePayload = { startDate: dateFilter.start_date, endDate };
+    const datePayload = {
+      startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+      endDate,
+    };
     getOrders({
       data: { page: currentPage, status: activeTab, ...datePayload },
     });
@@ -336,7 +340,13 @@ const Orders = ({ isRecent }) => {
                   placeholder="Filter by: "
                   options={dateFilters}
                   name="payout_filter"
-                  onClick={(e) => setDateFilter(e)}
+                  onClick={(e) => {
+                    if (e.value === "custom") {
+                      setShowDateModal(true);
+                      return;
+                    }
+                    setDateFilter(e);
+                  }}
                   value={dateFilter?.label}
                 />
               </div>
@@ -424,19 +434,25 @@ const Orders = ({ isRecent }) => {
         toggler={() => setCurrentTxnDetails(null)}
       />
       <DateRangeModal
-        active={dateFilter.value === "custom"}
-        toggler={() =>
+        active={showDateModal}
+        defaultDate={{
+          startDate: new Date(dateFilter.start_date),
+          endDate: new Date(dateFilter.end_date),
+          key: "selection",
+        }}
+        onApply={(date) =>
           setDateFilter({
-            value: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            label: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            start_date: dateConstants?.startOfWeek,
-            end_date: dateConstants?.endOfWeek,
+            value: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            label: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            start_date: date?.startDate,
+            end_date: date?.endDate,
           })
         }
+        toggler={() => setShowDateModal(false)}
       />
     </>
   );

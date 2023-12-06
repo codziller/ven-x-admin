@@ -75,6 +75,9 @@ const HomePage = () => {
     brandHomePageStats,
     loading: statLoading,
   } = HomeStore;
+
+  console.log("dateFilter: ", dateFilter);
+
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
     userIsAdmin && getUsers({ data: { page: 1 } });
@@ -89,7 +92,7 @@ const HomePage = () => {
         data: {
           endDate,
           id: warehouse_id,
-          startDate: dateFilter.start_date,
+          startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
         },
       });
       return;
@@ -98,7 +101,7 @@ const HomePage = () => {
     getAdminHomePageStats({
       data: {
         endDate,
-        startDate: dateFilter.start_date,
+        startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
       },
     });
   }, [userIsBrandStaff, dateFilter, warehouse_id]);
