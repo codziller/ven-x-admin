@@ -91,6 +91,7 @@ class MarketingStore {
   loadingMobilePagePost = false;
   createMobilePagePostLoading = false;
   editMobilePagePostLoading = false;
+  deleteMobilePagePostLoading = false;
 
   error = null;
   constructor() {
@@ -730,6 +731,23 @@ class MarketingStore {
       this.error = error;
     } finally {
       this.deleteWebMarketingImageLoading = false;
+    }
+  };
+
+  deleteMobilePagePost = async ({ data, onSuccess, page }) => {
+    this.deleteMobilePagePostLoading = true;
+    try {
+      await apis.deleteMobilePagePost(data);
+      successToast(
+        "Operation Successful!",
+        "Mobile page slider deleted successfully."
+      );
+      onSuccess?.();
+      await this.getMobilePagePosts({ data: { page: page || 1 } });
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteMobilePagePostLoading = false;
     }
   };
 }

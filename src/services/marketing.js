@@ -881,6 +881,15 @@ const deleteWebMarketingImageQuery = gql`
     }
   }
 `;
+
+const deleteMobilePagePostQuery = gql`
+  mutation removeMobilePagePost($id: String!) {
+    removeMobilePagePost(id: $id) {
+      status
+    }
+  }
+`;
+
 const apis = {
   getWebMarketingImages: ({ page }) =>
     graphQlInstance(getWebMarketingImagesQuery({ page }), {
@@ -1081,6 +1090,11 @@ const apis = {
 
   deleteWebMarketingImage: (variables) =>
     graphQlInstance(deleteWebMarketingImageQuery, {
+      variables,
+    }),
+
+  deleteMobilePagePost: (variables) =>
+    graphQlInstance(deleteMobilePagePostQuery, {
       variables,
     }),
 };

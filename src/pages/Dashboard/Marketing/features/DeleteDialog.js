@@ -20,6 +20,8 @@ const DeleteDialog = ({ details, toggler }) => {
     deleteHomeSliderImageLoading,
     deleteWebMarketingImage,
     deleteWebMarketingImageLoading,
+    deleteMobilePagePost,
+    deleteMobilePagePostLoading,
   } = MarketingStore;
   const navigate = useNavigate();
   const handleOnSubmit = () => {
@@ -66,6 +68,15 @@ const DeleteDialog = ({ details, toggler }) => {
         });
         break;
 
+      case "Mobile Page Slider":
+        deleteMobilePagePost({
+          data: payload,
+          onSuccess: () => {
+            toggler();
+            navigate(-1);
+          },
+        });
+        break;
       default:
         break;
     }
@@ -131,7 +142,8 @@ const DeleteDialog = ({ details, toggler }) => {
           deleteDiscountLoading ||
           editWareHouseLoading ||
           deleteHomeSliderImageLoading ||
-          deleteWebMarketingImageLoading
+          deleteWebMarketingImageLoading ||
+          deleteMobilePagePostLoading
         }
         text="No, Cancel"
         className="mb-5"
