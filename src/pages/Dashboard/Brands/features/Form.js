@@ -49,10 +49,6 @@ const Form = ({ details, toggler }) => {
       .array()
       .min(1, "Please select brand logo")
       .required("Please select brand logo"),
-    imageUrls: yup
-      .array()
-      .min(1, "Please select images for this brand")
-      .required("Please select images for this brand"),
   });
 
   const { createBrand, editBrand } = BrandsStore;
