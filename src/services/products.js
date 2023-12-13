@@ -641,8 +641,8 @@ const updateProductTransferRequestStatusQuery = gql`
 `;
 
 const deleteProductCategoryQuery = gql`
-  mutation removeProductCategory($id: String!) {
-    removeProductCategory(id: $id) {
+  mutation removeProductCategory($categoryId: String!, $productId: String!) {
+    removeProductCategory(categoryId: $categoryId, productId: $productId) {
       status
     }
   }

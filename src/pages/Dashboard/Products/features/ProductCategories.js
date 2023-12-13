@@ -42,7 +42,9 @@ const ProductCategories = ({
   const handleChangeTwo = async (val, itemIsSelected) => {
     if (product_id && type === "Product") {
       if (itemIsSelected) {
-        deleteProductCategory({ data: { id: val } });
+        deleteProductCategory({
+          data: { categoryId: val, productId: product_id },
+        });
       } else {
         createProductCategory({
           data: { categoryId: val, productId: product_id },
@@ -130,6 +132,7 @@ const ProductCategories = ({
                         lowerCase(item?.name)?.includes(lowerCase(searchInput))
                       )
                       ?.map((subItem) => {
+                        const itemIsSelected = isSelected(subItem?.id);
                         return (
                           <div
                             key={subItem?.id}
@@ -138,8 +141,10 @@ const ProductCategories = ({
                             <CheckBox
                               key={subItem?.id}
                               label={subItem?.name}
-                              onChange={() => handleChangeTwo(subItem?.id)}
-                              checked={isSelected(subItem?.id)}
+                              onChange={() =>
+                                handleChangeTwo(subItem?.id, itemIsSelected)
+                              }
+                              checked={itemIsSelected}
                               labelClass="text-[13px] font-500"
                               square={!isSingle}
                             />

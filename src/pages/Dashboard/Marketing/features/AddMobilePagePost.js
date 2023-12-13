@@ -26,6 +26,7 @@ import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import cleanPayload from "utils/cleanPayload";
 import { flattenCategories } from "utils/functions";
 import CategoryDetailsModal from "pages/Dashboard/Categories/features/DetailsModal";
+import { errorToast } from "components/General/Toast/Toast";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 const { PRODUCT_CATEGORY, PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;

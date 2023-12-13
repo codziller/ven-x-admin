@@ -22,6 +22,7 @@ import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import cleanPayload from "utils/cleanPayload";
+import { errorToast } from "components/General/Toast/Toast";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 
