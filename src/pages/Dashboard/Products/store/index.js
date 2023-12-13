@@ -45,6 +45,10 @@ class ProductsStore {
   productTransferRequestsLoading = false;
   productRequestsLoading = false;
   updateProductTransferRequestStatusLoading = false;
+
+  productStats = null;
+  loadingProductStats = false;
+
   productForm = {};
   sourceWarehouseId = "";
   constructor() {
@@ -73,6 +77,20 @@ class ProductsStore {
       this.loading = false;
     }
   };
+
+  getProductQuantitySoldByDateFilter = async ({ data }) => {
+    this.loadingProductStats = true;
+    try {
+      let res = await apis.getProductQuantitySoldByDateFilter(data);
+      res = res?.getProductQuantitySoldByDateFilter;
+      this.productStats = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingProductStats = false;
+    }
+  };
+
   getProducts = async ({ data, warehouse_id }) => {
     this.loading = true;
     try {

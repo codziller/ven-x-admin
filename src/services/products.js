@@ -83,24 +83,20 @@ archive
 `;
 
 const getProductQuantitySoldByDateFilterQuery = ({
-  id,
+  productId,
   endDate,
   startDate,
 }) => gql`
   {
     __typename
-    getProductQuantitySoldByDateFilter(id: "${id}",dateFilter:{
+    getProductQuantitySoldByDateFilter(productId: "${productId}",dateFilter:{
 
       endDate: "${endDate}",
 startDate: "${startDate}"
     }) {
-   id 
-   name
-   productCostPriceHistory {
-    createdAt
-    newCostPrice
-    oldCostPrice
-   }
+      profit
+      qtyLeft
+      qtySold
 }
 }
 `;
@@ -677,7 +673,17 @@ const apis = {
     graphQlInstance(getPrivateProductsQuery({ page, isPrivate }), {
       method: "GET",
     }),
-
+  getProductQuantitySoldByDateFilter: ({ productId, startDate, endDate }) =>
+    graphQlInstance(
+      getProductQuantitySoldByDateFilterQuery({
+        productId,
+        startDate,
+        endDate,
+      }),
+      {
+        method: "GET",
+      }
+    ),
   getProductsCount: ({ page }) =>
     graphQlInstance(getProductsCountQuery({ page }), {
       method: "GET",

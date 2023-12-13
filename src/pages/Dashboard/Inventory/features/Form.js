@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,6 +7,8 @@ import PropTypes from "prop-types";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Edit } from "assets/icons/Edit/edit.svg";
+import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
+import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -20,35 +22,12 @@ import TransactionDetailsModal from "./DetailsModal";
 import { isEmpty } from "lodash";
 import Select from "components/General/Input/Select";
 import { numberWithCommas } from "utils/formatter";
-import dateConstants from "utils/dateConstants";
+import { dateFilters } from "pages/Dashboard/Home/features";
+import moment from "moment";
+import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
+import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
+import EarningCard from "pages/Dashboard/Home/features/EarningCard";
 
-export const dateFilters = [
-  {
-    value: "today",
-    label: "Today",
-    start_date: dateConstants?.today,
-    end_date: dateConstants?.today,
-  },
-  {
-    value: "this_week",
-    label: "This Week",
-    start_date: dateConstants?.startOfWeek,
-    end_date: dateConstants?.endOfWeek,
-  },
-  {
-    value: "all_time",
-    label: "All Time",
-    start_date: dateConstants?.firstDay,
-    end_date: dateConstants?.today,
-  },
-
-  {
-    value: "custom",
-    label: "Custom Date",
-    start_date: dateConstants?.startOfWeek,
-    end_date: dateConstants?.endOfWeek,
-  },
-];
 const { PRODUCT_VARIANT } = PRODUCT_MODAL_TYPES;
 const { COST_PRICE_HISTORY } = INVENTORY_MODAL_TYPES;
 const Form = ({ details, toggler }) => {
@@ -62,9 +41,16 @@ const Form = ({ details, toggler }) => {
     productOptionModified: false,
   });
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
+  const [showDateModal, setShowDateModal] = useState(false);
 
-  const { editProductInventory, editProductInventoryLoading, product } =
-    ProductsStore;
+  const {
+    editProductInventory,
+    editProductInventoryLoading,
+    product,
+    productStats,
+    getProductQuantitySoldByDateFilter,
+    loadingProductStats,
+  } = ProductsStore;
   const { warehouses, loading } = WareHousesStore;
   const schema = yup.object({
     quantity: yup.string().required("Please enter product quantity"),
@@ -82,9 +68,22 @@ const Form = ({ details, toggler }) => {
     warehouseId: warehouse_id || "",
   };
 
+  useEffect(() => {
+    const endDate = moment(dateFilter.end_date)
+      .add(1, "day")
+      .format("YYYY-MM-DD");
+    getProductQuantitySoldByDateFilter({
+      data: {
+        endDate,
+        productId: product_id,
+        startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+      },
+    });
+  }, [dateFilter, product_id]);
+
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     trigger,
     watch,
@@ -93,6 +92,7 @@ const Form = ({ details, toggler }) => {
     mode: "onSubmit",
     resolver: yupResolver(schema),
   });
+
   const handleChange = async ({ prop, val, rest, isFormTwo }) => {
     if (prop === "productOptions") {
       setFormTwo({ ...formTwo, productOptionModified: true });
@@ -370,10 +370,50 @@ const Form = ({ details, toggler }) => {
         </form>
 
         <h2 className="section-heading mt-6 mb-3 text-xl">
-          Additiona Sales Data
+          Additiona Sales Data ({product?.name})
         </h2>
+        <div className="flex justify-between items-center w-fit mb-3 gap-1">
+          <div className="w-full sm:w-[200px]">
+            <DashboardFilterDropdown
+              placeholder="Filter by: "
+              options={dateFilters}
+              name="payout_filter"
+              onClick={(e) => {
+                if (e.value === "custom") {
+                  setShowDateModal(true);
+                  return;
+                }
+                setDateFilter(e);
+              }}
+              value={dateFilter?.label}
+            />
+          </div>
 
-        <div className="flex flex-col justify-start items-start gap-6 w-full overflow-y-auto"></div>
+          <div className="flex justify-start items-center w-fit truncate text-base">
+            {dateFilter.value === "today"
+              ? moment(dateFilter.start_date).format("MMM Do, YYYY")
+              : `${moment(dateFilter.start_date).format(
+                  "MMM Do, YYYY"
+                )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
+          <EarningCard
+            icon={<OrdersIcon className="scale-[0.8]" />}
+            title="Quantity sold"
+            value={productStats?.qtySold}
+            link="#"
+            isLoading={loadingProductStats}
+          />
+          <EarningCard
+            icon={<IncomeIcon className="scale-[0.8]" />}
+            title="Profit"
+            value={productStats?.profit}
+            link="#"
+            isLoading={loadingProductStats}
+            isAmount
+          />
+        </div>
       </div>
 
       <DetailsModal
@@ -393,6 +433,28 @@ const Form = ({ details, toggler }) => {
         active={formTwo?.modalType === COST_PRICE_HISTORY}
         details={{ ...product, modalSize: "lg", modalType: COST_PRICE_HISTORY }}
         toggler={handleCloseModal}
+      />
+
+      <DateRangeModal
+        active={showDateModal}
+        defaultDate={{
+          startDate: new Date(dateFilter.start_date),
+          endDate: new Date(dateFilter.end_date),
+          key: "selection",
+        }}
+        onApply={(date) =>
+          setDateFilter({
+            value: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            label: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            start_date: date?.startDate,
+            end_date: date?.endDate,
+          })
+        }
+        toggler={() => setShowDateModal(false)}
       />
     </>
   );

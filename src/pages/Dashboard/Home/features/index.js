@@ -11,7 +11,6 @@ import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
 import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg";
 import OrdersPage from "pages/Dashboard/Orders/features";
 import ProductsStore from "pages/Dashboard/Products/store";
-import OrdersStore from "pages/Dashboard/Orders/store";
 import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
 import TransactionDetailsModal from "./OrderDetailsModal";
@@ -22,17 +21,21 @@ import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
 import AuthStore from "pages/OnBoarding/SignIn/store";
-
-import HomeStore from "../store";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
-import { convertToJs } from "utils/functions";
-import Amount from "components/General/Numbers/Amount";
+import HomeStore from "../store";
+
 export const dateFilters = [
   {
     value: "today",
     label: "Today",
     start_date: dateConstants?.today,
     end_date: dateConstants?.today,
+  },
+  {
+    value: "yesterday",
+    label: "Yesterday",
+    start_date: dateConstants?.yesterday,
+    end_date: dateConstants?.yesterday,
   },
   {
     value: "this_week",
@@ -65,9 +68,9 @@ const HomePage = () => {
   const [searchInput] = useState("");
 
   const { userIsAdmin, userIsBrandStaff } = AuthStore;
-  const { getProductsCount, productsCount, loading } = ProductsStore;
-  const { ordersCount, loading: orderLoading } = OrdersStore;
-  const { getUsers, usersCount, loading: usersLoading } = UsersStore;
+  const { getProductsCount, loading } = ProductsStore;
+
+  const { getUsers, loading: usersLoading } = UsersStore;
   const {
     getBrandHomePageStats,
     getAdminHomePageStats,
@@ -75,8 +78,6 @@ const HomePage = () => {
     brandHomePageStats,
     loading: statLoading,
   } = HomeStore;
-
-  console.log("dateFilter: ", dateFilter);
 
   useEffect(() => {
     getProductsCount({ data: { page: 1 } });
@@ -113,10 +114,6 @@ const HomePage = () => {
       setCurrentPage(1);
     }
   }, [searchInput]);
-
-  console.log("brandHomePageStats: ", convertToJs(brandHomePageStats));
-
-  console.log("adminHomePageStats: ", convertToJs(adminHomePageStats));
 
   const homepageStats = userIsBrandStaff
     ? brandHomePageStats
