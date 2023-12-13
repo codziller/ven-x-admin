@@ -14,7 +14,6 @@ export const uploadImagesToCloud = async (files) => {
     return files;
   }
 
-  console.log("files before upload: ", files);
   let imageUrls = [];
   // Cheking if image is not a file
   // if (typeof files[0] === "string") {
@@ -43,7 +42,7 @@ export const uploadImagesToCloud = async (files) => {
   await axios.all(uploaders).then(() => {
     // ... perform after upload is successful operation
   });
-  console.log("imageUrls after upload: ", imageUrls);
+
   imageUrls = imageUrls
     ?.sort((a, b) => a?.index - b?.index)
     ?.map((_) => _?.url);

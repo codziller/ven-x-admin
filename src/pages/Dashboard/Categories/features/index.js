@@ -67,7 +67,7 @@ const CategoriesPage = () => {
     const filteredResults = categories?.filter(({ name }) =>
       name?.toLowerCase()?.includes(query)
     );
-    console.log("filteredResults: ", filteredResults);
+
     setSearchResults(filteredResults);
   };
 

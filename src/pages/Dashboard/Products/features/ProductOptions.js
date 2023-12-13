@@ -12,11 +12,9 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as InfoIcon } from "assets/icons/info-icon.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import Select from "components/General/Input/Select";
-import Textarea from "components/General/Textarea/Textarea";
-import { Link, useParams } from "react-router-dom";
+
+import { Link } from "react-router-dom";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
-import RadioInput from "components/General/Input/RadioInput";
 import classNames from "classnames";
 import { errorToast } from "components/General/Toast/Toast";
 import { isEmpty, lowerCase, uniq } from "lodash";
@@ -28,10 +26,10 @@ import { observer } from "mobx-react-lite";
 const ProductOptions = ({ details, toggler, handleOnChange, formObj }) => {
   const { productOptions } = formObj;
   const { currentProductOption } = details;
-  const { product_id } = useParams();
+
   const isEdit = !isEmpty(currentProductOption);
 
-  const { editProductOption, editProductOptionLoading } = ProductsStore;
+  const { editProductOptionLoading } = ProductsStore;
 
   console.log("currentProductOption: ", currentProductOption);
   const [formTwo, setFormTwo] = useState({

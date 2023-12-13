@@ -30,7 +30,7 @@ const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const { ALL, FIRST } = AFFILIATE_MARKETER_ORDER_TYPES;
 const Form = ({ details, toggler }) => {
   const { affiliateMarketer_id, warehouse_id } = useParams();
-  console.log("affiliateMarketer_id: ", affiliateMarketer_id);
+
   const {
     createAffiliateMarketer,
     affiliateMarketer,

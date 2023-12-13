@@ -49,6 +49,9 @@ class ProductsStore {
   productStats = null;
   loadingProductStats = false;
 
+  createProductCategoryLoading = false;
+  deleteProductCategoryLoading = false;
+
   productForm = {};
   sourceWarehouseId = "";
   constructor() {
@@ -406,6 +409,28 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.productTransferRequestLoading = false;
+    }
+  };
+
+  createProductCategory = async ({ data }) => {
+    this.createProductCategoryLoading = true;
+    try {
+      await apis.createProductCategory(data);
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.createProductCategoryLoading = false;
+    }
+  };
+
+  deleteProductCategory = async ({ data }) => {
+    this.deleteProductCategoryLoading = true;
+    try {
+      await apis.deleteProductCategory(data);
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteProductCategoryLoading = false;
     }
   };
   resetProductStore = () => {

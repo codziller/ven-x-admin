@@ -114,8 +114,6 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
   }, [form.main]);
 
   const handleOnSubmit = async (e) => {
-    console.log("is edit: ", isEdit);
-
     if (isEdit) {
       try {
         handleChangeTwo("editLoading", true);
@@ -133,7 +131,6 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
           videoUrls: imagesUrls?.[1],
         };
         cleanPayload(payload);
-        console.log("payload in variant: ", payload);
 
         const newChoices = currentProductOption?.choices?.map((item) =>
           cleanPayload(
@@ -151,14 +148,13 @@ const ProductVariant = ({ details, toggler, handleOnChange, formObj }) => {
             return item;
           }
         });
-        console.log("newProductOptions: ", newProductOptions);
+
         handleOnChange({
           prop: "productOptions",
           val: newProductOptions,
         });
         toggler?.();
       } catch (error) {
-        console.log("ERRor: ", error);
       } finally {
         handleChangeTwo("editLoading", false);
       }

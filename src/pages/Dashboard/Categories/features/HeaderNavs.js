@@ -75,7 +75,7 @@ const HeaderNavs = () => {
       },
     });
   };
-  console.log("headerNavsArray: ", headerNavsArray);
+
   return (
     <>
       <div className="h-full md:pr-4">

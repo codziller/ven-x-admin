@@ -108,7 +108,6 @@ const CreateProvider = () => {
     [form.state]
   );
 
-  console.log("state: ", state);
   return (
     <>
       <div className="md:p-7 py-8 px-3 form-container min-w-[calc(100vw-24px)] mini:!min-w-[362px] snap-center rounded-lg bg-white shadow-[0_7px_56px_0_rgba(84,68,242,0.04)] border border-grey-border">
@@ -141,7 +140,6 @@ const CreateProvider = () => {
             label="Select Country"
             placeholder="Select country"
             onClick={(val) => {
-              console.log("Vallll: ", val);
               handleChange("country", val);
             }}
             value={form.country}

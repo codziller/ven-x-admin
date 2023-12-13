@@ -365,7 +365,14 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
       : isArchive
       ? productsArchivedCount
       : productsCount;
-  }, [searchResult, products, isSearchMode, productsArchivedCount, isArchive]);
+  }, [
+    searchResult,
+    products,
+    isSearchMode,
+    productsArchivedCount,
+    isArchive,
+    activeTab,
+  ]);
 
   const isLoading = useMemo(() => {
     return isSearchMode

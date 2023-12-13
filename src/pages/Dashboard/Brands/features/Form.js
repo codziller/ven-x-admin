@@ -69,8 +69,6 @@ const Form = ({ details, toggler }) => {
     videoUrls: details?.videoUrls || [],
   };
 
-  console.log("defaultValues: ", defaultValues);
-
   const {
     handleSubmit,
     formState: { errors, isValid },
@@ -106,7 +104,6 @@ const Form = ({ details, toggler }) => {
     videoUrls: watch("videoUrls"),
   };
 
-  console.log("form: ", form);
   const handleOnSubmit = async () => {
     handleChangeTwo("createLoading", true);
 
@@ -146,7 +143,6 @@ const Form = ({ details, toggler }) => {
         return;
       }
     } catch (error) {
-      console.log("imagesUrls error: ", error);
       errorToast(
         "Error!",
         "Error encountered uploading images. Kindly Check the image format."

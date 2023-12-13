@@ -43,10 +43,10 @@ class AuthStore {
     try {
       let res = await apis.login(data);
       res = res?.adminLoginUser;
-      console.log("res: ", res);
       this.setCurrentUser(res?.user);
       logUserIn(res);
-      const message = "You have successfully logged into zusco admin dashboard";
+      const message =
+        "You have successfully logged into beautyhut admin dashboard";
       successToast(`Successfully logged in`, message);
     } catch (error) {
       this.error = error;

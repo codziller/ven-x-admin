@@ -1003,14 +1003,16 @@ const Form = ({ details, toggler }) => {
                           <span className="">{item?.name}</span>
                         </div>
 
-                        <span
-                          onClick={() =>
-                            handleRemoveOption(item, "categoryIds")
-                          }
-                          className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
-                        >
-                          <Close className="current-svg scale-[0.7]" />
-                        </span>
+                        {!product_id ? (
+                          <span
+                            onClick={() =>
+                              handleRemoveOption(item, "categoryIds")
+                            }
+                            className="hover:bg-red-300 hover:text-white transition-colors duration-300 ease-in-out cursor-pointer"
+                          >
+                            <Close className="current-svg scale-[0.7]" />
+                          </span>
+                        ) : null}
                       </div>
                     );
                   })}
