@@ -26,33 +26,7 @@ import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import TableDropdown from "components/General/Dropdown/TableDropdown";
 import { convertToJs } from "utils/functions";
-export const dateFilters = [
-  {
-    value: "today",
-    label: "Today",
-    start_date: dateConstants?.today,
-    end_date: dateConstants?.today,
-  },
-  {
-    value: "this_week",
-    label: "This Week",
-    start_date: dateConstants?.startOfWeek,
-    end_date: dateConstants?.endOfWeek,
-  },
-  {
-    value: "all_time",
-    label: "All Time",
-    start_date: dateConstants?.firstDay,
-    end_date: dateConstants?.today,
-  },
-
-  {
-    value: "custom",
-    label: "Custom Date",
-    start_date: dateConstants?.startOfWeek,
-    end_date: dateConstants?.endOfWeek,
-  },
-];
+import { dateFilters } from "pages/Dashboard/Home/features";
 
 const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
   ORDER_STATUSES;
