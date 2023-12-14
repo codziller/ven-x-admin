@@ -20,7 +20,6 @@ import Amount from "components/General/Numbers/Amount";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import EarningCard from "pages/Dashboard/Home/features/EarningCard";
 import BrandsStore from "../store";
-import classNames from "classnames";
 
 const ViewBrand = ({ isBrandStaff }) => {
   const pageCount = 10000000;
@@ -149,14 +148,7 @@ const ViewBrand = ({ isBrandStaff }) => {
 
   return (
     <>
-      <div
-        className={classNames(
-          "gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto",
-          {
-            "p-6": isBrandStaff,
-          }
-        )}
-      >
+      <div className={"gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto"}>
         {!isBrandStaff ? (
           <div className="mb-5 w-full flex justify-between">
             <div

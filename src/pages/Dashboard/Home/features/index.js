@@ -188,7 +188,7 @@ const HomePage = () => {
             <TransactionValueCard />
           </div> */}
 
-          <div className="w-full flex flex-col bg-white">
+          <div className="w-full flex flex-col bg-white p-6">
             {userIsAdmin ? <OrdersPage isRecent /> : <ViewBrand isBrandStaff />}
           </div>
         </div>
