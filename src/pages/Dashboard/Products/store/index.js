@@ -49,6 +49,9 @@ class ProductsStore {
   productStats = null;
   loadingProductStats = false;
 
+  brandProductStats = null;
+  loadingBrandProductStats = false;
+
   createProductCategoryLoading = false;
   deleteProductCategoryLoading = false;
 
@@ -91,6 +94,19 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.loadingProductStats = false;
+    }
+  };
+
+  getProductQuantitySoldByDateFilterByBrandId = async ({ data }) => {
+    this.loadingBrandProductStats = true;
+    try {
+      let res = await apis.getProductQuantitySoldByDateFilterByBrandId(data);
+      res = res?.getProductQuantitySoldByDateFilterByBrandId;
+      this.brandProductStats = res;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.loadingBrandProductStats = false;
     }
   };
 

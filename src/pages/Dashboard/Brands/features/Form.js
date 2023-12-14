@@ -3,22 +3,16 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PropTypes from "prop-types";
-import {
-  EditorState,
-  convertToRaw,
-  ContentState,
-  convertFromHTML,
-} from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
+import { Link } from "react-router-dom";
+import { isArray, isEmpty } from "lodash";
+
 import { ReactComponent as Plus } from "assets/icons/add.svg";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
-import Textarea from "components/General/Textarea/Textarea";
-import { Link } from "react-router-dom";
-import BrandsStore from "../store";
-import Wysiwyg from "components/General/Textarea/Wysiwyg";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import ImagePicker from "components/General/Input/ImagePicker";
 import { observer } from "mobx-react-lite";
@@ -28,10 +22,10 @@ import {
   uploadImagesToCloud,
 } from "utils/uploadImagesToCloud";
 import { errorToast } from "components/General/Toast/Toast";
-import { isArray, isEmpty } from "lodash";
 import { flattenCategories } from "utils/functions";
-import DetailsModal from "./DetailsModal";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
+import BrandsStore from "../store";
+import DetailsModal from "./DetailsModal";
 
 const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const Form = ({ details, toggler }) => {

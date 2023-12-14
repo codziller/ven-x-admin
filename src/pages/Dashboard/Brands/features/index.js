@@ -1,27 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import moment from "moment";
-import _, { isEmpty } from "lodash";
-import qs from "query-string";
+import _, { isEmpty, lowerCase } from "lodash";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import PropTypes from "prop-types";
+import { observer } from "mobx-react-lite";
 
-import useTableFilter from "hooks/tableFilter";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { hasValue } from "utils/validations";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
 import { ReactComponent as Plus } from "assets/icons/add.svg";
-
 import useWindowDimensions from "hooks/useWindowDimensions";
-
-import { paramsObjectToQueryString } from "utils/request";
-import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import { Button } from "components/General/Button";
-import BrandsStore from "../store";
-import { observer } from "mobx-react-lite";
 import CheckBox from "components/General/Input/CheckBox";
+import BrandsStore from "../store";
+import TransactionDetailsModal from "./DetailsModal";
+import { convertToJs } from "utils/functions";
+
 const pageCount = 500;
 export const dateFilters = [
   {
@@ -49,88 +46,39 @@ const BrandsPage = ({
   modalDetails,
   isSelected,
 }) => {
+  const navigate = useNavigate();
   const { brands, getBrands, loading, brandsCount } = BrandsStore;
-
-  const requiredFilters = {
-    start_date: "2020-01-01",
-    end_date: moment().format("YYYY-MM-DD"),
-  };
-
-  const defaultFilters = {
-    start_date: "",
-    end_date: "",
-    tx_verb: "",
-    fiat_wallet_id: "",
-    coin_wallet_id: "",
-    account_status: "",
-  };
 
   const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
+  const [displayedItems, setDisplayedItems] = useState([]);
 
   useEffect(() => {
     getBrands({ data: { page: currentPage } });
   }, [currentPage]);
-  const params = qs.parse(location.hash?.substring(1));
 
-  const searchQuery = searchInput?.trim();
-
-  const { filterData } = useTableFilter({
-    defaultFilters,
-    currentPage,
-    setCurrentPage,
-    params,
-  });
-
-  const fetchMerchants = () => {
-    const filters = {
-      start_date: hasValue(filterData?.start_date)
-        ? filterData?.start_date
-        : requiredFilters.start_date,
-      end_date: hasValue(filterData?.end_date)
-        ? filterData?.end_date
-        : requiredFilters.end_date,
-      ...(hasValue(searchQuery) && {
-        account_trade_name: searchQuery,
-      }),
-      ...(hasValue(filterData?.account_status) && {
-        account_status: filterData.account_status.value,
-      }),
-    };
-
-    const paramsData = {
-      ...filters,
-    };
-
-    if (
-      _.isEqual(
-        { start_date: paramsData.start_date, end_date: paramsData.end_date },
-        requiredFilters
-      )
-    ) {
-      delete paramsData.start_date;
-      delete paramsData.end_date;
-    }
-
-    window.location.hash = paramsObjectToQueryString(paramsData);
-  };
-
-  useEffect(() => {
-    if (searchQuery) {
-      setCurrentPage(1);
-    }
+  const { warehouse_id } = useParams();
+  const searchQuery = useMemo(() => {
+    return searchInput?.trim();
   }, [searchInput]);
 
   useEffect(() => {
-    console.log(fetchMerchants);
-  }, [currentPage, filterData]);
+    if (!brands) return;
+    setDisplayedItems(brands);
+  }, [brands]);
 
   useEffect(() => {
-    if (searchQuery?.length > 1 || !searchQuery) {
+    if (!searchQuery) {
+      setDisplayedItems(brands);
+      return;
     }
-  }, [searchInput]);
+    const searchResult = convertToJs(brands)?.filter((item) =>
+      lowerCase(item?.brandName).includes(searchQuery.toLowerCase())
+    );
+    setDisplayedItems(searchResult);
+  }, [searchQuery]);
 
   const handleEdit = (row) => {
     if (isModal) {
@@ -140,13 +88,17 @@ const BrandsPage = ({
     setCurrentTxnDetails({ ...row, currentPage, modalType: "edit" });
   };
 
+  const handleView = (row) => {
+    navigate(`/dashboard/brands/view/${warehouse_id}/${row?.id}`);
+  };
+
   const columns = [
     {
       name: "Brand Name",
       minWidth: isModal ? "60%" : "30%",
       selector: (row) => (
         <div
-          onClick={() => handleEdit(row)}
+          onClick={() => handleView(row)}
           className="flex justify-start items-center gap-2"
         >
           {isModal && (
@@ -187,6 +139,13 @@ const BrandsPage = ({
       minWidth: isMobile ? "50%" : "20%",
       selector: (row) => (
         <div className="flex justify-start items-center gap-1.5">
+          <span
+            onClick={() => handleView(row)}
+            className=" cursor-pointer px-4 py-1 rounded-full bg-white text-[11px] text-black border-[1px] border-grey-bordercolor"
+          >
+            View
+          </span>
+
           <span
             onClick={() => handleEdit(row)}
             className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
@@ -249,7 +208,7 @@ const BrandsPage = ({
               <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
                 {brands?.length > 0 ? (
                   <Table
-                    data={brands}
+                    data={displayedItems}
                     columns={
                       isModal
                         ? columns.slice(0, 2)
@@ -257,7 +216,7 @@ const BrandsPage = ({
                         ? columns
                         : columns.slice(0, 2)
                     }
-                    onRowClicked={(e) => handleEdit(e)}
+                    onRowClicked={(e) => handleView(e)}
                     pointerOnHover
                     isLoading={loading}
                     pageCount={brandsCount / pageCount}
