@@ -15,14 +15,15 @@ import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
 import TransactionDetailsModal from "./OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
-import EarningValueCard from "./EarningValueCard";
-import TransactionValueCard from "./TransactionValueCard";
+// import EarningValueCard from "./EarningValueCard";
+// import TransactionValueCard from "./TransactionValueCard";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";
 import { useParams } from "react-router-dom";
 import AuthStore from "pages/OnBoarding/SignIn/store";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
 import HomeStore from "../store";
+import ViewBrand from "pages/Dashboard/Brands/features/ViewBrand";
 
 export const dateFilters = [
   {
@@ -181,14 +182,14 @@ const HomePage = () => {
               />
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
             <EarningValueCard />
 
             <TransactionValueCard />
-          </div>
+          </div> */}
 
           <div className="w-full flex flex-col bg-white">
-            <OrdersPage isRecent />
+            {userIsAdmin ? <OrdersPage isRecent /> : <ViewBrand isBrandStaff />}
           </div>
         </div>
       </div>

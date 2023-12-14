@@ -20,10 +20,13 @@ import Amount from "components/General/Numbers/Amount";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import EarningCard from "pages/Dashboard/Home/features/EarningCard";
 import BrandsStore from "../store";
+import classNames from "classnames";
 
-const ViewBrand = () => {
+const ViewBrand = ({ isBrandStaff }) => {
   const pageCount = 10000000;
-  const { brand_id } = useParams();
+  const { brand_id, warehouse_id } = useParams();
+
+  const brandId = isBrandStaff ? warehouse_id : brand_id;
   const navigate = useNavigate();
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [showDateModal, setShowDateModal] = useState(false);
@@ -35,7 +38,7 @@ const ViewBrand = () => {
     brandProductStats,
     loadingBrandProductStats,
   } = ProductsStore;
-  console.log("brandProductStats: ", convertToJs(brandProductStats));
+
   const { getBrand, getBrandLoading, brand } = BrandsStore;
 
   useEffect(() => {
@@ -50,11 +53,11 @@ const ViewBrand = () => {
     getProductQuantitySoldByDateFilterByBrandId({
       data: {
         endDate,
-        brandId: brand_id,
+        brandId: brandId,
         startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
       },
     });
-  }, [dateFilter, brand_id]);
+  }, [dateFilter, brandId]);
 
   useEffect(() => {
     if (!brandProductStats) return;
@@ -96,38 +99,42 @@ const ViewBrand = () => {
       cell: (row) => numberWithCommas(row?.quantityLeft),
       sortable: true,
     },
-    {
-      name: "Cost Price",
-      selector: (row) => parseFloat(row?.costPrice),
-      cell: (row) => (
-        <div className="flex justify-start items-center gap-4">
-          <Amount value={row?.costPrice} />
-        </div>
-      ),
-      sortable: true,
-    },
+    ...(isBrandStaff
+      ? []
+      : [
+          {
+            name: "Cost Price",
+            selector: (row) => parseFloat(row?.costPrice),
+            cell: (row) => (
+              <div className="flex justify-start items-center gap-4">
+                <Amount value={row?.costPrice} />
+              </div>
+            ),
+            sortable: true,
+          },
 
-    {
-      name: "Sale Price",
-      selector: (row) => parseFloat(row?.salePrice),
-      cell: (row) => (
-        <div className="flex justify-start items-center gap-4">
-          <Amount value={row?.salePrice} />
-        </div>
-      ),
-      sortable: true,
-    },
+          {
+            name: "Sale Price",
+            selector: (row) => parseFloat(row?.salePrice),
+            cell: (row) => (
+              <div className="flex justify-start items-center gap-4">
+                <Amount value={row?.salePrice} />
+              </div>
+            ),
+            sortable: true,
+          },
 
-    {
-      name: "Profit",
-      selector: (row) => parseFloat(row?.profit),
-      cell: (row) => (
-        <div className="flex justify-start items-center gap-4">
-          <Amount value={row?.profit} />
-        </div>
-      ),
-      sortable: true,
-    },
+          {
+            name: "Profit",
+            selector: (row) => parseFloat(row?.profit),
+            cell: (row) => (
+              <div className="flex justify-start items-center gap-4">
+                <Amount value={row?.profit} />
+              </div>
+            ),
+            sortable: true,
+          },
+        ]),
   ];
 
   const displayedItemsCount = brandProductStats?.length || 0;
@@ -142,12 +149,24 @@ const ViewBrand = () => {
 
   return (
     <>
-      <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
-        <div className="mb-5 w-full flex justify-between">
-          <div onClick={() => navigate(-1)} className="scale-90 cursor-pointer">
-            <ArrowBack />
+      <div
+        className={classNames(
+          "gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto",
+          {
+            "p-6": isBrandStaff,
+          }
+        )}
+      >
+        {!isBrandStaff ? (
+          <div className="mb-5 w-full flex justify-between">
+            <div
+              onClick={() => navigate(-1)}
+              className="scale-90 cursor-pointer"
+            >
+              <ArrowBack />
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {getBrandLoading ? (
           <div className="flex justify-center items-center w-full p-6">
@@ -155,11 +174,12 @@ const ViewBrand = () => {
           </div>
         ) : (
           <>
-            <h2 className="section-heading mb-3 text-xl">
-              <span className="text-red">{brand?.brandName} </span>sales data
-              history
-            </h2>
-
+            {!isBrandStaff ? (
+              <h2 className="section-heading mb-3 text-xl">
+                <span className="text-red">{brand?.brandName} </span>sales data
+                history
+              </h2>
+            ) : null}
             <div className="flex justify-between items-center w-fit mb-3 gap-1">
               <div className="w-full sm:w-[200px]">
                 <DashboardFilterDropdown
@@ -199,21 +219,24 @@ const ViewBrand = () => {
                 <CircleLoader blue />
               ) : (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
-                    <EarningCard
-                      icon={<OrdersIcon className="scale-[0.8]" />}
-                      title="Total Quantity sold"
-                      value={totalQuantitySold}
-                      link="#"
-                    />
-                    <EarningCard
-                      icon={<IncomeIcon className="scale-[0.8]" />}
-                      title="Profit"
-                      value={totalProfit}
-                      link="#"
-                      isAmount
-                    />
-                  </div>
+                  {!isBrandStaff ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
+                      <EarningCard
+                        icon={<OrdersIcon className="scale-[0.8]" />}
+                        title="Total Quantity sold"
+                        value={totalQuantitySold}
+                        link="#"
+                      />
+
+                      <EarningCard
+                        icon={<IncomeIcon className="scale-[0.8]" />}
+                        title="Profit"
+                        value={totalProfit}
+                        link="#"
+                        isAmount
+                      />
+                    </div>
+                  ) : null}
                   <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
                     {!isEmpty(displayedItems) ? (
                       <Table
@@ -263,7 +286,7 @@ const ViewBrand = () => {
   );
 };
 ViewBrand.propTypes = {
-  toggler: PropTypes.func,
+  isBrandStaff: PropTypes.bool,
   details: PropTypes.object,
 };
 export default observer(ViewBrand);
