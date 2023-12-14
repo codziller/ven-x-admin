@@ -19,7 +19,6 @@ const QuantityLeft = ({ details, toggler }) => {
   const { product, getProductCostPriceHistory, getProductLoading } =
     ProductsStore;
 
-  console.log("details: ", details);
   const { productCostPrice } = details;
   const columns = [
     {

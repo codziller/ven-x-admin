@@ -3,8 +3,15 @@ import { isEmail, isMobilePhone, isNumeric } from "validator";
 import { hasValue } from "./validations";
 
 export function numberWithCommas(x) {
-  if (x) return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  else return 0;
+  if (x) {
+    const splitNum = String(x)?.split(".");
+    const wholeNum = splitNum[0];
+    const floatNum = splitNum?.[1]?.substring(0, 2) || "";
+    const numWithCommas = wholeNum
+      ?.toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return floatNum ? numWithCommas + "." + floatNum : numWithCommas;
+  } else return 0;
 }
 
 export function numberFormatter(num, digits) {

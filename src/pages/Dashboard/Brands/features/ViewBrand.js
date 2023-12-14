@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { observer } from "mobx-react-lite";
 import { useNavigate, useParams } from "react-router-dom";
-import { isEmpty, lowerCase } from "lodash";
+import { isEmpty, lowerCase, sumBy } from "lodash";
 
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
+import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
+import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import ProductsStore from "pages/Dashboard/Products/store";
 import { dateFilters } from "pages/Dashboard/Home/features";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
@@ -14,9 +16,11 @@ import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import { convertToJs } from "utils/functions";
 import { numberWithCommas } from "utils/formatter";
 import Table from "components/General/Table";
-import BrandsStore from "../store";
 import Amount from "components/General/Numbers/Amount";
 import SearchBar from "components/General/Searchbar/SearchBar";
+import EarningCard from "pages/Dashboard/Home/features/EarningCard";
+import BrandsStore from "../store";
+
 const ViewBrand = () => {
   const pageCount = 10000000;
   const { brand_id } = useParams();
@@ -128,6 +132,14 @@ const ViewBrand = () => {
 
   const displayedItemsCount = brandProductStats?.length || 0;
 
+  const totalQuantitySold = useMemo(() => {
+    return sumBy(brandProductStats, "quantitySold");
+  }, [brandProductStats]);
+
+  const totalProfit = useMemo(() => {
+    return sumBy(brandProductStats, "profit");
+  }, [brandProductStats]);
+
   return (
     <>
       <div className="gap-y-4 py-4 w-full h-full pb-4 overflow-y-auto">
@@ -187,6 +199,21 @@ const ViewBrand = () => {
                 <CircleLoader blue />
               ) : (
                 <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
+                    <EarningCard
+                      icon={<OrdersIcon className="scale-[0.8]" />}
+                      title="Total Quantity sold"
+                      value={totalQuantitySold}
+                      link="#"
+                    />
+                    <EarningCard
+                      icon={<IncomeIcon className="scale-[0.8]" />}
+                      title="Profit"
+                      value={totalProfit}
+                      link="#"
+                      isAmount
+                    />
+                  </div>
                   <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
                     {!isEmpty(displayedItems) ? (
                       <Table
