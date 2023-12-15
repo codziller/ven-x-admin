@@ -89,6 +89,10 @@ const BrandsPage = ({
   };
 
   const handleView = (row) => {
+    if (isModal) {
+      handleBrandSelect?.(row);
+      return;
+    }
     navigate(`/dashboard/brands/view/${warehouse_id}/${row?.id}`);
   };
 
