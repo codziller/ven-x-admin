@@ -727,6 +727,7 @@ const getReviewsQuery = ({ page }) => gql`
         user{
           firstName
           lastName
+          phoneNumber
         }
       }
     }

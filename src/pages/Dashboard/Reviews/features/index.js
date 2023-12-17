@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import _, { isEmpty } from "lodash";
-import { useNavigate, useParams } from "react-router-dom";
 import classNames from "classnames";
 import { observer } from "mobx-react-lite";
 import PropTypes from "prop-types";
@@ -9,16 +8,14 @@ import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
 import { pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
-import { ReactComponent as Plus } from "assets/icons/add.svg";
 import useWindowDimensions from "hooks/useWindowDimensions";
 import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
-import SearchBar from "components/General/Searchbar/SearchBar";
 import { numberWithCommas } from "utils/formatter";
 import Amount from "components/General/Numbers/Amount";
 import Tabs from "components/General/Tabs";
 import ProductsStore from "pages/Dashboard/Products/store";
-import { Button } from "components/General/Button";
+import { convertToJs } from "utils/functions";
 
 export const dateFilters = [
   {
@@ -41,9 +38,9 @@ export const dateFilters = [
   },
 ];
 const ReviewsPage = ({ isModal, handleUserSelect }) => {
-  const navigate = useNavigate();
-  const { warehouse_id } = useParams();
   const { getReviews, reviews, reviewsLoading, reviewsCount } = ProductsStore;
+
+  console.log("reviews: ", convertToJs(reviews));
   const searchResult = [];
   const searchResultCount = 0;
   const searchUserLoading = false;
@@ -87,41 +84,40 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
   };
   const columns = [
     {
-      name: "Name",
-      minWidth: isMobile ? "50%" : "30%",
+      name: "Customer",
+      minWidth: isMobile ? "35%" : "20%",
       selector: (row) => (
         <div
           onClick={() => handleEdit(row)}
           className="py-4 mt-[5px] mb-[5px] flex-col justify-start items-start gap-1 flex"
         >
           <div className="text-black text-sm font-medium font-700">
-            {row?.firstName} {row?.lastName}
+            {row?.user?.firstName} {row?.user?.lastName}
           </div>
-          <div className="text-grey text-sm font-normal">{row.email}</div>
+          <div className="text-grey text-sm font-normal">
+            {row?.user?.phoneNumber}
+          </div>
         </div>
       ),
       sortable: false,
     },
 
     {
-      name: "Phone Number",
-      selector: "phoneNumber",
-      sortable: false,
-    },
-    {
-      name: "Role",
-      selector: (row) => (
-        <span onClick={() => handleEdit(row)}>{row?.role}</span>
-      ),
+      name: "Product",
+      selector: "productName",
       sortable: false,
     },
 
     {
-      name: "Wallet Balance",
-      selector: (row) => (
-        <Amount value={row?.balance} onClick={() => handleEdit(row)} />
-      ),
-      sortable: true,
+      name: "Rating",
+      selector: "rating",
+      sortable: false,
+    },
+
+    {
+      name: "Review",
+      selector: "review",
+      sortable: false,
     },
 
     {
@@ -135,14 +131,7 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
             }
             className=" cursor-pointer px-4 py-1 rounded-full bg-red-deep text-[11px] text-white "
           >
-            {row?.isDeleted ? "Unarchive" : "Archive"}
-          </span>
-
-          <span
-            onClick={() => handleEdit(row)}
-            className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white "
-          >
-            Edit
+            {row?.isDeleted ? "Unarchive" : "Delete"}
           </span>
         </div>
       ),

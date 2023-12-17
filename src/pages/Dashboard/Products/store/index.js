@@ -476,8 +476,9 @@ class ProductsStore {
   getReviews = async ({ data }) => {
     this.reviewsLoading = true;
     try {
-      const res = await apis.getReviews(data);
-      this.reviews = res?.products_reviews_by_product_id;
+      let res = await apis.getReviews(data);
+      res = res?.products_reviews_all;
+      this.reviews = res?.results;
       this.reviewsCount = res?.total;
     } catch (error) {
       this.error = error;
