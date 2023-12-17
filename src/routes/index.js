@@ -34,6 +34,7 @@ import BackInStock from "pages/Dashboard/BackInStock";
 import BackInStockPage from "pages/Dashboard/BackInStock/features";
 import Brands from "pages/Dashboard/Brands";
 import BrandsPage from "pages/Dashboard/Brands/features";
+import BrandDetails from "pages/Dashboard/Brands/features/Brand";
 import AbandonedCarts from "pages/Dashboard/AbandonedCarts";
 import AbandonedCartsPage from "pages/Dashboard/AbandonedCarts/features";
 import GiftCards from "pages/Dashboard/GiftCards";
@@ -66,7 +67,6 @@ import AddMobileBrandsOfTheMoment from "pages/Dashboard/Marketing/features/AddMo
 import EditInventory from "pages/Dashboard/Inventory/features/EditInventory";
 import AddWebMarketingImage from "pages/Dashboard/Marketing/features/AddWebMarketingImage";
 import AddWebLinkMarketingImage from "pages/Dashboard/Marketing/features/AddWebLinkMarketingImage";
-import ViewBrand from "pages/Dashboard/Brands/features/ViewBrand";
 import Reviews from "pages/Dashboard/Reviews";
 import ReviewsPage from "pages/Dashboard/Reviews/features";
 
@@ -198,7 +198,10 @@ const Router = () => {
           }
         >
           <Route path=":warehouse_id" element={<BrandsPage />} />
-          <Route path="view/:warehouse_id/:brand_id" element={<ViewBrand />} />
+          <Route
+            path="view/:warehouse_id/:brand_id"
+            element={<BrandDetails />}
+          />
         </Route>
         {/* end brands */}
 

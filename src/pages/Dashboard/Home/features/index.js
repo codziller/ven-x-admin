@@ -59,7 +59,7 @@ export const dateFilters = [
   },
 ];
 const HomePage = () => {
-  const { warehouse_id } = useParams();
+  const { warehouse_id, brand_id } = useParams();
 
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -89,11 +89,11 @@ const HomePage = () => {
     const endDate = moment(dateFilter.end_date)
       .add(1, "day")
       .format("YYYY-MM-DD");
-    if (userIsBrandStaff) {
+    if (userIsBrandStaff || brand_id) {
       getBrandHomePageStats({
         data: {
           endDate,
-          id: warehouse_id,
+          id: brand_id || warehouse_id,
           startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
         },
       });
@@ -106,7 +106,7 @@ const HomePage = () => {
         startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
       },
     });
-  }, [userIsBrandStaff, dateFilter, warehouse_id]);
+  }, [userIsBrandStaff, dateFilter, warehouse_id, brand_id]);
 
   const searchQuery = searchInput?.trim();
 
@@ -116,12 +116,11 @@ const HomePage = () => {
     }
   }, [searchInput]);
 
-  const homepageStats = userIsBrandStaff
-    ? brandHomePageStats
-    : adminHomePageStats;
+  const homepageStats =
+    userIsBrandStaff || brand_id ? brandHomePageStats : adminHomePageStats;
   return (
     <>
-      <div className="h-full md:pr-4">
+      <div className="w-full h-full md:pr-4">
         <div className="flex flex-col justify-start items-start h-full w-full gap-y-5">
           <div className="flex justify-between items-center w-fit mb-3 gap-1">
             <div className="w-full sm:w-[200px]">
@@ -184,7 +183,7 @@ const HomePage = () => {
               isAmount
             />
 
-            {userIsAdmin && (
+            {userIsAdmin && !brand_id && (
               <EarningCard
                 icon={<IncomeIcon className="scale-[0.8]" />}
                 title="Delivery Revenue"
@@ -201,7 +200,7 @@ const HomePage = () => {
               link={!userIsAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
               isLoading={statLoading}
             />
-            {userIsAdmin && (
+            {userIsAdmin && !brand_id && (
               <EarningCard
                 icon={<CustomersIcon className="scale-[0.8]" />}
                 title="Users"
@@ -217,9 +216,15 @@ const HomePage = () => {
             <TransactionValueCard />
           </div> */}
 
-          <div className="w-full flex flex-col bg-white p-6">
-            {userIsAdmin ? <OrdersPage isRecent /> : <ViewBrand isBrandStaff />}
-          </div>
+          {!brand_id ? (
+            <div className="w-full flex flex-col bg-white p-6">
+              {userIsAdmin ? (
+                <OrdersPage isRecent />
+              ) : (
+                <ViewBrand isBrandStaff />
+              )}
+            </div>
+          ) : null}
         </div>
       </div>
 
