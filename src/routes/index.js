@@ -67,6 +67,8 @@ import EditInventory from "pages/Dashboard/Inventory/features/EditInventory";
 import AddWebMarketingImage from "pages/Dashboard/Marketing/features/AddWebMarketingImage";
 import AddWebLinkMarketingImage from "pages/Dashboard/Marketing/features/AddWebLinkMarketingImage";
 import ViewBrand from "pages/Dashboard/Brands/features/ViewBrand";
+import Reviews from "pages/Dashboard/Reviews";
+import ReviewsPage from "pages/Dashboard/Reviews/features";
 
 const Router = () => {
   return (
@@ -199,6 +201,19 @@ const Router = () => {
           <Route path="view/:warehouse_id/:brand_id" element={<ViewBrand />} />
         </Route>
         {/* end brands */}
+
+        {/* reviews */}
+        <Route
+          path="/dashboard/reviews"
+          element={
+            <ProtectedRoute path="">
+              <Reviews />
+            </ProtectedRoute>
+          }
+        >
+          <Route path=":warehouse_id" element={<ReviewsPage />} />
+        </Route>
+        {/* end reviews */}
 
         {/* categories */}
         <Route

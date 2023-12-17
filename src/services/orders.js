@@ -56,10 +56,18 @@ const getOrdersByUserQuery = ({ page, id }) => gql`
   }
 `;
 
-const getOrdersQuery = ({ page, status, startDate, endDate }) => gql`
+const getOrdersQuery = ({
+  page,
+  status,
+  startDate,
+  endDate,
+  deliveryHandler,
+}) => gql`
   {
     __typename
-    orders(pageNumber: "${page}", status: "${status}",startDate: "${startDate}", endDate: "${endDate}") {
+    orders(pageNumber: "${page}", status: "${status}",startDate: "${startDate}", endDate: "${endDate}",  ${
+  deliveryHandler ? `deliveryHandler:"${deliveryHandler}"` : ""
+}) {
       total
       results {
         calculatedOrder {
@@ -228,10 +236,13 @@ const apis = {
     graphQlInstance(getOrdersByUserQuery({ page, id }), {
       method: "GET",
     }),
-  getOrders: ({ page, status, startDate, endDate }) =>
-    graphQlInstance(getOrdersQuery({ page, status, startDate, endDate }), {
-      method: "GET",
-    }),
+  getOrders: ({ page, status, startDate, endDate, deliveryHandler }) =>
+    graphQlInstance(
+      getOrdersQuery({ page, status, startDate, endDate, deliveryHandler }),
+      {
+        method: "GET",
+      }
+    ),
   getBrandOrders: ({ page, id, startDate, endDate }) =>
     graphQlInstance(getBrandOrdersQuery({ page, id, startDate, endDate }), {
       method: "GET",

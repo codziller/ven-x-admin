@@ -27,9 +27,28 @@ import Tabs from "components/General/Tabs";
 import TableDropdown from "components/General/Dropdown/TableDropdown";
 import { convertToJs } from "utils/functions";
 import { dateFilters } from "pages/Dashboard/Home/features";
+import cleanPayload from "utils/cleanPayload";
 
 const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
   ORDER_STATUSES;
+const deliveryHandlers = [
+  {
+    value: "ALL",
+    label: "All Delivery Handlers",
+  },
+  {
+    value: "BEAUTYHUT",
+    label: "BeautyHut",
+  },
+  {
+    value: "CHOWDECK",
+    label: "Chowdeck",
+  },
+  {
+    value: "TOPSHIP",
+    label: "Topship",
+  },
+];
 const Orders = ({ isRecent }) => {
   const {
     getOrders,
@@ -79,6 +98,7 @@ const Orders = ({ isRecent }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
+  const [deliveryHandler, setDeliveryHandler] = useState(deliveryHandlers[0]);
   const [showDateModal, setShowDateModal] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [activeTab, setActiveTab] = useState(TABS[0]?.name);
@@ -98,7 +118,10 @@ const Orders = ({ isRecent }) => {
     const endDate = moment(dateFilter.end_date)
       .add(1, "day")
       .format("YYYY-MM-DD");
-    const datePayload = { startDate: dateFilter.start_date, endDate };
+    const datePayload = {
+      startDate: dateFilter.start_date,
+      endDate,
+    };
     getOrders({ data: { page: 1, status: PENDING, ...datePayload } });
     getOrders({ data: { page: 1, status: DISPATCHED, ...datePayload } });
     getOrders({ data: { page: 1, status: COMPLETED, ...datePayload } });
@@ -111,7 +134,10 @@ const Orders = ({ isRecent }) => {
     const datePayload = {
       startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
       endDate,
+      deliveryHandler:
+        deliveryHandler?.value === "ALL" ? "" : deliveryHandler?.value,
     };
+    cleanPayload(datePayload);
     getOrders({
       data: { page: currentPage, status: activeTab, ...datePayload },
     });
@@ -122,7 +148,7 @@ const Orders = ({ isRecent }) => {
   }, []);
   useEffect(() => {
     isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch, activeTab, dateFilter]);
+  }, [currentPage, currentPageSearch, activeTab, dateFilter, deliveryHandler]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
@@ -302,7 +328,6 @@ const Orders = ({ isRecent }) => {
 
   useEffect(() => scrollToTop(), [displayedItems]);
 
-  console.log("searchResult: ", convertToJs(searchResult));
   return (
     <>
       <div className="h-full w-full">
@@ -331,6 +356,19 @@ const Orders = ({ isRecent }) => {
                   : `${moment(dateFilter.start_date).format(
                       "MMM Do, YYYY"
                     )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
+              </div>
+
+              <div className="min-w-[200px] max-w-[200px] flex justify-end">
+                <DashboardFilterDropdown
+                  align="items-end"
+                  placeholder="Delivery by: "
+                  options={deliveryHandlers}
+                  name="delivery_by"
+                  onClick={(e) => {
+                    setDeliveryHandler(e);
+                  }}
+                  value={deliveryHandler?.label}
+                />
               </div>
             </div>
           )}

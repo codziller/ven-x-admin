@@ -686,6 +686,52 @@ const deleteProductSubscriptionQuery = gql`
   }
 `;
 
+const deleteProductReviewQuery = gql`
+  mutation deleteProductReview($productReviewId: String!) {
+    deleteProductReview(productReviewId: $productReviewId) {
+      status
+    }
+  }
+`;
+
+const getProductReviewsQuery = ({ page, productId }) => gql`
+  {
+    __typename
+    products_reviews_by_product_id(pageNumber: "${page}",productId:"${productId}") {
+      total
+      results {
+        createdAt
+        rating
+        review
+        user{
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+const getReviewsQuery = ({ page }) => gql`
+  {
+    __typename
+    products_reviews_all(pageNumber: "${page}") {
+      total
+      results {
+        createdAt
+        rating
+        review
+        orderId
+        productId
+        productName
+        user{
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
 const apis = {
   getProducts: ({ page }) =>
     graphQlInstance(getProductsQuery({ page }), {
@@ -831,6 +877,21 @@ const apis = {
   deleteProductSubscription: (variables) =>
     graphQlInstance(deleteProductSubscriptionQuery, {
       variables,
+    }),
+
+  deleteProductReview: (variables) =>
+    graphQlInstance(deleteProductReviewQuery, {
+      variables,
+    }),
+
+  getProductReviews: ({ page, productId }) =>
+    graphQlInstance(getProductReviewsQuery({ page, productId }), {
+      method: "GET",
+    }),
+
+  getReviews: ({ page }) =>
+    graphQlInstance(getReviewsQuery({ page }), {
+      method: "GET",
     }),
 };
 

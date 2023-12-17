@@ -8,6 +8,8 @@ const getBrandHomePageStatsQuery = ({ id, startDate, endDate }) => gql`
       totalOrders
       totalProducts
       totalRevenue
+      averageOrderValue
+      totalGrossRevenue
     }
   }
 `;
@@ -20,6 +22,9 @@ const getAdminHomePageStatsQuery = ({ startDate, endDate }) => gql`
       totalProducts
       totalRevenue
       totalUsers
+      totalGrossRevenue
+      totalDeliveryRevenue
+      averageOrderValue
     }
   }
 `;

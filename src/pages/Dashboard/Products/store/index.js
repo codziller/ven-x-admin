@@ -57,6 +57,16 @@ class ProductsStore {
 
   productForm = {};
   sourceWarehouseId = "";
+
+  reviews = [];
+  reviewsCount = null;
+  reviewsLoading = false;
+  deleteReviewLoading = false;
+
+  productReviews = [];
+  productReviewsCount = null;
+  productReviewsLoading = false;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -447,6 +457,43 @@ class ProductsStore {
       this.error = error;
     } finally {
       this.deleteProductCategoryLoading = false;
+    }
+  };
+
+  getProductReviews = async ({ data }) => {
+    this.productReviewsLoading = true;
+    try {
+      const res = await apis.getProductReviews(data);
+      this.productReviews = res?.products_reviews_by_product_id;
+      this.productReviewsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.productReviewsLoading = false;
+    }
+  };
+
+  getReviews = async ({ data }) => {
+    this.reviewsLoading = true;
+    try {
+      const res = await apis.getReviews(data);
+      this.reviews = res?.products_reviews_by_product_id;
+      this.reviewsCount = res?.total;
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.reviewsLoading = false;
+    }
+  };
+
+  deleteReview = async ({ data }) => {
+    this.deleteReviewLoading = true;
+    try {
+      await apis.deleteProductReview(data);
+    } catch (error) {
+      this.error = error;
+    } finally {
+      this.deleteReviewLoading = false;
     }
   };
   resetProductStore = () => {

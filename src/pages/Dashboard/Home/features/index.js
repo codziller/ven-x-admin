@@ -165,12 +165,41 @@ const HomePage = () => {
               isLoading={statLoading}
               isAmount
             />
+
+            <EarningCard
+              icon={<IncomeIcon className="scale-[0.8]" />}
+              title="Gross Revenue"
+              value={homepageStats?.totalGrossRevenue}
+              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              isLoading={statLoading}
+              isAmount
+            />
+
+            <EarningCard
+              icon={<IncomeIcon className="scale-[0.8]" />}
+              title="Average Order Value"
+              value={homepageStats?.averageOrderValue}
+              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              isLoading={statLoading}
+              isAmount
+            />
+
+            {userIsAdmin && (
+              <EarningCard
+                icon={<IncomeIcon className="scale-[0.8]" />}
+                title="Delivery Revenue"
+                value={homepageStats?.totalDeliveryRevenue}
+                link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+                isLoading={statLoading}
+                isAmount
+              />
+            )}
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Products"
               value={numberWithCommas(homepageStats?.totalProducts)}
               link={!userIsAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
-              isLoading={loading || statLoading}
+              isLoading={statLoading}
             />
             {userIsAdmin && (
               <EarningCard
@@ -178,7 +207,7 @@ const HomePage = () => {
                 title="Users"
                 value={numberWithCommas(homepageStats?.totalUsers)}
                 link={!userIsAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
-                isLoading={usersLoading}
+                isLoading={statLoading}
               />
             )}
           </div>

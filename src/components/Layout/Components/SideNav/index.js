@@ -26,6 +26,7 @@ import {
   MdOutlinePeopleAlt,
   MdOutlineRemoveShoppingCart,
   MdOutlineStorage,
+  MdOutlineReviews,
 } from "react-icons/md";
 import { FcBusinesswoman } from "react-icons/fc";
 
@@ -117,6 +118,19 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           link: `/dashboard/brands/${warehouse_id}`,
           icon: (
             <TbBrandDenodo
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+
+        {
+          title: "Reviews",
+          slug: "/dashboard/reviews",
+          label: "Here’s what’s happening with Beautyhut today.",
+          link: `/dashboard/reviews/${warehouse_id}`,
+          icon: (
+            <MdOutlineReviews
               size={24}
               className="stroke-current transition-all duration-500 ease-in-out"
             />
