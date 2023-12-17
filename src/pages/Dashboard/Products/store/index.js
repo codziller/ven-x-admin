@@ -487,10 +487,11 @@ class ProductsStore {
     }
   };
 
-  deleteReview = async ({ data }) => {
+  deleteReview = async ({ data, onSuccess }) => {
     this.deleteReviewLoading = true;
     try {
       await apis.deleteProductReview(data);
+      onSuccess?.();
     } catch (error) {
       this.error = error;
     } finally {

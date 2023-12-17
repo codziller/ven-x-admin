@@ -107,6 +107,11 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
       selector: "productName",
       sortable: false,
     },
+    {
+      name: "Order Code",
+      selector: "orderCode",
+      sortable: false,
+    },
 
     {
       name: "Rating",
