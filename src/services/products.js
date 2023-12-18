@@ -97,6 +97,7 @@ startDate: "${startDate}"
       profit
       qtyLeft
       qtySold
+     
 }
 }
 `;
@@ -119,6 +120,8 @@ startDate: "${startDate}"
       quantityLeft
       quantitySold
       salePrice
+      totalGrossRevenue
+      averageOrderValue
 }
 }
 `;

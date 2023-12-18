@@ -358,6 +358,16 @@ const getMarketingTextQuery = () => gql`
       emailExclusiveTextVisibility
       freeShippingTextVisibility
       loyaltyTextVisibility
+      appExploreImageUrl
+      appVersionAndroidText
+      appVersionButtonLink
+      appVersionButtonText
+      appVersionHeaderText
+      appVersionIosText
+      appVersionMainText
+      appVersionSkipBool
+      appVersionSkipText
+      appVersionWhatsNewText
     }
   }
 `;
@@ -828,6 +838,16 @@ const editMarketingTextQuery = gql`
     $emailExclusiveTextVisibility: Boolean!
     $freeShippingTextVisibility: Boolean!
     $loyaltyTextVisibility: Boolean!
+    $appExploreImageUrl: String
+    $appVersionAndroidText: String
+    $appVersionButtonLink: String
+    $appVersionButtonText: String
+    $appVersionHeaderText: String
+    $appVersionIosText: String
+    $appVersionMainText: String
+    $appVersionSkipBool: Boolean
+    $appVersionSkipText: String
+    $appVersionWhatsNewText: String
   ) {
     patchMarketingText(
       marketingTextInput: {
@@ -843,6 +863,16 @@ const editMarketingTextQuery = gql`
         emailExclusiveTextVisibility: $emailExclusiveTextVisibility
         freeShippingTextVisibility: $freeShippingTextVisibility
         loyaltyTextVisibility: $loyaltyTextVisibility
+        appExploreImageUrl: $appExploreImageUrl
+        appVersionAndroidText: $appVersionAndroidText
+        appVersionButtonLink: $appVersionButtonLink
+        appVersionButtonText: $appVersionButtonText
+        appVersionHeaderText: $appVersionHeaderText
+        appVersionIosText: $appVersionIosText
+        appVersionMainText: $appVersionMainText
+        appVersionSkipBool: $appVersionSkipBool
+        appVersionSkipText: $appVersionSkipText
+        appVersionWhatsNewText: $appVersionWhatsNewText
       }
     ) {
       id

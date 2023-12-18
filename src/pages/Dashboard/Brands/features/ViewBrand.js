@@ -98,6 +98,26 @@ const ViewBrand = ({ isBrandStaff }) => {
       cell: (row) => numberWithCommas(row?.quantityLeft),
       sortable: true,
     },
+    {
+      name: "Total GrossR evenue",
+      selector: (row) => parseFloat(row?.totalGrossRevenue),
+      cell: (row) => (
+        <div className="flex justify-start items-center gap-4">
+          <Amount value={row?.totalGrossRevenue} />
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      name: "AverageOrderValue",
+      selector: (row) => parseFloat(row?.averageOrderValue),
+      cell: (row) => (
+        <div className="flex justify-start items-center gap-4">
+          <Amount value={row?.averageOrderValue} />
+        </div>
+      ),
+      sortable: true,
+    },
     ...(isBrandStaff
       ? []
       : [
