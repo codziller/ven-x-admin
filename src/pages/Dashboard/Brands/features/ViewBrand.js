@@ -209,10 +209,15 @@ const ViewBrand = ({ isBrandStaff }) => {
         ) : (
           <>
             {!isBrandStaff ? (
-              <h2 className="section-heading mb-3 text-xl">
-                <span className="text-red">{brand?.brandName} </span>sales data
-                history
-              </h2>
+              <div className="flex flex-col justify-start items-start mb-5">
+                <h2 className="section-heading mb-1 text-xl">
+                  <span className="text-red">{brand?.brandName} </span>sales
+                  data history
+                </h2>
+                <span className="text-grey-text font-thin text-sm">
+                  Click on a product to view details
+                </span>
+              </div>
             ) : null}
             <div className="flex justify-between items-center w-fit mb-3 gap-1">
               <div className="w-full sm:w-[200px]">
@@ -277,6 +282,7 @@ const ViewBrand = ({ isBrandStaff }) => {
                         data={displayedItems}
                         columns={columns}
                         pageCount={displayedItemsCount / pageCount}
+                        pointerOnHover
                         onRowClicked={(e) => {
                           handleView(e);
                         }}
