@@ -116,6 +116,7 @@ startDate: "${startDate}"
     }) {
       costPrice
       productName
+      productId
       profit
       quantityLeft
       quantitySold

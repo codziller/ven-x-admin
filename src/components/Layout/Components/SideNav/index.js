@@ -20,12 +20,12 @@ import BackDrop from "components/Layout/BackDrop";
 import ProviderCard from "./ProviderCard";
 import {
   MdOutlineCardGiftcard,
-  MdOutlineForwardToInbox,
+  // MdOutlineForwardToInbox,
   MdOutlineInventory,
   MdOutlinePayments,
   MdOutlinePeopleAlt,
   MdOutlineRemoveShoppingCart,
-  MdOutlineStorage,
+  // MdOutlineStorage,
   MdOutlineReviews,
 } from "react-icons/md";
 import { FcBusinesswoman } from "react-icons/fc";
@@ -65,18 +65,18 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           ),
         },
 
-        {
-          title: "Subscriptions",
-          slug: "/dashboard/subscriptions",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/subscriptions/${warehouse_id}`,
-          icon: (
-            <MdOutlineForwardToInbox
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
+        // {
+        //   title: "Subscriptions",
+        //   slug: "/dashboard/subscriptions",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/subscriptions/${warehouse_id}`,
+        //   icon: (
+        //     <MdOutlineForwardToInbox
+        //       size={24}
+        //       className="stroke-current transition-all duration-500 ease-in-out"
+        //     />
+        //   ),
+        // },
 
         {
           title: "Products",
@@ -136,31 +136,31 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
             />
           ),
         },
-        {
-          title: "Back in stock",
-          slug: "/dashboard/back-in-stock",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/back-in-stock/${warehouse_id}`,
-          icon: (
-            <MdOutlineStorage
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out fill-current"
-            />
-          ),
-        },
+        // {
+        //   title: "Back in stock",
+        //   slug: "/dashboard/back-in-stock",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/back-in-stock/${warehouse_id}`,
+        //   icon: (
+        //     <MdOutlineStorage
+        //       size={24}
+        //       className="stroke-current transition-all duration-500 ease-in-out fill-current"
+        //     />
+        //   ),
+        // },
 
-        {
-          title: "Abandoned Carts",
-          slug: "/dashboard/abandoned-carts",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/abandoned-carts/${warehouse_id}`,
-          icon: (
-            <MdOutlineRemoveShoppingCart
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
+        // {
+        //   title: "Abandoned Carts",
+        //   slug: "/dashboard/abandoned-carts",
+        //   label: "Here’s what’s happening with Beautyhut today.",
+        //   link: `/dashboard/abandoned-carts/${warehouse_id}`,
+        //   icon: (
+        //     <MdOutlineRemoveShoppingCart
+        //       size={24}
+        //       className="stroke-current transition-all duration-500 ease-in-out"
+        //     />
+        //   ),
+        // },
 
         {
           title: "Affiliate Marketers",

@@ -77,6 +77,13 @@ const ViewBrand = ({ isBrandStaff }) => {
     );
     setDisplayedItems(searchResult);
   }, [searchQuery]);
+
+  const handleView = (row) => {
+    if (isBrandStaff) {
+      return;
+    }
+    navigate(`/dashboard/products/edit/${warehouse_id}/${row?.productId}`);
+  };
   const columns = [
     {
       minWidth: "30%",
@@ -102,7 +109,10 @@ const ViewBrand = ({ isBrandStaff }) => {
       name: "Total GrossR evenue",
       selector: (row) => parseFloat(row?.totalGrossRevenue),
       cell: (row) => (
-        <div className="flex justify-start items-center gap-4">
+        <div
+          onClick={() => handleView(row)}
+          className="flex justify-start items-center gap-4 cursor-pointer"
+        >
           <Amount value={row?.totalGrossRevenue} />
         </div>
       ),
@@ -112,7 +122,10 @@ const ViewBrand = ({ isBrandStaff }) => {
       name: "AverageOrderValue",
       selector: (row) => parseFloat(row?.averageOrderValue),
       cell: (row) => (
-        <div className="flex justify-start items-center gap-4">
+        <div
+          onClick={() => handleView(row)}
+          className="flex justify-start items-center gap-4 cursor-pointer"
+        >
           <Amount value={row?.averageOrderValue} />
         </div>
       ),
@@ -125,7 +138,10 @@ const ViewBrand = ({ isBrandStaff }) => {
             name: "Cost Price",
             selector: (row) => parseFloat(row?.costPrice),
             cell: (row) => (
-              <div className="flex justify-start items-center gap-4">
+              <div
+                onClick={() => handleView(row)}
+                className="flex justify-start items-center gap-4 cursor-pointer"
+              >
                 <Amount value={row?.costPrice} />
               </div>
             ),
@@ -136,7 +152,10 @@ const ViewBrand = ({ isBrandStaff }) => {
             name: "Sale Price",
             selector: (row) => parseFloat(row?.salePrice),
             cell: (row) => (
-              <div className="flex justify-start items-center gap-4">
+              <div
+                onClick={() => handleView(row)}
+                className="flex justify-start items-center gap-4 cursor-pointer"
+              >
                 <Amount value={row?.salePrice} />
               </div>
             ),
@@ -147,7 +166,10 @@ const ViewBrand = ({ isBrandStaff }) => {
             name: "Profit",
             selector: (row) => parseFloat(row?.profit),
             cell: (row) => (
-              <div className="flex justify-start items-center gap-4">
+              <div
+                onClick={() => handleView(row)}
+                className="flex justify-start items-center gap-4 cursor-pointer"
+              >
                 <Amount value={row?.profit} />
               </div>
             ),
@@ -255,6 +277,9 @@ const ViewBrand = ({ isBrandStaff }) => {
                         data={displayedItems}
                         columns={columns}
                         pageCount={displayedItemsCount / pageCount}
+                        onRowClicked={(e) => {
+                          handleView(e);
+                        }}
                         tableClassName="txn-section-table"
                         noPadding
                       />
