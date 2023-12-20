@@ -51,6 +51,7 @@ const Form = ({ details, toggler }) => {
     getProductQuantitySoldByDateFilter,
     loadingProductStats,
   } = ProductsStore;
+
   const { warehouses, loading } = WareHousesStore;
   const schema = yup.object({
     quantity: yup.string().required("Please enter product quantity"),
@@ -222,7 +223,7 @@ const Form = ({ details, toggler }) => {
 
             <span className="text-grey-text text-sm">
               Current quantity in warehouse:{" "}
-              {numberWithCommas(currentWareHouseInventory?.quantity)}
+              {numberWithCommas(product?.quantity)}
             </span>
 
             <Input

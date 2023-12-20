@@ -70,6 +70,7 @@ lowInQuantityValue
 quantity
 warehouseId
 }
+quantity
 productCostPrice {
   costPrice
   updatedAt
