@@ -86,7 +86,7 @@ const ViewBrand = ({ isBrandStaff }) => {
   };
   const columns = [
     {
-      minWidth: "30%",
+      minWidth: "20%",
       name: "Product",
       selector: (row) => lowerCase(row?.productName),
       cell: (row) => row?.productName,
