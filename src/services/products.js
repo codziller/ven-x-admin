@@ -187,6 +187,7 @@ const getProductsQuery = ({ page }) => gql`
       salePrice
       imageUrls
       archive
+      quantity
       productCostPrice {
         costPrice
         updatedAt
