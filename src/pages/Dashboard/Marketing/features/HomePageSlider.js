@@ -95,10 +95,10 @@ const HomePageSlider = () => {
                       key={i + "card"}
                       to={
                         slide
-                          ? `/dashboard/marketing/edit/${warehouse_id}/${
+                          ? `/dashboard/settings/edit/${warehouse_id}/${
                               i + 1
                             }/${slide?.id}`
-                          : `/dashboard/marketing/add-homepage-slider/${warehouse_id}/${
+                          : `/dashboard/settings/add-homepage-slider/${warehouse_id}/${
                               i + 1
                             }`
                       }

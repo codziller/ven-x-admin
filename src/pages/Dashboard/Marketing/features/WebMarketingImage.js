@@ -65,8 +65,8 @@ const WebMarketingImage = () => {
                             key={i + "card"}
                             to={
                               slide
-                                ? `/dashboard/marketing/edit-web-marketing-image/${warehouse_id}/${category?.id}/${slide?.id}`
-                                : `/dashboard/marketing/add-web-marketing-image/${warehouse_id}/${category?.id}`
+                                ? `/dashboard/settings/edit-web-marketing-image/${warehouse_id}/${category?.id}/${slide?.id}`
+                                : `/dashboard/settings/add-web-marketing-image/${warehouse_id}/${category?.id}`
                             }
                             className="flex justify-center items-center cursor-pointer w-full min-h-[240px] bg-[#F8F8F8] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                           >

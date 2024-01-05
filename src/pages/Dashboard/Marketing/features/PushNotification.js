@@ -163,10 +163,10 @@ const Form = observer(() => {
                 <div className="flex flex-col basis-1/3 justify-start items-start gap-y-3 h-full">
                   <div className="flex flex-col justify-start items-start gap-1">
                     <span className="text-grey-text text-lg uppercase">
-                      App Version
+                      Push Notification
                     </span>
                     <span className="text-grey-text text-sm">
-                      Provide details of the app version
+                      Send push notfications to the app
                     </span>
                   </div>
 

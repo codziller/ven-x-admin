@@ -376,7 +376,7 @@ const Router = () => {
 
         {/* media */}
         <Route
-          path="/dashboard/marketing"
+          path="/dashboard/settings"
           element={
             <ProtectedRoute path="">
               <Marketing />

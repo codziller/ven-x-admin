@@ -140,9 +140,9 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
 
         {
           title: "Settings",
-          slug: "/dashboard/marketing",
+          slug: "/dashboard/settings",
           label: "Here’s what’s happening with Ven-x today.",
-          link: `/dashboard/marketing/${warehouse_id}/?tab=marketingTextContent`,
+          link: `/dashboard/settings/${warehouse_id}/?tab=pushNotifications`,
           icon: (
             <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
           ),

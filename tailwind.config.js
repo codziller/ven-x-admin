@@ -27,7 +27,7 @@ module.exports = {
       },
       colors: {
         blue: {
-          DEFAULT: "#1E1E1E",
+          DEFAULT: "#6B61E5",
           disabled: "#CECBF7",
           hover: "#1921C8",
           "outline-hover": "#eeedfe",

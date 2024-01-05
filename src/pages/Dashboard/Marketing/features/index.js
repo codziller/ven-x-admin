@@ -50,14 +50,14 @@ const MarketingPage = () => {
       <div className="h-full w-full md:pr-4 md:px-4">
         <div className="flex flex-col justify-start items-center h-full w-full gap-y-5 mt-5">
           <Tabs
-            baseUrl={`/dashboard/marketing/${warehouse_id}/`}
+            baseUrl={`/dashboard/settings/${warehouse_id}/`}
             tabs={TABS}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
 
-          {activeTab === "appSettings" ? <MarketingTextInput /> : null}
           {activeTab === "pushNotifications" ? <PushNotification /> : null}
+          {activeTab === "appSettings" ? <MarketingTextInput /> : null}
           {activeTab === "homePagePosts" ? <HomePagePost /> : null}
           {activeTab === "mobilePagePosts" ? <MobilePagePost /> : null}
           {activeTab === "mobileMarketingImages" ? (

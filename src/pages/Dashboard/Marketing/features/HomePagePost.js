@@ -40,10 +40,10 @@ const HomePagePost = () => {
                       key={i + "card"}
                       to={
                         slide
-                          ? `/dashboard/marketing/edit-homepage-post/${warehouse_id}/${
+                          ? `/dashboard/settings/edit-homepage-post/${warehouse_id}/${
                               i + 1
                             }/${slide?.id}`
-                          : `/dashboard/marketing/add-homepage-post/${warehouse_id}/${
+                          : `/dashboard/settings/add-homepage-post/${warehouse_id}/${
                               i + 1
                             }`
                       }

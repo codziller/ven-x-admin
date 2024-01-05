@@ -32,8 +32,8 @@ const PromoBanner = () => {
               <Link
                 to={
                   webPromoBanner
-                    ? `/dashboard/marketing/edit-promo-banner/${warehouse_id}/web/${webPromoBanner?.id}`
-                    : `/dashboard/marketing/add-promo-banner/${warehouse_id}/web`
+                    ? `/dashboard/settings/edit-promo-banner/${warehouse_id}/web/${webPromoBanner?.id}`
+                    : `/dashboard/settings/add-promo-banner/${warehouse_id}/web`
                 }
                 className="flex justify-center items-center h-[36px] text-center bg-red-light3 cursor-pointer w-full hover:border-red-deep border border-transparent transition-colors duration-500 ease-in-out"
               >
@@ -51,8 +51,8 @@ const PromoBanner = () => {
               <Link
                 to={
                   mobilePromoBanner
-                    ? `/dashboard/marketing/edit-promo-banner/${warehouse_id}/mobile/${mobilePromoBanner?.id}`
-                    : `/dashboard/marketing/add-promo-banner/${warehouse_id}/mobile`
+                    ? `/dashboard/settings/edit-promo-banner/${warehouse_id}/mobile/${mobilePromoBanner?.id}`
+                    : `/dashboard/settings/add-promo-banner/${warehouse_id}/mobile`
                 }
                 className="flex justify-center items-center h-[36px] text-center bg-grey-border cursor-pointer w-[375px] hover:border-grey-dark3 border border-transparent transition-colors duration-500 ease-in-out"
               >

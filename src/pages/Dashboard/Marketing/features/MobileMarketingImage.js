@@ -61,8 +61,8 @@ const MobileMarketingImage = () => {
                       key={i + "card"}
                       to={
                         slide
-                          ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/forYou/${slide?.id}`
-                          : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/forYou`
+                          ? `/dashboard/settings/edit-mobile-marketing-image/${warehouse_id}/forYou/${slide?.id}`
+                          : `/dashboard/settings/add-mobile-marketing-image/${warehouse_id}/forYou`
                       }
                       className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                     >
@@ -101,8 +101,8 @@ const MobileMarketingImage = () => {
                             key={i + "card"}
                             to={
                               slide
-                                ? `/dashboard/marketing/edit-mobile-marketing-image/${warehouse_id}/${category?.id}/${slide?.id}`
-                                : `/dashboard/marketing/add-mobile-marketing-image/${warehouse_id}/${category?.id}`
+                                ? `/dashboard/settings/edit-mobile-marketing-image/${warehouse_id}/${category?.id}/${slide?.id}`
+                                : `/dashboard/settings/add-mobile-marketing-image/${warehouse_id}/${category?.id}`
                             }
                             className="flex justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px]  max-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                           >

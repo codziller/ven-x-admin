@@ -65,8 +65,8 @@ const MobileBrandsOfTheMoment = () => {
                             key={i + "card"}
                             to={
                               slide
-                                ? `/dashboard/marketing/edit-mobile-brand-of-the-moment/${warehouse_id}/${category?.id}/${slide?.id}`
-                                : `/dashboard/marketing/add-mobile-brand-of-the-moment/${warehouse_id}/${category?.id}`
+                                ? `/dashboard/settings/edit-mobile-brand-of-the-moment/${warehouse_id}/${category?.id}/${slide?.id}`
+                                : `/dashboard/settings/add-mobile-brand-of-the-moment/${warehouse_id}/${category?.id}`
                             }
                             className="flex flex-col justify-center items-center cursor-pointer min-w-[187px]  max-w-[187px] min-h-[275px] bg-[#F8F8F8] rounded-[7px] border-[0.8px] border-grey-border hover:border-blue transition-colors duration-500 ease-in-out gap-2.5 snap-center"
                           >

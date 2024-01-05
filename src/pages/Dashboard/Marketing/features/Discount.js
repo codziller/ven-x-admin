@@ -90,7 +90,7 @@ const Discount = ({ isModal, handleDiscountSelect }) => {
     }
 
     navigate(
-      `/dashboard/marketing/edit-discount/${warehouse_id}/mobile/${row?.id}`
+      `/dashboard/settings/edit-discount/${warehouse_id}/mobile/${row?.id}`
     );
   };
 
@@ -199,7 +199,7 @@ const Discount = ({ isModal, handleDiscountSelect }) => {
                   />
                 </div>
                 <Link
-                  to={`/dashboard/marketing/add-discount/${warehouse_id}/mobile`}
+                  to={`/dashboard/settings/add-discount/${warehouse_id}/mobile`}
                 >
                   <Button
                     text="Add Discount"

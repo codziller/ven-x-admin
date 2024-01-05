@@ -78,10 +78,10 @@ const MobilePagePost = () => {
                       key={i + "card"}
                       to={
                         slide
-                          ? `/dashboard/marketing/edit-mobile-post/${warehouse_id}/${
+                          ? `/dashboard/settings/edit-mobile-post/${warehouse_id}/${
                               i + 1
                             }/${slide?.id}`
-                          : `/dashboard/marketing/add-mobile-post/${warehouse_id}/${
+                          : `/dashboard/settings/add-mobile-post/${warehouse_id}/${
                               i + 1
                             }`
                       }
