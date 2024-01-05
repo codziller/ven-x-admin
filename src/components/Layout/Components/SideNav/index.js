@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import PropTypes from "prop-types";
 import clsx from "classnames";
 import { Link, useParams } from "react-router-dom";
+import { MdOutlineEventNote } from "react-icons/md";
 
 import { trimArrayOfObject } from "utils/formatter";
 import { ReactComponent as Overview } from "assets/icons/overview.svg";
@@ -72,7 +73,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           label: "Here’s what’s happening with Ven-x today.",
           link: `/dashboard/events/${warehouse_id}`,
           icon: (
-            <TbPackageImport
+            <MdOutlineEventNote
               size={24}
               className="stroke-current transition-all duration-500 ease-in-out"
             />
