@@ -44,7 +44,7 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
   const searchResult = [];
   const searchResultCount = 0;
   const searchUserLoading = false;
-  const TABS = [{ name: "reviews", label: `Reviews (${reviewsCount || "-"})` }];
+  const TABS = [{ name: "reviews", label: `Reports (${reviewsCount || "-"})` }];
   const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
