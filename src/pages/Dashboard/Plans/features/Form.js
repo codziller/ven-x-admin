@@ -490,11 +490,16 @@ const Form = ({ details, toggler }) => {
       ? []
       : form?.productVariants?.map((item) => item.videoUrls);
     try {
+      // const imagesUrls = await Promise.all([
+      //   uploadImagesToCloud(form?.imageUrls),
+      //   uploadImagesToCloud(form?.videoUrls),
+      //   ...productVariantsImages?.map((items) => uploadImagesToCloud(items)),
+      //   ...productVariantsVideos?.map((items) => uploadImagesToCloud(items)),
+      // ]);
+
       const imagesUrls = await Promise.all([
         uploadImagesToCloud(form?.imageUrls),
         uploadImagesToCloud(form?.videoUrls),
-        ...productVariantsImages?.map((items) => uploadImagesToCloud(items)),
-        ...productVariantsVideos?.map((items) => uploadImagesToCloud(items)),
       ]);
 
       let productVariants = [];

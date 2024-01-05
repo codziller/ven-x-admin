@@ -139,15 +139,15 @@ const Form = ({ details, toggler }) => {
     cleanPayload(payload);
     const newSubcategories = formTwo.subcategories?.filter((item) => !item?.id);
 
-    await Promise.all([
-      editCategory({ data: payload, noAlert: true }),
-      ...newSubcategories?.map((item) =>
-        createCategory({
-          data: { name: item?.name, parentCategoryId: details?.id },
-          noAlert: true,
-        })
-      ),
-    ]);
+    // await Promise.all([
+    //   editCategory({ data: payload, noAlert: true }),
+    //   ...newSubcategories?.map((item) =>
+    //     createCategory({
+    //       data: { name: item?.name, parentCategoryId: details?.id },
+    //       noAlert: true,
+    //     })
+    //   ),
+    // ]);
 
     handleChangeTwo("editLoading", false);
     successToast("Operation Successful!", "Category updated Successfully.");

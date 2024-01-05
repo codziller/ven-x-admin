@@ -32,9 +32,10 @@ const Products = ({ details, toggler, handleChange, form }) => {
       toggler?.();
       return;
     }
-    const newItems = formTwo?.[prop]?.includes(val)
-      ? formTwo?.[prop]?.filter((item) => item !== val)
-      : [...formTwo?.[prop], val];
+    // const newItems = formTwo?.[prop]?.includes(val)
+    //   ? formTwo?.[prop]?.filter((item) => item !== val)
+    //   : [...formTwo?.[prop], val];
+    const newItems = [];
     setFormTwo({ ...formTwo, [prop]: newItems });
     handleChange({ prop, val: newItems });
   };
