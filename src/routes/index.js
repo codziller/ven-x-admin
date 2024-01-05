@@ -24,8 +24,12 @@ import AddHomePageSlider from "pages/Dashboard/Marketing/features/AddHomePageSli
 import MarketingPage from "pages/Dashboard/Marketing/features";
 import FeaturedSectionPage from "pages/Dashboard/FeaturedSection/features";
 import FeaturedSection from "pages/Dashboard/FeaturedSection";
-import Orders from "pages/Dashboard/Events";
-import OrdersPage from "pages/Dashboard/Events/features";
+import Orders from "pages/Dashboard/Jobs";
+import OrdersPage from "pages/Dashboard/Jobs/features";
+
+import Events from "pages/Dashboard/Events";
+import EventsPage from "pages/Dashboard/Events/features";
+
 import Inventory from "pages/Dashboard/Inventory";
 import InventoryPage from "pages/Dashboard/Inventory/features";
 import Categories from "pages/Dashboard/Categories";
@@ -158,9 +162,9 @@ const Router = () => {
         </Route>
         {/* end affiliate-marketers */}
 
-        {/* orders */}
+        {/* jobs */}
         <Route
-          path="/dashboard/events"
+          path="/dashboard/jobs"
           element={
             <ProtectedRoute path="">
               <Orders />
@@ -169,7 +173,20 @@ const Router = () => {
         >
           <Route path=":warehouse_id" element={<OrdersPage />} />
         </Route>
-        {/* end orders */}
+        {/* end jobs */}
+
+        {/* events */}
+        <Route
+          path="/dashboard/events"
+          element={
+            <ProtectedRoute path="">
+              <Events />
+            </ProtectedRoute>
+          }
+        >
+          <Route path=":warehouse_id" element={<EventsPage />} />
+        </Route>
+        {/* end events */}
 
         {/* inventory */}
         <Route

@@ -28,7 +28,7 @@ import moment from "moment";
 import UsersStore from "../store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import OrdersStore from "pages/Dashboard/Events/store";
+import OrdersStore from "pages/Dashboard/Jobs/store";
 import { numberWithCommas } from "utils/formatter";
 import Select from "components/General/Input/Select";
 import PhoneNumber from "components/General/PhoneNumber/PhoneNumber";

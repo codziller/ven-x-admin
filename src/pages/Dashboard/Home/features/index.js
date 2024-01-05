@@ -9,7 +9,7 @@ import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
 import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
 import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg";
-import OrdersPage from "pages/Dashboard/Events/features";
+import OrdersPage from "pages/Dashboard/Jobs/features";
 import ProductsStore from "pages/Dashboard/Plans/store";
 import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
@@ -154,27 +154,25 @@ const HomePage = () => {
               icon={<OrdersIcon className="scale-[0.8]" />}
               title="Events"
               value={homepageStats?.totalOrders}
-              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/jobs/${warehouse_id}`}
               isLoading={statLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
               value={homepageStats?.totalRevenue}
-              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/jobs/${warehouse_id}`}
               isLoading={statLoading}
               isAmount
             />
-
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Gross Revenue"
               value={homepageStats?.totalGrossRevenue}
-              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/jobs/${warehouse_id}`}
               isLoading={statLoading}
               isAmount
             />
-
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
               title="Total Plans"
@@ -191,6 +189,24 @@ const HomePage = () => {
                 isLoading={statLoading}
               />
             )}
+            {userIsAdmin && !brand_id && (
+              <EarningCard
+                icon={<CustomersIcon className="scale-[0.8]" />}
+                title="Clients"
+                value={numberWithCommas(homepageStats?.totalUsers)}
+                link={!userIsAdmin ? "#" : `/dashboard/clients/${warehouse_id}`}
+                isLoading={statLoading}
+              />
+            )}{" "}
+            {userIsAdmin && !brand_id && (
+              <EarningCard
+                icon={<CustomersIcon className="scale-[0.8]" />}
+                title="Vendors"
+                value={numberWithCommas(homepageStats?.totalUsers)}
+                link={!userIsAdmin ? "#" : `/dashboard/clients/${warehouse_id}`}
+                isLoading={statLoading}
+              />
+            )}{" "}
             {userIsAdmin && !brand_id && (
               <EarningCard
                 icon={<CustomersIcon className="scale-[0.8]" />}

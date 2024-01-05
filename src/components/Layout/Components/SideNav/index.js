@@ -54,6 +54,19 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
   ...(userIsAdmin
     ? [
         {
+          title: "Jobs",
+          slug: "/dashboard/jobs",
+          label: "Here’s what’s happening with Ven-x today.",
+          link: `/dashboard/jobs/${warehouse_id}`,
+          icon: (
+            <TbPackageImport
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+
+        {
           title: "Events",
           slug: "/dashboard/events",
           label: "Here’s what’s happening with Ven-x today.",

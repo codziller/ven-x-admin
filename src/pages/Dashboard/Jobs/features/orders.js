@@ -72,13 +72,17 @@ const Orders = ({ isRecent }) => {
   const TABS = [
     {
       name: INPROGRESS,
-      label: `All events (${in_progressOrdersCount || "0"})`,
+      label: `Inprogress jobs (${in_progressOrdersCount || "0"})`,
     },
-    { name: PENDING, label: `Assigned events (${pendingOrdersCount || "0"})` },
+    { name: PENDING, label: `Pending jobs (${pendingOrdersCount || "0"})` },
 
     {
       name: COMPLETED,
-      label: `Unassigned events (${completedOrdersCount || "0"})`,
+      label: `Completed jobs (${completedOrdersCount || "0"})`,
+    },
+    {
+      name: CANCELLED,
+      label: `Cancelled jobs (${cancelledOrdersCount || "0"})`,
     },
   ];
 
@@ -373,7 +377,7 @@ const Orders = ({ isRecent }) => {
               })}
             >
               <SearchBar
-                placeholder={"Search events"}
+                placeholder={"Search jobs"}
                 onChange={setSearchInput}
                 value={searchInput}
                 className="flex"

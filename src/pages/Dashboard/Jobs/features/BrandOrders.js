@@ -1,24 +1,25 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import moment from "moment";
-import _, { isEmpty } from "lodash";
+import _, { isEmpty, lowerCase } from "lodash";
+import PropTypes from "prop-types";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import Table from "components/General/Table";
-import { ORDER_STATUS_OPTIONS, pageCount } from "utils/appConstant";
+import { pageCount } from "utils/appConstant";
 import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon.svg";
+import { transactionAmount } from "utils/transactions";
 
 import useWindowDimensions from "hooks/useWindowDimensions";
-import { transactionAmount } from "utils/transactions";
-import TransactionDetailsModal from "pages/Dashboard/Jobs/features/OrderDetailsModal";
+
+import TransactionDetailsModal from "./OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
-import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
-import OrdersStore from "pages/Dashboard/Jobs/store";
-import SearchBar from "components/General/Searchbar/SearchBar";
+import OrdersStore from "../store";
 import { observer } from "mobx-react-lite";
-import { numberWithCommas } from "utils/formatter";
+import { useParams } from "react-router";
+import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
+import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
+import SearchBar from "components/General/Searchbar/SearchBar";
 import classNames from "classnames";
-import TableDropdown from "components/General/Dropdown/TableDropdown";
-import { useParams } from "react-router-dom";
 export const dateFilters = [
   {
     value: "today",
@@ -46,61 +47,47 @@ export const dateFilters = [
     end_date: dateConstants?.endOfWeek,
   },
 ];
+const BrandOrders = ({ isModal, isRecent }) => {
+  const { brandOrders, getBrandOrders, brandOrdersLoading, brandOrdersCount } =
+    OrdersStore;
+  const { warehouse_id } = useParams();
 
-const UserOrders = ({ isRecent }) => {
-  const { user_id } = useParams();
-  const {
-    searchOrders,
-    searchLoading,
-    searchResult,
-    searchResultCount,
-
-    getOrdersByUser,
-    userOrders,
-    userOrdersCount,
-    userOrdersLoading,
-    updateOrderStatusLoading,
-  } = OrdersStore;
-
-  const { width } = useWindowDimensions();
+  const { width, isMobile } = useWindowDimensions();
   const [currentTxnDetails, setCurrentTxnDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentPageSearch, setCurrentPageSearch] = useState(1);
   const [dateFilter, setDateFilter] = useState(dateFilters[0]);
   const [searchInput, setSearchInput] = useState("");
+  const [showDateModal, setShowDateModal] = useState(false);
 
+  useEffect(() => {
+    getBrandOrders({
+      data: {
+        page: currentPage,
+        id: warehouse_id,
+        endDate: moment(dateFilter.end_date).format("YYYY-MM-DD"),
+        startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+      },
+    });
+  }, [currentPage, warehouse_id, dateFilter]);
+
+  console.log("dateFilter: ", dateFilter);
   const searchQuery = searchInput?.trim();
-  const isSearchMode = searchQuery?.length > 1;
 
-  const handleSearch = async () => {
-    if (!searchQuery) {
-      return;
+  useEffect(() => {
+    if (searchQuery) {
+      setCurrentPage(1);
     }
-    const payload = { page: currentPage, searchQuery };
-    await searchOrders({ data: payload });
-  };
-
-  const handleGetData = () => {
-    getOrdersByUser({ data: { page: currentPage, id: user_id } });
-  };
-
-  useEffect(() => {
-    handleGetData();
-  }, []);
-
-  useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
-  }, [currentPage, currentPageSearch, user_id]);
+  }, [searchInput]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      handleSearch();
     }
   }, [searchInput]);
 
   const handleView = (row) => {
     setCurrentTxnDetails({ ...row, modalType: "details", isSideModal: true });
   };
+
   const columns = [
     {
       name: "Order Code",
@@ -119,9 +106,8 @@ const UserOrders = ({ isRecent }) => {
     },
     {
       name: "Order Status",
-
       selector: (row) => (
-        <TableDropdown
+        <span
           className={classNames({
             "text-yellow":
               row?.orderStatus === "IN_PROGRESS" ||
@@ -130,16 +116,10 @@ const UserOrders = ({ isRecent }) => {
             "text-green": row?.orderStatus === "COMPLETED",
             "text-red-deep": row?.orderStatus === "CANCELLED",
           })}
-          options={ORDER_STATUS_OPTIONS}
-          content={row.orderStatus}
-          handleClick={(e) =>
-            setCurrentTxnDetails({ ...row, modalType: "prompt", ...e })
-          }
-          isLoading={
-            currentTxnDetails?.orderCode === row?.orderCode &&
-            updateOrderStatusLoading
-          }
-        />
+          onClick={() => handleView(row)}
+        >
+          {row?.orderStatus}
+        </span>
       ),
       sortable: false,
     },
@@ -176,36 +156,36 @@ const UserOrders = ({ isRecent }) => {
     },
   ];
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-  const displayedItems = useMemo(() => {
-    return isSearchMode ? searchResult : userOrders;
-  }, [searchResult, isSearchMode, userOrders]);
-
-  const displayedItemsCount = useMemo(() => {
-    return isSearchMode ? searchResultCount : userOrdersCount;
-  }, [searchResult, isSearchMode, displayedItems]);
-
-  const isLoading = useMemo(() => {
-    return isSearchMode ? searchLoading : userOrdersLoading;
-  }, [searchLoading, userOrdersLoading]);
-
-  useEffect(() => scrollToTop(), [displayedItems]);
-
   return (
     <>
       <div className="h-full w-full">
-        <div className="flex flex-col justify-start items-center h-full w-full gap-y-5">
-          {isRecent && (
-            <p className="font-700 text-start w-full pl-3 mt-5">
-              Recent Orders
-            </p>
-          )}
-          <div className="flex justify-between items-center w-full mb-3 gap-1">
+        <div className="flex flex-col justify-start items-center h-full w-full gap-y-5 mb-14">
+          <div className="flex justify-between items-center w-full mb-3 gap-1 p-6">
+            <div className="flex justify-start items-center w-fit">
+              <div className="w-full sm:w-[200px]">
+                <DashboardFilterDropdown
+                  placeholder="Filter by: "
+                  options={dateFilters}
+                  name="payout_filter"
+                  onClick={(e) => {
+                    if (e.value === "custom") {
+                      setShowDateModal(true);
+                      return;
+                    }
+                    setDateFilter(e);
+                  }}
+                  value={dateFilter?.label}
+                />
+              </div>
+              <div className="flex justify-start items-center w-fit truncate text-base">
+                {dateFilter.value === "today"
+                  ? moment(dateFilter.start_date).format("MMM Do, YYYY")
+                  : `${moment(dateFilter.start_date).format(
+                      "MMM Do, YYYY"
+                    )} - ${moment(dateFilter.end_date).format("MMM Do, YYYY")}`}
+              </div>
+            </div>
+
             <div
               className={classNames("w-full sm:w-[45%] sm:min-w-[300px]", {
                 "ml-3 mt-3": isRecent,
@@ -220,29 +200,27 @@ const UserOrders = ({ isRecent }) => {
             </div>
           </div>
 
-          {isLoading ? (
+          {brandOrdersLoading && isEmpty(brandOrders) ? (
             <CircleLoader blue />
           ) : (
             <>
-              {isSearchMode &&
-                `Search results - ${numberWithCommas(searchResultCount)}`}
-
               <div className="flex flex-col flex-grow justify-start items-center w-full h-full">
-                {!isEmpty(displayedItems) ? (
+                {brandOrders?.length > 0 ? (
                   <Table
-                    data={displayedItems}
-                    columns={width >= 640 ? columns : columns.slice(0, 2)}
-                    onRowClicked={(e) => {
-                      handleView(e);
-                    }}
-                    pointerOnHover
-                    pageCount={displayedItemsCount / pageCount}
-                    onPageChange={(page) =>
-                      isSearchMode
-                        ? setCurrentPageSearch(page)
-                        : setCurrentPage(page)
+                    data={brandOrders}
+                    columns={
+                      isModal
+                        ? columns.slice(0, 2)
+                        : width >= 640
+                        ? columns
+                        : columns.slice(0, 2)
                     }
-                    currentPage={isSearchMode ? currentPageSearch : currentPage}
+                    onRowClicked={(e) => handleView(e)}
+                    pointerOnHover
+                    isLoading={brandOrdersLoading}
+                    pageCount={brandOrdersCount / pageCount}
+                    onPageChange={(page) => setCurrentPage(page)}
+                    currentPage={currentPage}
                     tableClassName="txn-section-table"
                     noPadding
                   />
@@ -250,13 +228,9 @@ const UserOrders = ({ isRecent }) => {
                   <>
                     <div className="text-grey-text flex flex-col justify-center items-center space-y-3 h-full">
                       <SearchIcon className="stroke-current" />
-                      {
-                        <span>
-                          {isSearchMode && isEmpty(searchResult)
-                            ? `There are no results for your search '${searchQuery}'`
-                            : `There are currently no orders`}
-                        </span>
-                      }
+                      <span className="">
+                        There are no orders for {lowerCase(dateFilter?.label)}{" "}
+                      </span>
                     </div>
                   </>
                 )}
@@ -271,23 +245,33 @@ const UserOrders = ({ isRecent }) => {
         details={currentTxnDetails}
         toggler={() => setCurrentTxnDetails(null)}
       />
+
       <DateRangeModal
-        active={dateFilter.value === "custom"}
-        toggler={() =>
+        active={showDateModal}
+        defaultDate={{
+          startDate: new Date(dateFilter.start_date),
+          endDate: new Date(dateFilter.end_date),
+          key: "selection",
+        }}
+        onApply={(date) =>
           setDateFilter({
-            value: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            label: `${moment(dateConstants?.startOfWeek).format(
-              "DD MMM"
-            )} - ${moment(dateConstants?.endOfWeek).format("DD MMM")}`,
-            start_date: dateConstants?.startOfWeek,
-            end_date: dateConstants?.endOfWeek,
+            value: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            label: `${moment(date?.startDate).format("DD MMM")} - ${moment(
+              date?.endDate
+            ).format("DD MMM")}`,
+            start_date: date?.startDate,
+            end_date: date?.endDate,
           })
         }
+        toggler={() => setShowDateModal(false)}
       />
     </>
   );
 };
-
-export default observer(UserOrders);
+BrandOrders.propTypes = {
+  isModal: PropTypes.bool,
+  isRecent: PropTypes.bool,
+};
+export default observer(BrandOrders);
