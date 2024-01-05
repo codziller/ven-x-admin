@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { IS_DEV } from "utils/appConstant";
+import { ReactComponent as Logo } from "assets/logos/logo-purple.svg";
 import { OnboardingDefaultWrapper } from "./style";
 
 export default function Index({ children }) {
@@ -10,9 +11,11 @@ export default function Index({ children }) {
       } bg-white`}
     >
       <div className="default-content">
-        <div className="beautyhut-logo-container flex flex-col items-center justify-center mb-3">
-          <h2 className="text-black text-xl">beautyhut.</h2>
-          <span className="text-sm bg-blue-clear3 px-5 py-0.5 rounded-[12px]">
+        <div className="beautyhut-logo-container flex flex-col items-center justify-center mb-3 gap-2">
+          <span className="scale-150">
+            <Logo />
+          </span>
+          <span className="text-sm bg-blue-clear3 px-5 py-0.5 font-semibold">
             admin
           </span>
         </div>

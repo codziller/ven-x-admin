@@ -260,21 +260,8 @@ export const ROLES = [
   },
 
   {
-    value: "BRAND_STAFF",
-    label: "BRAND_STAFF",
-  },
-  {
     value: "GUEST",
     label: "GUEST",
-  },
-
-  {
-    value: "WAREHOUSE_ADMIN",
-    label: "WAREHOUSE ADMIN",
-  },
-  {
-    value: "WAREHOUSE_STAFF",
-    label: "WAREHOUSE STAFF",
   },
 ];
 

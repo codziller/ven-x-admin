@@ -26,7 +26,7 @@ export const DetailBlock = ({ title, value, values, valueClassName }) => {
         );
         return (
           <Link
-            to={`/dashboard/products/view/${warehouse_id}/${item?.product?.id}`}
+            to={`/dashboard/plans/view/${warehouse_id}/${item?.product?.id}`}
             className="flex justify-start items-center gap-2 w-full underline"
             rel="noreferrer"
             target="_blank"

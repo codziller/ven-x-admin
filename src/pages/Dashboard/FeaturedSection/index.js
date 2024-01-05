@@ -7,7 +7,7 @@ const FeaturedSection = () => {
   return (
     <div>
       <Helmet>
-        <title>Featured Sections - Beautyhut</title>
+        <title>Featured Sections - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

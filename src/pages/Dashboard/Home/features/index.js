@@ -9,8 +9,8 @@ import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
 import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
 import { ReactComponent as ProductsIcon } from "assets/icons/products-icon.svg";
 import { ReactComponent as CustomersIcon } from "assets/icons/customers-icon.svg";
-import OrdersPage from "pages/Dashboard/Orders/features";
-import ProductsStore from "pages/Dashboard/Products/store";
+import OrdersPage from "pages/Dashboard/Events/features";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import UsersStore from "pages/Dashboard/Users/store";
 import EarningCard from "./EarningCard";
 import TransactionDetailsModal from "./OrderDetailsModal";
@@ -81,31 +81,30 @@ const HomePage = () => {
   } = HomeStore;
 
   useEffect(() => {
-    getProductsCount({ data: { page: 1 } });
-    userIsAdmin && getUsers({ data: { page: 1 } });
+    // getProductsCount({ data: { page: 1 } });
+    // userIsAdmin && getUsers({ data: { page: 1 } });
   }, []);
 
   useEffect(() => {
-    const endDate = moment(dateFilter.end_date)
-      .add(1, "day")
-      .format("YYYY-MM-DD");
-    if (userIsBrandStaff || brand_id) {
-      getBrandHomePageStats({
-        data: {
-          endDate,
-          id: brand_id || warehouse_id,
-          startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
-        },
-      });
-      return;
-    }
-
-    getAdminHomePageStats({
-      data: {
-        endDate,
-        startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
-      },
-    });
+    // const endDate = moment(dateFilter.end_date)
+    //   .add(1, "day")
+    //   .format("YYYY-MM-DD");
+    // if (userIsBrandStaff || brand_id) {
+    //   getBrandHomePageStats({
+    //     data: {
+    //       endDate,
+    //       id: brand_id || warehouse_id,
+    //       startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+    //     },
+    //   });
+    //   return;
+    // }
+    // getAdminHomePageStats({
+    //   data: {
+    //     endDate,
+    //     startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+    //   },
+    // });
   }, [userIsBrandStaff, dateFilter, warehouse_id, brand_id]);
 
   const searchQuery = searchInput?.trim();
@@ -151,16 +150,16 @@ const HomePage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 smlg:grid-cols-4 gap-4 justify-between items-start w-full mb-2">
             <EarningCard
               icon={<OrdersIcon className="scale-[0.8]" />}
-              title="Orders"
+              title="Events"
               value={homepageStats?.totalOrders}
-              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
               isLoading={statLoading}
             />
             <EarningCard
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Income"
               value={homepageStats?.totalRevenue}
-              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
               isLoading={statLoading}
               isAmount
             />
@@ -169,43 +168,33 @@ const HomePage = () => {
               icon={<IncomeIcon className="scale-[0.8]" />}
               title="Gross Revenue"
               value={homepageStats?.totalGrossRevenue}
-              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/events/${warehouse_id}`}
               isLoading={statLoading}
               isAmount
             />
 
-            <EarningCard
-              icon={<IncomeIcon className="scale-[0.8]" />}
-              title="Average Order Value"
-              value={homepageStats?.averageOrderValue}
-              link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
-              isLoading={statLoading}
-              isAmount
-            />
-
-            {userIsAdmin && !brand_id && (
-              <EarningCard
-                icon={<IncomeIcon className="scale-[0.8]" />}
-                title="Delivery Revenue"
-                value={homepageStats?.totalDeliveryRevenue}
-                link={!userIsAdmin ? "#" : `/dashboard/orders/${warehouse_id}`}
-                isLoading={statLoading}
-                isAmount
-              />
-            )}
             <EarningCard
               icon={<ProductsIcon className="scale-[0.8]" />}
-              title="Total Products"
+              title="Total Plans"
               value={numberWithCommas(homepageStats?.totalProducts)}
-              link={!userIsAdmin ? "#" : `/dashboard/products/${warehouse_id}`}
+              link={!userIsAdmin ? "#" : `/dashboard/plans/${warehouse_id}`}
               isLoading={statLoading}
             />
             {userIsAdmin && !brand_id && (
               <EarningCard
                 icon={<CustomersIcon className="scale-[0.8]" />}
-                title="Users"
+                title="Subscribed Users"
                 value={numberWithCommas(homepageStats?.totalUsers)}
-                link={!userIsAdmin ? "#" : `/dashboard/users/${warehouse_id}`}
+                link={!userIsAdmin ? "#" : `/dashboard/clients/${warehouse_id}`}
+                isLoading={statLoading}
+              />
+            )}
+            {userIsAdmin && !brand_id && (
+              <EarningCard
+                icon={<CustomersIcon className="scale-[0.8]" />}
+                title="All Users"
+                value={numberWithCommas(homepageStats?.totalUsers)}
+                link={!userIsAdmin ? "#" : `/dashboard/clients/${warehouse_id}`}
                 isLoading={statLoading}
               />
             )}

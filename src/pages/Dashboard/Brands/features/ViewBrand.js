@@ -8,7 +8,7 @@ import { isEmpty, lowerCase, sumBy } from "lodash";
 import { ReactComponent as ArrowBack } from "assets/icons/Arrow/arrow-left-black.svg";
 import { ReactComponent as OrdersIcon } from "assets/icons/orders-icon.svg";
 import { ReactComponent as IncomeIcon } from "assets/icons/income-icon.svg";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { dateFilters } from "pages/Dashboard/Home/features";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
@@ -49,13 +49,13 @@ const ViewBrand = ({ isBrandStaff }) => {
     const endDate = moment(dateFilter.end_date)
       .add(1, "day")
       .format("YYYY-MM-DD");
-    getProductQuantitySoldByDateFilterByBrandId({
-      data: {
-        endDate,
-        brandId: brandId,
-        startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
-      },
-    });
+    // getProductQuantitySoldByDateFilterByBrandId({
+    //   data: {
+    //     endDate,
+    //     brandId: brandId,
+    //     startDate: moment(dateFilter.start_date).format("YYYY-MM-DD"),
+    //   },
+    // });
   }, [dateFilter, brandId]);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ const ViewBrand = ({ isBrandStaff }) => {
     if (isBrandStaff) {
       return;
     }
-    navigate(`/dashboard/products/edit/${warehouse_id}/${row?.productId}`);
+    navigate(`/dashboard/plans/edit/${warehouse_id}/${row?.productId}`);
   };
   const columns = [
     {

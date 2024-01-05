@@ -24,7 +24,7 @@ const DeleteDialog = ({ details, toggler }) => {
       editUser({
         data: payload,
         page: details?.currentPage,
-        onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+        onSuccess: () => navigate(`/dashboard/clients/${warehouse_id}`),
       });
       return;
     }
@@ -33,7 +33,7 @@ const DeleteDialog = ({ details, toggler }) => {
       data: payload,
       onSuccess: () => {
         toggler();
-        navigate(`/dashboard/users/${warehouse_id}`);
+        navigate(`/dashboard/clients/${warehouse_id}`);
       },
     });
   };

@@ -35,7 +35,7 @@ const DeleteDialog = ({ details, toggler }) => {
       editProduct({
         data: payload,
         page: details?.currentPage,
-        onSuccess: () => navigate(`/dashboard/products/${warehouse_id}`),
+        onSuccess: () => navigate(`/dashboard/plans/${warehouse_id}`),
       });
       return;
     }
@@ -45,7 +45,7 @@ const DeleteDialog = ({ details, toggler }) => {
       data: payload,
       onSuccess: () => {
         toggler();
-        navigate(`/dashboard/products/${warehouse_id}`);
+        navigate(`/dashboard/plans/${warehouse_id}`);
       },
     });
   };

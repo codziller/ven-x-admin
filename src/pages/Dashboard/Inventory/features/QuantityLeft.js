@@ -8,7 +8,7 @@ import Button from "components/General/Button/Button";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
 import { observer } from "mobx-react-lite";
 import { isEmpty } from "lodash";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import moment from "moment";
 import Amount from "components/General/Numbers/Amount";
 import { pageCount } from "utils/appConstant";

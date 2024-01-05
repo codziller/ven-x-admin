@@ -27,7 +27,7 @@ const SignIn = () => {
 
   const SIGN_IN_STEPS = [
     {
-      title: "Login - Beautyhut",
+      title: "Login - Ven-x",
       route: "/auth/login",
       component: <Login />,
     },

@@ -19,7 +19,7 @@ import {
 import Input from "components/General/Input/Input";
 import { isArray, isEmpty, lowerCase } from "lodash";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";

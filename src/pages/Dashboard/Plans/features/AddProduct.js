@@ -9,7 +9,7 @@ const AddProduct = () => {
   const { product_id } = useParams();
   const { getProduct, getProductLoading } = ProductsStore;
   useEffect(() => {
-    product_id && getProduct({ data: { id: product_id } });
+    // product_id && getProduct({ data: { id: product_id } });
   }, [product_id]);
   return (
     <>
@@ -20,7 +20,7 @@ const AddProduct = () => {
           <Form
             details={{
               isAdd: true,
-              link: "/dashboard/products/warehouse_id",
+              link: "/dashboard/plans/warehouse_id",
             }}
           />
         )}

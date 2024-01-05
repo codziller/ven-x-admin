@@ -10,7 +10,7 @@ export const ProtectedRoute = ({ path, notProtected, children, ...rest }) => {
   if (notProtected && isAuthenticated) {
     return (
       <DashboardLayout>
-        <Navigate replace to="/warehouses" />;
+        <Navigate replace to="/dashboard/home" />;
       </DashboardLayout>
     );
   }

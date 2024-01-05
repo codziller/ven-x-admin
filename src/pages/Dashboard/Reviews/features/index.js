@@ -14,7 +14,7 @@ import dateConstants from "utils/dateConstants";
 import { numberWithCommas } from "utils/formatter";
 import Amount from "components/General/Numbers/Amount";
 import Tabs from "components/General/Tabs";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { convertToJs } from "utils/functions";
 
 export const dateFilters = [
@@ -67,7 +67,7 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
   };
 
   useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
+    // isSearchMode ? handleSearch() : handleGetData();
   }, [currentPage, currentPageSearch, currentPageArchived, isArchive]);
 
   useEffect(() => {
@@ -222,8 +222,8 @@ const ReviewsPage = ({ isModal, handleUserSelect }) => {
                           {isSearchMode && isEmpty(searchResult)
                             ? `There are no results for your search '${searchQuery}'`
                             : isArchive
-                            ? "There are currently no archived reviews"
-                            : "There are currently no reviews"}
+                            ? "There are currently no archived reports"
+                            : "There are currently no reports"}
                         </span>
                       }
                     </div>

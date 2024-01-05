@@ -9,7 +9,7 @@ const AddStaff = () => {
   const { staff_id } = useParams();
   const { getStaff, getStaffLoading } = StaffsStore;
   useEffect(() => {
-    staff_id && getStaff({ data: { id: staff_id } });
+    // staff_id && getStaff({ data: { id: staff_id } });
   }, [staff_id]);
 
   return (
@@ -20,7 +20,7 @@ const AddStaff = () => {
         <Form
           details={{
             isAdd: true,
-            link: "/dashboard/products/warehouse_id",
+            link: "/dashboard/plans/warehouse_id",
           }}
         />
       )}

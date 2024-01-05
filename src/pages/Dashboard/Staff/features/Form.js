@@ -55,7 +55,7 @@ const Form = ({ details, toggler }) => {
   const { warehouses, loading, getWarehouses } = WareHousesStore;
   const { getBrand, brand, getBrandLoading } = BrandsStore;
   useEffect(() => {
-    getWarehouses({ data: { page: 1 } });
+    // getWarehouses({ data: { page: 1 } });
   }, []);
   const navigate = useNavigate();
 
@@ -124,7 +124,7 @@ const Form = ({ details, toggler }) => {
     if (!form.brandId) {
       return;
     }
-    getBrand({ data: { id: form?.brandId } });
+    // getBrand({ data: { id: form?.brandId } });
   }, [form.brandId]);
   const { PasswordCheckComp } = usePasswordValidation({
     value: form?.password,

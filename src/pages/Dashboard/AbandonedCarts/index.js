@@ -7,7 +7,7 @@ const AbandonedCarts = () => {
   return (
     <div>
       <Helmet>
-        <title>Abandoned Carts - Beautyhut</title>
+        <title>Abandoned Carts - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

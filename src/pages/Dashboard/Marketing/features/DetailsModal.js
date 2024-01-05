@@ -15,7 +15,7 @@ import {
 import { observer } from "mobx-react-lite";
 import Brands from "./Brands";
 import Products from "./Products";
-import ProductCategories from "pages/Dashboard/Products/features/ProductCategories";
+import ProductCategories from "pages/Dashboard/Plans/features/ProductCategories";
 
 const { BRAND, PRODUCT } = MEDIA_MODAL_TYPES;
 const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;

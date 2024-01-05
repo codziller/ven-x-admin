@@ -28,7 +28,7 @@ import moment from "moment";
 import UsersStore from "../store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import OrdersStore from "pages/Dashboard/Orders/store";
+import OrdersStore from "pages/Dashboard/Events/store";
 import { numberWithCommas } from "utils/formatter";
 import Select from "components/General/Input/Select";
 import PhoneNumber from "components/General/PhoneNumber/PhoneNumber";
@@ -53,7 +53,7 @@ const Form = ({ details, toggler }) => {
   const { getBrand, brand, getBrandLoading } = BrandsStore;
   const { userOrdersCount } = OrdersStore;
   useEffect(() => {
-    getWarehouses({ data: { page: 1 } });
+    // getWarehouses({ data: { page: 1 } });
   }, []);
   const navigate = useNavigate();
 
@@ -122,7 +122,7 @@ const Form = ({ details, toggler }) => {
     if (!form.brandId) {
       return;
     }
-    getBrand({ data: { id: form?.brandId } });
+    // getBrand({ data: { id: form?.brandId } });
   }, [form.brandId]);
   const { PasswordCheckComp } = usePasswordValidation({
     value: form?.password,
@@ -160,13 +160,13 @@ const Form = ({ details, toggler }) => {
     if (user_id) {
       editUser({
         data: payload,
-        onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+        onSuccess: () => navigate(`/dashboard/clients/${warehouse_id}`),
       });
       return;
     }
     createUser({
       data: payload,
-      onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+      onSuccess: () => navigate(`/dashboard/clients/${warehouse_id}`),
     });
   };
 
@@ -180,7 +180,7 @@ const Form = ({ details, toggler }) => {
     if (user_id) {
       editUserWallet({
         data: payload,
-        onSuccess: () => navigate(`/dashboard/users/${warehouse_id}`),
+        onSuccess: () => navigate(`/dashboard/clients/${warehouse_id}`),
       });
       return;
     }
@@ -191,7 +191,10 @@ const Form = ({ details, toggler }) => {
       <div className="gap-y-4 py-4 w-full h-full pb-4 ">
         {details?.link ? (
           <div className="mb-5">
-            <Link to={`/dashboard/users/${warehouse_id}`} className="scale-90">
+            <Link
+              to={`/dashboard/clients/${warehouse_id}`}
+              className="scale-90"
+            >
               <ArrowBack />
             </Link>
           </div>

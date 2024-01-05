@@ -8,8 +8,9 @@ import { ReactComponent as Overview } from "assets/icons/overview.svg";
 import { ReactComponent as Products } from "assets/icons/products.svg";
 import { ReactComponent as Staff } from "assets/icons/staff.svg";
 import { ReactComponent as Gallery } from "assets/icons/gallery.svg";
-import Logo from "assets/images/logo-main.png";
-import LogoSmall from "assets/images/logo-small.png";
+import Logo from "assets/icons/logo--name.svg";
+
+import { ReactComponent as LogoSmall } from "assets/logos/logo-purple.svg";
 import { TbBrandDenodo, TbCategory2, TbPackageImport } from "react-icons/tb";
 import {
   PiArrowsInLineVerticalDuotone,
@@ -31,7 +32,7 @@ import {
 import { FcBusinesswoman } from "react-icons/fc";
 
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { observer } from "mobx-react-lite";
 import { getUserInfoFromStorage } from "utils/storage";
 import { GiReceiveMoney } from "react-icons/gi";
@@ -42,7 +43,7 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
   {
     title: "Overview",
     heading: `Welcome, ${user?.firstName}`,
-    label: "Here’s what’s happening with Beautyhut today.",
+    label: "Here’s what’s happening with Ven-x today.",
     slug: "/dashboard/home",
     link: `/dashboard/home/${warehouse_id}`,
     icon: (
@@ -53,10 +54,10 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
   ...(userIsAdmin
     ? [
         {
-          title: "Orders",
-          slug: "/dashboard/orders",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/orders/${warehouse_id}`,
+          title: "Events",
+          slug: "/dashboard/events",
+          label: "Here’s what’s happening with Ven-x today.",
+          link: `/dashboard/events/${warehouse_id}`,
           icon: (
             <TbPackageImport
               size={24}
@@ -65,69 +66,19 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           ),
         },
 
-        // {
-        //   title: "Subscriptions",
-        //   slug: "/dashboard/subscriptions",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/subscriptions/${warehouse_id}`,
-        //   icon: (
-        //     <MdOutlineForwardToInbox
-        //       size={24}
-        //       className="stroke-current transition-all duration-500 ease-in-out"
-        //     />
-        //   ),
-        // },
-
         {
-          title: "Products",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/products/${warehouse_id}`,
-          slug: "/dashboard/products",
+          title: "Plans",
+          label: "Here’s what’s happening with Ven-x today.",
+          link: `/dashboard/plans/${warehouse_id}`,
+          slug: "/dashboard/plans",
           icon: (
             <Products className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
           ),
         },
         {
-          title: "Inventory",
-          slug: "/dashboard/inventory",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/inventory/${warehouse_id}`,
-          icon: (
-            <MdOutlineInventory
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-        {
-          title: "Categories",
-          slug: "/dashboard/categories",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/categories/${warehouse_id}`,
-          icon: (
-            <TbCategory2
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-        {
-          title: "Brands",
-          slug: "/dashboard/brands",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/brands/${warehouse_id}`,
-          icon: (
-            <TbBrandDenodo
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-
-        {
-          title: "Reviews",
+          title: "Reports",
           slug: "/dashboard/reviews",
-          label: "Here’s what’s happening with Beautyhut today.",
+          label: "Here’s what’s happening with Ven-x today.",
           link: `/dashboard/reviews/${warehouse_id}`,
           icon: (
             <MdOutlineReviews
@@ -136,111 +87,11 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
             />
           ),
         },
-        // {
-        //   title: "Back in stock",
-        //   slug: "/dashboard/back-in-stock",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/back-in-stock/${warehouse_id}`,
-        //   icon: (
-        //     <MdOutlineStorage
-        //       size={24}
-        //       className="stroke-current transition-all duration-500 ease-in-out fill-current"
-        //     />
-        //   ),
-        // },
 
-        // {
-        //   title: "Abandoned Carts",
-        //   slug: "/dashboard/abandoned-carts",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/abandoned-carts/${warehouse_id}`,
-        //   icon: (
-        //     <MdOutlineRemoveShoppingCart
-        //       size={24}
-        //       className="stroke-current transition-all duration-500 ease-in-out"
-        //     />
-        //   ),
-        // },
-
-        {
-          title: "Affiliate Marketers",
-          slug: "/dashboard/affiliate-marketers",
-          heading: "Manage Affiliate Marketers",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/affiliate-marketers/${warehouse_id}`,
-          icon: (
-            <FcBusinesswoman
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-
-        {
-          title: "Donations",
-          slug: "/dashboard/donations",
-          heading: "Manage Donations",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/donations/${warehouse_id}`,
-          icon: (
-            <GiReceiveMoney
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-
-        // {
-        //   title: "Promo",
-        //   slug: "/dashboard/promo",
-        //   heading: "Manage Promo Code",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/promo/${warehouse_id}`,
-        //   icon: (
-        //     <Promo className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
-        //   ),
-        // },
-        {
-          title: "Gift Cards",
-          slug: "/dashboard/gift-cards",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/gift-cards/${warehouse_id}`,
-          icon: (
-            <MdOutlineCardGiftcard
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
-
-        // {
-        //   title: "Discount Codes",
-        //   slug: "/dashboard/discounts",
-        //   label: "Here’s what’s happening with Beautyhut today.",
-        //   link: `/dashboard/discounts/${warehouse_id}`,
-        //   icon: (
-        //     <MdOutlineDiscount
-        //       size={24}
-        //       className="stroke-current transition-all duration-500 ease-in-out"
-        //     />
-        //   ),
-        // },
-        {
-          title: "Referrals",
-          slug: "/dashboard/referrals",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/referrals/${warehouse_id}`,
-          icon: (
-            <MdOutlinePeopleAlt
-              size={24}
-              className="stroke-current transition-all duration-500 ease-in-out"
-            />
-          ),
-        },
         {
           title: "Payments",
           slug: "/dashboard/payments",
-          label: "Here’s what’s happening with Beautyhut today.",
+          label: "Here’s what’s happening with Ven-x today.",
           link: `/dashboard/payments/${warehouse_id}`,
           icon: (
             <MdOutlinePayments
@@ -253,18 +104,18 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
           title: "Staff",
           slug: "/dashboard/staffs",
           heading: "Manage Staffs",
-          label: "Here’s what’s happening with Beautyhut today.",
+          label: "Here’s what’s happening with Ven-x today.",
           link: `/dashboard/staffs/${warehouse_id}`,
           icon: (
             <Staff className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
           ),
         },
         {
-          title: "Users",
-          slug: "/dashboard/users",
+          title: "Clients",
+          slug: "/dashboard/clients",
           heading: "Manage Users",
-          label: "Here’s what’s happening with Beautyhut today.",
-          link: `/dashboard/users/${warehouse_id}`,
+          label: "Here’s what’s happening with Ven-x today.",
+          link: `/dashboard/clients/${warehouse_id}`,
           icon: (
             <PiUsersThree
               size={24}
@@ -274,9 +125,23 @@ const getLinks = (warehouse_id, user, userIsAdmin) => [
         },
 
         {
-          title: "Marketing",
+          title: "Vendors",
+          slug: "/dashboard/clients",
+          heading: "Manage Users",
+          label: "Here’s what’s happening with Ven-x today.",
+          link: `/dashboard/clients/${warehouse_id}`,
+          icon: (
+            <PiUsersThree
+              size={24}
+              className="stroke-current transition-all duration-500 ease-in-out"
+            />
+          ),
+        },
+
+        {
+          title: "Settings",
           slug: "/dashboard/marketing",
-          label: "Here’s what’s happening with Beautyhut today.",
+          label: "Here’s what’s happening with Ven-x today.",
           link: `/dashboard/marketing/${warehouse_id}/?tab=marketingTextContent`,
           icon: (
             <Gallery className="stroke-current fill-current sidenav-item  transition-all duration-500 ease-in-out" />
@@ -305,12 +170,12 @@ const SideNav = ({
   const { getWarehouse, warehouse, getWareHouseLoading } = WareHousesStore;
   const { resetProductStore } = ProductsStore;
   useEffect(() => {
-    warehouse_id && userIsAdmin && getWarehouse({ data: { id: warehouse_id } });
+    // warehouse_id && userIsAdmin && getWarehouse({ data: { id: warehouse_id } });
   }, [warehouse_id, location.pathname, userIsAdmin]);
   useEffect(() => {
-    warehouse_id &&
-      userIsBrandStaff &&
-      getBrand({ data: { id: warehouse_id } });
+    // warehouse_id &&
+    //   userIsBrandStaff &&
+    //   getBrand({ data: { id: warehouse_id } });
   }, [warehouse_id, location.pathname, userIsBrandStaff]);
 
   const handleLinks = (url) => {
@@ -344,11 +209,9 @@ const SideNav = ({
             <div className="flex text-white">
               <span className=" text-xl font-600">
                 {sidenavCollapsed ? (
-                  <img
-                    alt="logo"
-                    src={LogoSmall}
-                    className="w-[50px] h-[40px]"
-                  />
+                  <span className="scale-50">
+                    <LogoSmall />
+                  </span>
                 ) : (
                   <img alt="logo" src={Logo} className="w-[120px] h-[60px]" />
                 )}
@@ -387,16 +250,6 @@ const SideNav = ({
         </span>
         <div className="w-full md:h-full space-y-[21px] md:space-y-6 pb-[15px] pr-4">
           <div className=" flex flex-col justify-start items-start pl-3 md:pl-6 w-full cursor-pointer transition-all duration-1000 ease-in-out pb-28">
-            {userIsAdmin && (
-              <div onClick={resetProductStore}>
-                <ProviderCard
-                  provider={warehouse}
-                  sidenavCollapsed={sidenavCollapsed}
-                  getWareHouseLoading={getWareHouseLoading}
-                />
-              </div>
-            )}
-
             {trimArrayOfObject(links).map(({ title, icon, link, slug }) => (
               <>
                 <Link key={title} {...handleLinks(link)}>

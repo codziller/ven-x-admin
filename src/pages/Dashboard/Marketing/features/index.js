@@ -14,6 +14,7 @@ import WebMarketingImage from "./WebMarketingImage";
 import { useParams, useLocation } from "react-router-dom";
 import MarketingTextInput from "./MarketingTextInput";
 import WebLinkMarketingImage from "./WebLinkMarketingImage";
+import PushNotification from "./PushNotification";
 
 const MarketingPage = () => {
   const { warehouse_id } = useParams();
@@ -21,40 +22,10 @@ const MarketingPage = () => {
   const currentTab = new URLSearchParams(location.search).get("tab");
   console.log("currentTab: ", currentTab);
   const TABS = [
+    { name: "pushNotifications", label: "Push Notifications" },
     {
-      name: "marketingTextContent",
-      label: "Marketing Text Content",
-    },
-    { name: "homePageSliders", label: "Home Page Sliders" },
-    { name: "homePagePosts", label: "Home Page Posts" },
-    {
-      name: "mobilePagePosts",
-      label: "Mobile Page Sliders",
-    },
-    {
-      name: "mobileMarketingImages",
-      label: "Mobile Marketing Images",
-    },
-    {
-      name: "webLinkMarketingImages",
-      label: "Web Marketing Images",
-    },
-    {
-      name: "webMarketingImage",
-      label: "Web Marketing Images (LandScape)",
-    },
-    {
-      name: "mobileBrandsOfTheMoment",
-      label: "Mobile Brands Of The Moment",
-    },
-    {
-      name: "promoBanners",
-      label: "Promo Banners",
-    },
-
-    {
-      name: "discounts",
-      label: "Discounts",
+      name: "appSettings",
+      label: "App Settings",
     },
   ];
 
@@ -85,8 +56,8 @@ const MarketingPage = () => {
             setActiveTab={setActiveTab}
           />
 
-          {activeTab === "marketingTextContent" ? <MarketingTextInput /> : null}
-          {activeTab === "homePageSliders" ? <HomePageSlider /> : null}
+          {activeTab === "appSettings" ? <MarketingTextInput /> : null}
+          {activeTab === "pushNotifications" ? <PushNotification /> : null}
           {activeTab === "homePagePosts" ? <HomePagePost /> : null}
           {activeTab === "mobilePagePosts" ? <MobilePagePost /> : null}
           {activeTab === "mobileMarketingImages" ? (

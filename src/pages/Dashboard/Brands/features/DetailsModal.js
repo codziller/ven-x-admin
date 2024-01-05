@@ -6,7 +6,7 @@ import ModalBody from "components/General/Modal/ModalBody/ModalBody";
 import Form from "./Form";
 import DeleteDialog from "./DeleteDialog";
 import { PRODUCT_MODAL_TYPES } from "utils/appConstant";
-import ProductCategories from "pages/Dashboard/Products/features/ProductCategories";
+import ProductCategories from "pages/Dashboard/Plans/features/ProductCategories";
 
 const { PRODUCT_CATEGORY_OPTIONS } = PRODUCT_MODAL_TYPES;
 const DetailsModal = ({ active, toggler, details, handleChange, form }) => {

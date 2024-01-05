@@ -8,7 +8,7 @@ import { ReactComponent as Close } from "assets/icons/close-x.svg";
 import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
 
 import Button from "components/General/Button/Button";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 
 const DeleteDialog = ({ details, toggler }) => {
   const { deleteReview, deleteReviewLoading, editWareHouseLoading } =

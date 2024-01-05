@@ -34,19 +34,15 @@ const { DISPATCHED, CANCELLED, COMPLETED, INPROGRESS, PENDING } =
 const deliveryHandlers = [
   {
     value: "ALL",
-    label: "All Delivery Handlers",
+    label: "All Locations",
   },
   {
-    value: "BEAUTYHUT",
-    label: "BeautyHut",
+    value: "Lagos",
+    label: "Lagos",
   },
   {
-    value: "CHOWDECK",
-    label: "Chowdeck",
-  },
-  {
-    value: "TOPSHIP",
-    label: "Topship",
+    value: "London",
+    label: "London",
   },
 ];
 const Orders = ({ isRecent }) => {
@@ -76,20 +72,17 @@ const Orders = ({ isRecent }) => {
   const TABS = [
     {
       name: INPROGRESS,
-      label: `Inprogress orders (${in_progressOrdersCount || "0"})`,
+      label: `Inprogress events (${in_progressOrdersCount || "0"})`,
     },
-    { name: PENDING, label: `Pending orders (${pendingOrdersCount || "0"})` },
-    {
-      name: DISPATCHED,
-      label: `Dispatched orders (${dispatchedOrdersCount || "0"})`,
-    },
+    { name: PENDING, label: `Pending events (${pendingOrdersCount || "0"})` },
+
     {
       name: COMPLETED,
-      label: `Completed orders (${completedOrdersCount || "0"})`,
+      label: `Completed events (${completedOrdersCount || "0"})`,
     },
     {
       name: CANCELLED,
-      label: `Cancelled orders (${cancelledOrdersCount || "0"})`,
+      label: `Cancelled events (${cancelledOrdersCount || "0"})`,
     },
   ];
 
@@ -144,15 +137,15 @@ const Orders = ({ isRecent }) => {
   };
 
   useEffect(() => {
-    handleGetAllData();
+    // handleGetAllData();
   }, []);
   useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
+    // isSearchMode ? handleSearch() : handleGetData();
   }, [currentPage, currentPageSearch, activeTab, dateFilter, deliveryHandler]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      handleSearch();
+      // handleSearch();
     }
   }, [searchInput]);
 
@@ -374,7 +367,7 @@ const Orders = ({ isRecent }) => {
           )}
           {isRecent && (
             <p className="font-700 text-start w-full pl-3 mt-5">
-              Recent Orders
+              Recent events
             </p>
           )}
           <div className="flex justify-between items-center w-full mb-3 gap-1">
@@ -384,7 +377,7 @@ const Orders = ({ isRecent }) => {
               })}
             >
               <SearchBar
-                placeholder={"Search orders"}
+                placeholder={"Search events"}
                 onChange={setSearchInput}
                 value={searchInput}
                 className="flex"
@@ -428,7 +421,7 @@ const Orders = ({ isRecent }) => {
                             ? `There are no results for your search '${searchQuery}'`
                             : `There are currently no ${lowerCase(
                                 activeTab?.replaceAll("_", " ")
-                              )} orders`}
+                              )} events`}
                         </span>
                       }
                     </div>

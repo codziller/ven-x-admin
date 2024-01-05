@@ -12,7 +12,7 @@ export default function AddReferrals() {
               <Form
                 details={{
                   isAdd: true,
-                  link: "/dashboard/products/warehouse_id",
+                  link: "/dashboard/plans/warehouse_id",
                 }}
               />
             </div>

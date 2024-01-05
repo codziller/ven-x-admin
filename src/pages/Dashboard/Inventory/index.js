@@ -7,7 +7,7 @@ const Inventory = () => {
   return (
     <div>
       <Helmet>
-        <title>Inventory - Beautyhut</title>
+        <title>Inventory - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

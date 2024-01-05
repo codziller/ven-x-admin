@@ -28,7 +28,7 @@ import DetailsModal from "./DetailsModal";
 import { observer } from "mobx-react-lite";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import cleanPayload from "utils/cleanPayload";
 import { FormErrorMessage } from "components/General/FormErrorMessage";
 import { flattenCategories } from "utils/functions";

@@ -91,12 +91,12 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
   };
 
   useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
+    // isSearchMode ? handleSearch() : handleGetData();
   }, [currentPage, currentPageSearch, currentPageArchived, isArchive]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      handleSearch();
+      // handleSearch();
     }
   }, [searchInput]);
 
@@ -106,7 +106,7 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
       return;
     }
 
-    navigate(`/dashboard/users/edit/${warehouse_id}/${row?.id}`);
+    navigate(`/dashboard/clients/edit/${warehouse_id}/${row?.id}`);
   };
   const columns = [
     {
@@ -225,7 +225,7 @@ const UsersPage = ({ isModal, handleUserSelect, isSelected }) => {
               text="Add User"
               icon={<Plus className="stroke-current" />}
               className="hidden md:block"
-              onClick={() => navigate(`/dashboard/users/add/${warehouse_id}`)}
+              onClick={() => navigate(`/dashboard/clients/add/${warehouse_id}`)}
             />
           </div>
 

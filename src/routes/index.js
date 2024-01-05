@@ -11,9 +11,9 @@ import SignIn from "pages/OnBoarding/SignIn/features";
 import SignInPage from "pages/OnBoarding/SignIn";
 import Logs from "pages/Dashboard/Log";
 import ListOfLogs from "pages/Dashboard/Log/features";
-import ProductsPage from "pages/Dashboard/Products/features";
-import Products from "pages/Dashboard/Products";
-import AddProduct from "pages/Dashboard/Products/features/AddProduct";
+import ProductsPage from "pages/Dashboard/Plans/features";
+import Products from "pages/Dashboard/Plans";
+import AddProduct from "pages/Dashboard/Plans/features/AddProduct";
 import StaffPage from "pages/Dashboard/Staff/features";
 import Staff from "pages/Dashboard/Staff";
 import PromoPage from "pages/Dashboard/Promo/features";
@@ -24,8 +24,8 @@ import AddHomePageSlider from "pages/Dashboard/Marketing/features/AddHomePageSli
 import MarketingPage from "pages/Dashboard/Marketing/features";
 import FeaturedSectionPage from "pages/Dashboard/FeaturedSection/features";
 import FeaturedSection from "pages/Dashboard/FeaturedSection";
-import Orders from "pages/Dashboard/Orders";
-import OrdersPage from "pages/Dashboard/Orders/features";
+import Orders from "pages/Dashboard/Events";
+import OrdersPage from "pages/Dashboard/Events/features";
 import Inventory from "pages/Dashboard/Inventory";
 import InventoryPage from "pages/Dashboard/Inventory/features";
 import Categories from "pages/Dashboard/Categories";
@@ -107,7 +107,7 @@ const Router = () => {
 
         {/* products */}
         <Route
-          path="/dashboard/products"
+          path="/dashboard/plans"
           element={
             <ProtectedRoute path="">
               <Products />
@@ -160,7 +160,7 @@ const Router = () => {
 
         {/* orders */}
         <Route
-          path="/dashboard/orders"
+          path="/dashboard/events"
           element={
             <ProtectedRoute path="">
               <Orders />
@@ -274,7 +274,7 @@ const Router = () => {
 
         {/* users */}
         <Route
-          path="/dashboard/users"
+          path="/dashboard/clients"
           element={
             <ProtectedRoute path="">
               <Users />

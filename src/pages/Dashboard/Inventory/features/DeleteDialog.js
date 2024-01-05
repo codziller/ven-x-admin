@@ -7,9 +7,9 @@ import { ReactComponent as Delete } from "assets/icons/delete-span.svg";
 import Button from "components/General/Button/Button";
 import { Link, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { PRODUCT_REQUEST_STATUSES } from "utils/appConstant";
-import { DetailBlock } from "pages/Dashboard/Orders/features/OrderDetails";
+import { DetailBlock } from "pages/Dashboard/Events/features/OrderDetails";
 import classNames from "classnames";
 import moment from "moment";
 

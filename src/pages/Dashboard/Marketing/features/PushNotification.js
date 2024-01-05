@@ -170,106 +170,26 @@ const Form = observer(() => {
                     </span>
                   </div>
 
+                  <Input
+                    label="Notification Title"
+                    value={form?.tagline}
+                    onChangeFunc={(val) => handleChange("tagline", val)}
+                    placeholder="Enter Notification Title"
+                    formError={errors.tagline}
+                    showFormError={formTwo?.showFormError}
+                  />
+
                   <Textarea
-                    label="App Version Android Text"
+                    isRequired
+                    label="Notification Body"
                     value={form?.appVersionAndroidText}
                     onChangeFunc={(val) =>
                       handleChange({ prop: "appVersionAndroidText", val })
                     }
-                    placeholder="Enter Text"
+                    placeholder="Enter Notification Body"
                     formError={errors.appVersionAndroidText}
                     showFormError={formTwo?.showFormError}
                     required
-                  />
-
-                  <Textarea
-                    label="App Version Button Link"
-                    value={form?.appVersionButtonLink}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionButtonLink", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionButtonLink}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-                  <Textarea
-                    label="App Version Button Text"
-                    value={form?.appVersionButtonText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionButtonText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionButtonText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-                  <Textarea
-                    label="App Version Header Text"
-                    value={form?.appVersionHeaderText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionHeaderText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionHeaderText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-
-                  <Textarea
-                    label="App Version Ios Text"
-                    value={form?.appVersionIosText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionIosText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionIosText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-                  <Textarea
-                    label="App Version Main Text"
-                    value={form?.appVersionMainText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionMainText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionMainText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-                  <Textarea
-                    label="App Version Skip Text"
-                    value={form?.appVersionSkipText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionSkipText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionSkipText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-
-                  <Textarea
-                    label="App Version Whats New Text"
-                    value={form?.appVersionWhatsNewText}
-                    onChangeFunc={(val) =>
-                      handleChange({ prop: "appVersionWhatsNewText", val })
-                    }
-                    placeholder="Enter Text"
-                    formError={errors.appVersionWhatsNewText}
-                    showFormError={formTwo?.showFormError}
-                    required
-                  />
-                  <CheckBox
-                    label="Skip App Version Update"
-                    onChange={() =>
-                      handleChange({
-                        prop: "appVersionSkipBool",
-                        val: !form.appVersionSkipBool,
-                      })
-                    }
-                    checked={form?.appVersionSkipBool}
                   />
 
                   <Button
@@ -278,7 +198,7 @@ const Form = observer(() => {
                     }
                     isLoading={formTwo.createLoading}
                     type="submit"
-                    text="Save Changes"
+                    text="Push Notification"
                     className="mt-8 mb-5"
                     fullWidth
                   />

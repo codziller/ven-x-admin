@@ -7,7 +7,7 @@ const BackInStock = () => {
   return (
     <div>
       <Helmet>
-        <title>Back In Stock - Beautyhut</title>
+        <title>Back In Stock - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

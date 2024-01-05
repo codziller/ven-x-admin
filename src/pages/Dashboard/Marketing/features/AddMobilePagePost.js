@@ -17,7 +17,7 @@ import {
 } from "utils/appConstant";
 import { isArray, isEmpty, lowerCase } from "lodash";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import MarketingStore from "../store";
 import DetailsModal from "./DetailsModal";

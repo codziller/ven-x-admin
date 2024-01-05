@@ -85,12 +85,12 @@ const StaffsPage = ({ isModal, handleStaffSelect, isSelected }) => {
   };
 
   useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
+    // isSearchMode ? handleSearch() : handleGetData();
   }, [currentPage, currentPageSearch, currentPageArchived, isArchive]);
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      handleSearch();
+      // handleSearch();
     }
   }, [searchInput]);
 

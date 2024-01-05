@@ -22,7 +22,7 @@ import ImagePicker from "components/General/Input/ImagePicker";
 import CategoriesStore from "pages/Dashboard/Categories/store";
 import { uploadImageToCloud } from "utils/uploadImagesToCloud";
 import BrandsStore from "pages/Dashboard/Brands/store";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { isArray, isEmpty, lowerCase } from "lodash";
 import { errorToast } from "components/General/Toast/Toast";
 import CheckBox from "components/General/Input/CheckBox";

@@ -9,10 +9,10 @@ import { ReactComponent as SearchIcon } from "assets/icons/SearchIcon/searchIcon
 
 import useWindowDimensions from "hooks/useWindowDimensions";
 import { transactionAmount } from "utils/transactions";
-import TransactionDetailsModal from "pages/Dashboard/Orders/features/OrderDetailsModal";
+import TransactionDetailsModal from "pages/Dashboard/Events/features/OrderDetailsModal";
 import dateConstants from "utils/dateConstants";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
-import OrdersStore from "pages/Dashboard/Orders/store";
+import OrdersStore from "pages/Dashboard/Events/store";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import { observer } from "mobx-react-lite";
 import { numberWithCommas } from "utils/formatter";

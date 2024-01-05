@@ -9,7 +9,7 @@ import Button from "components/General/Button/Button";
 import Input from "components/General/Input/Input";
 import Select from "components/General/Input/Select";
 import { Link } from "react-router-dom";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import { observer } from "mobx-react-lite";
 import cleanPayload from "utils/cleanPayload";

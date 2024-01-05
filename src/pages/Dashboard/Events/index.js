@@ -3,11 +3,11 @@ import { Outlet } from "react-router";
 import { Helmet } from "react-helmet";
 import DashboardLayout from "components/Layout/DashboardLayout";
 
-const Products = () => {
+const Orders = () => {
   return (
     <div>
       <Helmet>
-        <title>Products - Beautyhut</title>
+        <title>Orders - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />
@@ -16,4 +16,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default Orders;

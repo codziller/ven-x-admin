@@ -16,7 +16,7 @@ import TransactionDetailsModal from "./DetailsModal";
 import dateConstants from "utils/dateConstants";
 import SearchBar from "components/General/Searchbar/SearchBar";
 import { observer } from "mobx-react-lite";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import classNames from "classnames";
 import Tabs from "components/General/Tabs";
 import { numberWithCommas } from "utils/formatter";
@@ -333,7 +333,7 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
             Edit
           </span>
 
-          <Link to={`/dashboard/products/edit/${warehouse_id}/${row?.id}`}>
+          <Link to={`/dashboard/plans/edit/${warehouse_id}/${row?.id}`}>
             <span className=" cursor-pointer px-4 py-1 rounded-full bg-black text-[11px] text-white ">
               View
             </span>
@@ -477,8 +477,8 @@ const InventoryPage = ({ isModal, handleProductSelect, isSelected }) => {
                               {isSearchMode && isEmpty(searchResult)
                                 ? `There are no results for your search '${searchQuery}'`
                                 : isArchive
-                                ? "There are currently no archived products"
-                                : "There are currently no products"}
+                                ? "There are currently no archived plans"
+                                : "There are currently no plans"}
                             </span>
                           }
                         </div>

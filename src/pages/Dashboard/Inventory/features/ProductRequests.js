@@ -14,7 +14,7 @@ import useWindowDimensions from "hooks/useWindowDimensions";
 import TransactionDetailsModal from "./DetailsModal";
 
 import { observer } from "mobx-react-lite";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import { useParams } from "react-router-dom";
 import DashboardFilterDropdown from "components/General/Dropdown/DashboardFilterDropdown";
 import classNames from "classnames";

@@ -7,7 +7,7 @@ const AffiliateMarketers = () => {
   return (
     <div>
       <Helmet>
-        <title>Affiliate Marketers - Beautyhut</title>
+        <title>Affiliate Marketers - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

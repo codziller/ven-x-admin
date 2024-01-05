@@ -7,7 +7,7 @@ const GiftCards = () => {
   return (
     <div>
       <Helmet>
-        <title>Gift Cards - Beautyhut</title>
+        <title>Gift Cards - Ven-x</title>
       </Helmet>
       <DashboardLayout>
         <Outlet />

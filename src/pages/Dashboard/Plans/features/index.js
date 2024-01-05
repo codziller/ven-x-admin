@@ -72,15 +72,11 @@ const ProductsPage = ({
   } = ProductsStore;
 
   const TABS = [
-    { name: "products", label: `Products (${productsCount || "-"})` },
+    { name: "plans", label: `Plans (${productsCount || "-"})` },
 
     {
-      name: "private",
-      label: `Private products (${productsPrivateCount || "-"})`,
-    },
-    {
       name: "archived",
-      label: `Archived products (${productsArchivedCount || "-"})`,
+      label: `Archived plans (${productsArchivedCount || "-"})`,
     },
   ];
   const { width, isMobile } = useWindowDimensions();
@@ -93,8 +89,8 @@ const ProductsPage = ({
   const [activeTab, setActiveTab] = useState(TABS[0]?.name);
   const searchQuery = searchInput?.trim();
   const isSearchMode = searchQuery?.length > 1;
-  const isPrivate = activeTab === TABS[1]?.name;
-  const isArchive = activeTab === TABS[2]?.name;
+  const isPrivate = activeTab === TABS[2]?.name;
+  const isArchive = activeTab === TABS[1]?.name;
 
   const handleSearch = async () => {
     if (!searchQuery) {
@@ -119,7 +115,7 @@ const ProductsPage = ({
   };
 
   useEffect(() => {
-    isSearchMode ? handleSearch() : handleGetData();
+    // isSearchMode ? handleSearch() : handleGetData();
   }, [
     currentPage,
     currentPageSearch,
@@ -131,7 +127,7 @@ const ProductsPage = ({
 
   useEffect(() => {
     if (searchQuery?.length > 1 || !searchQuery) {
-      handleSearch();
+      // handleSearch();
     }
   }, [searchInput]);
 
@@ -141,7 +137,7 @@ const ProductsPage = ({
       return;
     }
 
-    navigate(`/dashboard/products/edit/${warehouse_id}/${row?.id}`);
+    navigate(`/dashboard/plans/edit/${warehouse_id}/${row?.id}`);
   };
   const columns = [
     {
@@ -300,16 +296,16 @@ const ProductsPage = ({
               })}
             >
               <SearchBar
-                placeholder={"Search products"}
+                placeholder={"Search plans"}
                 onChange={setSearchInput}
                 value={searchInput}
                 className="flex"
               />
             </div>
             {!isModal && (
-              <Link to={`/dashboard/products/add/${warehouse_id}`}>
+              <Link to={`/dashboard/plans/add/${warehouse_id}`}>
                 <Button
-                  text="Add New Product"
+                  text="Add New Plan"
                   icon={<Plus className="stroke-current" />}
                   className="hidden md:block"
                 />
@@ -369,10 +365,10 @@ const ProductsPage = ({
                           {isSearchMode && isEmpty(searchResult)
                             ? `There are no results for your search '${searchQuery}'`
                             : isArchive
-                            ? "There are currently no archived products"
+                            ? "There are currently no archived plans"
                             : isPrivate
-                            ? "There are currently no private products"
-                            : "There are currently no products"}
+                            ? "There are currently no private plans"
+                            : "There are currently no plans"}
                         </span>
                       }
                     </div>

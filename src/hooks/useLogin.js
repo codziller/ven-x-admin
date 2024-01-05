@@ -21,7 +21,7 @@ function useLogin() {
           ? `/dashboard/home/${brandId}`
           : !role?.includes("ADMIN") && warehouseId
           ? `/dashboard/home/${warehouseId}`
-          : "/warehouses";
+          : "/dashboard/home/1";
       saveToken(accessToken);
       saveUserInfoToStorage(rest);
       setAuthenticatedUser(user);

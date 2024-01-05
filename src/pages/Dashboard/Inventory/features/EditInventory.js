@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import CircleLoader from "components/General/CircleLoader/CircleLoader";
-import ProductsStore from "pages/Dashboard/Products/store";
+import ProductsStore from "pages/Dashboard/Plans/store";
 import WareHousesStore from "pages/Dashboard/WareHouses/store";
 import Form from "./Form";
 
@@ -26,7 +26,7 @@ const EditInventory = () => {
           <Form
             details={{
               isAdd: true,
-              link: "/dashboard/products/warehouse_id",
+              link: "/dashboard/plans/warehouse_id",
             }}
           />
         )}
