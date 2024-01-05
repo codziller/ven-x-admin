@@ -108,7 +108,7 @@ export default function Form({ details, toggler }) {
           label="Message"
           value={form?.name}
           onChangeFunc={(val) => handleChange("name", val)}
-          placeholder="Get 10% off when you order on beautyhut"
+          placeholder="Get 10% off when you order on ven-x"
           formError={errors.name}
           showFormError={formTwo?.showFormError}
           required

@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-const TOKEN = "beautyhut-admin-token";
-const USER_DATA = "beautyhut-admin-user-data";
-const LAST_CURRENT_BUSINESS = "beautyhut-admin-lcb";
+const TOKEN = "venx-admin-token";
+const USER_DATA = "venx-admin-user-data";
+const LAST_CURRENT_BUSINESS = "venx-admin-lcb";
 export const ACCOUNT_CREATED = "ADMIN_ACCOUNT_CREATED";
-export const BUSINESS_CUSTOMER_REFS = "beautyhut-admin-cr";
+export const BUSINESS_CUSTOMER_REFS = "venx-admin-cr";
 
 export const saveToken = (token) => {
   try {

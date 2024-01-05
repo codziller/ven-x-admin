@@ -62,8 +62,7 @@ class AuthStore {
       this.setCurrentUser(res?.user);
       console.log("RESSS: ", res);
       logUserIn(res);
-      const message =
-        "You have successfully logged into beautyhut admin dashboard";
+      const message = "You have successfully logged into ven-x admin dashboard";
       successToast(`Successfully logged in`, message);
     } catch (error) {
       this.error = error;

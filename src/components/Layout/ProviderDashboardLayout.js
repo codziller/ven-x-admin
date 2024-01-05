@@ -18,7 +18,7 @@ const ProviderDashboardLayout = ({ children }) => {
         <div className="relative flex flex-row justify-center items-center mx-auto w-full md:px-6 ">
           <Link to="/warehouses" className="h-8 w-16 !my-0">
             <div className="beautyhut-logo-container flex flex-col items-center justify-center mb-3">
-              <h2 className="text-black text-xl">beautyhut.</h2>
+              <h2 className="text-black text-xl">ven-x.</h2>
               <span className="text-sm bg-blue-clear3 px-5 py-0.5 rounded-[12px]">
                 admin
               </span>
