@@ -24,6 +24,8 @@ import AuthStore from "pages/OnBoarding/SignIn/store";
 import DateRangeModal from "components/General/Modal/DateRangeModal/DateRangeModal";
 import HomeStore from "../store";
 import ViewBrand from "pages/Dashboard/Brands/features/ViewBrand";
+import EarningValueCard from "./EarningValueCard";
+import TransactionValueCard from "./TransactionValueCard";
 
 export const dateFilters = [
   {
@@ -199,11 +201,11 @@ const HomePage = () => {
               />
             )}
           </div>
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 justify-between items-start w-full mb-2">
             <EarningValueCard />
 
             <TransactionValueCard />
-          </div> */}
+          </div>
 
           {!brand_id ? (
             <div className="w-full flex flex-col bg-white p-6">

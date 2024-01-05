@@ -34,7 +34,7 @@ const TransactionValueCard = () => {
     <div className="bg-white flex flex-col justify-start items-start w-full border border-grey-bordercolor rounded-lg px-3 py-5 gap-3.5">
       <div className="flex justify-between items-center w-full gap-3">
         <p className="text-[12px] uppercase text-grey-text font-thin w-full">
-          Orders
+          Events
         </p>
         <div className="w-[150px]">
           <DashboardFilterDropdown
