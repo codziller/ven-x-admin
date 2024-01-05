@@ -14,7 +14,7 @@ const DetailBlock = ({ title, value, values }) => (
           className="w-[45px] h-[45px] min-w-[45px] min-h-[45px]"
         />
         <p key={i} className="text-grey-label text-sm truncate max-w-[60%]">
-          {item?.name} <span className="text-red">x3</span>
+          {item?.name}
         </p>
       </div>
     ))}
@@ -23,26 +23,23 @@ const DetailBlock = ({ title, value, values }) => (
 const OrderDetails = ({ transaction }) => {
   return (
     <div className="gap-y-4 py-4 w-full h-full pb-4">
-      <h3 className="text-lg mb-5">Order Details</h3>
+      <h3 className="text-lg mb-5">Event Details</h3>
       <div className="flex flex-col justify-start items-start w-full border border-grey-bordercolor rounded">
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
           <DetailBlock title="Customer" value={"Jane Doe"} />
         </div>
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Order ID" value={"1252657612"} />
+          <DetailBlock title="Event ID" value={"1252657612"} />
         </div>
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
           <DetailBlock
-            title="Products"
-            values={[
-              { name: "Cerave foaming facial cleanser", images: [cerave] },
-              { name: "Simple Hydrating Moisturizer", images: [shm] },
-            ]}
+            title="Event"
+            values={[{ name: "Lagos Beach Event", images: [cerave] }]}
           />
         </div>
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
-          <DetailBlock title="Order Date" value={"June 20, 2023"} />
-          <DetailBlock title="Delivery Date" value={"June 20, 2023"} />
+          <DetailBlock title="Event Date" value={"June 20, 2023"} />
+          <DetailBlock title="End Date" value={"June 20, 2023"} />
         </div>
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
           <DetailBlock title="Payment Method" value={"Card"} />
@@ -51,7 +48,7 @@ const OrderDetails = ({ transaction }) => {
         <div className="flex justify-between items-center w-full border-b border-grey-bordercolor py-[18px]">
           <DetailBlock
             title="Description"
-            value={"Payment for Cerave Moisturizer"}
+            value={"Payment for Lagos Beach Event"}
           />
         </div>
         <div className="flex justify-between items-center w-full py-[18px]">
